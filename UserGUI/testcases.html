@@ -1,0 +1,325 @@
+
+<html>
+<head>
+<script language="javascript" type="text/javascript" src="AutomationUIJavascript.js">
+</script>
+
+<style>
+	table {
+			border: 1px solid black;
+			float:left;
+			margin-left:100px;
+}
+th, td{
+    border: 1px solid black;
+}
+
+tr{
+    border: 1px solid black;
+	text-align:center;
+}
+* { margin: 0; }
+
+</style>
+</head>
+
+<body bgcolor="#f9f9f9" onload="GetTestCaseCellData()">
+<form scrolling="yes">
+
+<div name="TestCaseDetails" class="scroll" style="overflow-y:scroll;height:500px;">
+
+<center>
+<br><br>
+  <table width="900" border="3" cellpadding= "10" >
+  
+  <tr>
+
+	<th width="100">Serial No</th>
+	<th width="150">Module Name</th>
+	<th width="100">TestCase ID</th>
+    <th width="300">TestCase Description</th>		
+    <th width="120">Execution Flag</th>
+  </tr>
+  
+  
+  <tr>
+	<td >1</td>
+	<td>MenuBar</td>
+	<td>TC_001</td>
+	<td align="left">ValidateNavigationToMenuBarPageItems</td>
+	<td align="center">
+		<select name="TC1">
+		<option value="Yes">Yes</option>
+		<option value="No">No</option>
+		</select>
+	</td>
+  
+  </tr>
+  
+  
+  
+  <tr>
+	
+	<td >2</td>
+	<td>HomePage</td>
+	<td>TC_002</td>
+	<td align="left">ValidateMessagesAndNotificationsLoadedInHomePage</td>
+	<td >
+	<select name = "TC2"><option value="Yes">Yes</option><option value="No">No</option></select>	</td>
+  
+  </tr>
+  
+  
+  
+  <tr>
+	
+	<td >3</td>
+	<td>HomePage</td>
+	<td>TC_003</td>
+	<td align="left">ValidateUserProfile</td>
+	<td ><select name = "TC3"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+  
+  </tr>
+   
+   
+   <tr>
+	
+	<td >4</td>
+	<td>CatalogPage</td>
+	<td>TC_004</td>
+	<td align="left">ValidateCreateCatalogTopicAndMetrics</td>
+	<td ><select name = "TC4"><option value="Yes">Yes</option><option value="No">No</option>	</select>	</td>
+
+  </tr>
+  
+  
+  <tr>
+	
+	<td >5</td>
+	<td>CatalogPage</td>
+	<td>TC_005</td>
+	<td align="left">ValidateCatalogSettingsAndFilters</td>
+	<td ><select  name="TC5"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+  
+  </tr>
+
+<tr>
+	
+	<td >6</td>
+	<td>CatalogPage</td>
+	<td align="center">TC_006</td>
+	<td align="left">ValidateViewOrganizationDataButton</td>
+	<td ><select name = "TC6"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+ 
+ </tr>
+ 
+ <tr>
+	
+	<td >7</td>
+	<td>CatalogPage</td>
+	<td align="center">TC_007</td>
+	<td align="left">ValidateAuditTrailForAMetric</td>
+	<td ><select name = "TC6"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+ 
+ </tr>
+ 
+ <tr>
+	
+	<td >8</td>
+	<td>CatalogPage</td>
+	<td align="center">TC_008</td>
+	<td align="left">ValidateUploadEvidence</td>
+	<td ><select name = "TC6"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+ 
+ </tr>
+ 
+ 
+ <tr>
+	
+	<td >9</td>
+	<td>CatalogPage</td>
+	<td align="center">TC_009</td>
+	<td align="left">ValidateDownloadAndViewEvidence</td>
+	<td ><select name = "TC6"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+ 
+ </tr>
+ 
+ 
+ <tr>
+	
+	<td >10</td>
+	<td>CatalogPage</td>
+	<td align="center">TC_010</td>
+	<td align="left">ValidateUploadMetrics</td>
+	<td ><select name = "TC6"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+ 
+ </tr>
+ <tr>
+	
+	<td >11</td>
+	<td>CatalogPage</td>
+	<td align="center">TC_011</td>
+	<td align="left">ValidateDownloadMetrics</td>
+	<td ><select name = "TC6"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+ 
+ </tr>
+ <tr>
+	
+	<td >12</td>
+	<td>CatalogPage</td>
+	<td align="center">TC_012</td>
+	<td align="left">ValidateDownloadMetricsReport</td>
+	<td ><select name = "TC6"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+ 
+ </tr>
+ <tr>
+	
+	<td >13</td>
+	<td>CatalogPage</td>
+	<td align="center">TC_013</td>
+	<td align="left">ValidateCatalogMetricInputTypes</td>
+	<td ><select name = "TC6"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+ 
+ </tr>
+ <tr>
+	
+	<td >14</td>
+	<td>CatalogPage</td>
+	<td align="center">TC_014</td>
+	<td align="left">ValidateCreateGoals</td>
+	<td ><select name = "TC6"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+ 
+ </tr>
+ <tr>
+	
+	<td >15</td>
+	<td>CatalogPage</td>
+	<td align="center">TC_015</td>
+	<td align="left">ValidateGoalsPageMenu</td>
+	<td ><select name = "TC6"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+ 
+ </tr>
+ <tr>
+	
+	<td >16</td>
+	<td>CatalogPage</td>
+	<td align="center">TC_016</td>
+	<td align="left">ValidateSortOrderOfGoalsPage</td>
+	<td ><select name = "TC6"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+ 
+ </tr>
+ <tr>
+	
+	<td >17</td>
+	<td>CatalogPage</td>
+	<td align="center">TC_017</td>
+	<td align="left">ValidateCreateDataRequestNoApprovalFlowInPulsESG</td>
+	<td ><select name = "TC6"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+ 
+ </tr>
+ <tr>
+	
+	<td >18</td>
+	<td>CatalogPage</td>
+	<td align="center">TC_018</td>
+	<td align="left">ValidateCreateDataRequestOneLevelApprovalFlowInPulsESG</td>
+	<td ><select name = "TC6"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+ 
+ </tr>
+ <tr>
+	
+	<td >19</td>
+	<td>CatalogPage</td>
+	<td align="center">TC_019</td>
+	<td align="left">ValidateCreateDataRequestMultiLevelApprovalFlowInPulsESG</td>
+	<td ><select name = "TC6"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+ 
+ </tr>
+ <tr>
+	
+	<td >20</td>
+	<td>CatalogPage</td>
+	<td align="center">TC_020</td>
+	<td align="left">ValidateCreateDataDestinationTasksPASI</td>
+	<td ><select name = "TC6"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+ 
+ </tr>
+ <tr>
+	
+	<td >21</td>
+	<td>CatalogPage</td>
+	<td align="center">TC_021</td>
+	<td align="left">ValidateCreateDataDestinationTasksGRI</td>
+	<td ><select name = "TC6"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+ 
+ </tr>
+ <tr>
+	
+	<td >22</td>
+	<td>CatalogPage</td>
+	<td align="center">TC_022</td>
+	<td align="left">ValidateCreateDataDestinationTasksDataDestinationTile</td>
+	<td ><select name = "TC6"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+ 
+ </tr><tr>
+	
+	<td >23</td>
+	<td>CatalogPage</td>
+	<td align="center">TC_023</td>
+	<td align="left">ValidateCreatDataSource</td>
+	<td ><select name = "TC6"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+ 
+ </tr><tr>
+	
+	<td >24</td>
+	<td>CatalogPage</td>
+	<td align="center">TC_024</td>
+	<td align="left">ValiadteAnalyticsInPulsESG</td>
+	<td ><select name = "TC6"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+ 
+ </tr><tr>
+	
+	<td >25</td>
+	<td>CatalogPage</td>
+	<td align="center">TC_025</td>
+	<td align="left">ValidateGHGCalculatorScope2</td>
+	<td ><select name = "TC6"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+ 
+ </tr><tr>
+	
+	<td >26</td>
+	<td>CatalogPage</td>
+	<td align="center">TC_026</td>
+	<td align="left">ValidateAddNewTransactionFor2022_filterAgainAndGenerateAgain</td>
+	<td ><select name = "TC6"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+ 
+ </tr><tr>
+	
+	<td >27</td>
+	<td>CatalogPage</td>
+	<td align="center">TC_027</td>
+	<td align="left">ValidateAddActivityForStationaryCombustionInScope1Calculator</td>
+	<td ><select name = "TC6"><option value="Yes">Yes</option><option value="No">No</option></select></td>
+ 
+ </tr>
+ 
+ 
+ 
+ </table>
+
+
+
+
+	<!--  <input type="button" value="Get Test Status" width="100%" onClick="GetCellData()"> -->
+	
+	<br><br>
+	<input type="button" value="Save" width="100%" onClick="updatetestcasedetails()">
+	<br><br>
+	<input type="button" name="Run" value="Run" width="100%" onclick="launchApp()">
+	<br><br>
+	
+</center>
+</div>
+</form>
+</body>
+</html>	

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?><suite name="Suite" parallel="none">
+  <listners>
+    <listner class-name="Utilities.TestListener"/>
+  </listners>
+  <test name="Test">
+    <classes>
+      <class name="uitests.GHGCalculator_DirectEmissionCalculatorPageTests">
+        <methods>
+          <exclude name="TC001_ValidateAddActivityForStationaryCombustionInScope1Calculator"/>
+          <exclude name="TC002_ValidateAddActivityForMobileCombustionInScope1Calculator"/>
+          <exclude name="TC003_ValidateAddActivityForRefrigerantsandFugitivesInScope1Calculator"/>
+        </methods>
+      </class>
+      <class name="uitests.GHGCalculator_InDirectEmissionCalculatorPageTests">
+        <methods>
+          <exclude name="TC004_ValidateAddActivityForInDirectEmissionInScope2Calculator"/>
+        </methods>
+      </class>
+      <class name="uitests.GHGCalculatorPurchasedGoodServicesCalculatorPageTests">
+        <methods>
+          <exclude name="TC005_ValidateAddActivityforPurchasedGoodsandSerAveragedataInScope3_1Calculator"/>
+          <exclude name="TC006_ValidateAddActivityforPurchasedGoodsandSerInScope3_1SpendBasedCalculator"/>
+        </methods>
+      </class>
+      <class name="uitests.GHGCalculatorCapitalGoodsAveragedataPageTests">
+        <methods>
+          <exclude name="TC007_ValidateAddActivityforCapitalGoodsandSerAveragedataInScope3_2Calculator"/>
+          <include name="TC008_ValidateAddActivityforCapitalGoodsandSerInScope3_2SpendBasedCalculator"/>
+        </methods>
+      </class>
+      <class name="uitests.GHGCalculator_FuelAndEnergyRelatedActivitiesCalculatorPageTests">
+        <methods>
+          <exclude name="TC009_ValidateAddActivityforFuelandEnergyRelatedActivities_InScope3_3Calculator"/>
+        </methods>
+      </class>
+      <class name="uitests.GHGCalculator_UpstreamTransportationDistributionCalculatorPageTests">
+        <methods>
+          <exclude name="TC010_ValidateAddActivityforUpstreamTransportationandDistribution_InScope3_4Calculator"/>
+        </methods>
+      </class>
+      <class name="uitests.GHGCalculator_WasteGeneratedInOperationsCalculatorPageTests">
+        <methods>
+          <exclude name="TC012_ValidateAddActivitiesForWastegeneratedInOperations"/>
+        </methods>
+      </class>
+      <class name="uitests.GHGCalculator_BusinessTravelCalculatorPageTests">
+        <methods>
+          <exclude name="TC013_ValidateAddActivitiesForBusinessTravelDistanceBaseMethodCalculator"/>
+          <exclude name="TC014_ValidateAddActivitiesForBusinessTravelSpendBaseMethodCalculator"/>
+        </methods>
+      </class>
+      <class name="uitests.GHGCalculator_HotelStayCalculatorPageTests">
+        <methods>
+          <exclude name="TC015_ValidateAddActivityforHotelStay3_6GHGCalculator"/>
+        </methods>
+      </class>
+      <class name="uitests.GHGCalculatorEmployeeCommutingCalculatorPageTests">
+        <methods>
+          <exclude name="TC016_ValidateAddActivitiesForEmployeeCommutingCalculator"/>
+        </methods>
+      </class>
+      <class name="uitests.GHGCalculator_HomeOfficeTelecomCalculatorPageTests">
+        <methods>
+          <exclude name="TC017_ValidateAddActivityforHomeOfficeTelecommuting_InScope3_7Calculator"/>
+        </methods>
+      </class>
+      <class name="uitests.GHGCalculator_UpstreamLeasedAssetsCalculatorPageTests">
+        <methods>
+          <exclude name="TC018_ValidateAddActivityfor3_8UpstreamLeasedAssets"/>
+        </methods>
+      </class>
+      <class name="uitests.GHGCalculator_DownstreamTransportationDistributionCalculatorPageTests">
+        <methods>
+          <exclude name="TC019_ValidateAddActivityforDownstreamTransportationandDistribution_InScope3_9Calculator"/>
+        </methods>
+      </class>
+      <class name="uitests.GHGCalculators_ProcessingofSoldProductCalculatorPageTests">
+        <methods>
+          <exclude name="TC021_ValidateAddActivityfor3_10PrcessingofSoldProdutcs"/>
+        </methods>
+      </class>
+      <class name="uitests.GHGCalculator_UseofSoldProductCalculatorPageTests">
+        <methods>
+          <exclude name="TC022_ValidateAddActivityfor3_11UseofSoldProdutcs"/>
+        </methods>
+      </class>
+      <class name="uitests.GHGCalculators_EndOfLifeTreatmentCalculatorPageTests">
+        <methods>
+          <exclude name="TC023_ValidateAddActivityforEndOfLifeTreatemtForSoldProductInScope3_12Calculator"/>
+        </methods>
+      </class>
+      <class name="uitests.GHGCalculator_DownstreamLeasedAssetsCalculatorPageTests">
+        <methods>
+          <exclude name="TC024_ValidateAddActivityfor3_13DownstreamLeasedAssets"/>
+        </methods>
+      </class>
+      <class name="uitests.GHGCalculator_FranchisesCalculatorPageTests">
+        <methods>
+          <exclude name="TC025_ValidateAddActivityforFranchises_InScope3_14Calculator"/>
+        </methods>
+      </class>
+      <class name="uitests.GHGCalculator_InvestmentsCalculatorPageTests">
+        <methods>
+          <exclude name="TC026_ValidateAddActivityfor3_15InvestmentsSpecificMethod"/>
+          <exclude name="TC027_ValidateAddActivityfor3_15InvestmentsAveraggeDataMethod"/>
+          <exclude name="TC028_ValidateAddActivityfor3_15InvestmentsDeptProjectFinancingSpecificMethod"/>
+          <exclude name="TC029_ValidateAddActivityfor3_15InvestmentsDebtProjectFinancingAverageDataMethod"/>
+        </methods>
+      </class>
+      <class name="uitests.DataRequestPageTests">
+        <methods>
+          <exclude name="TC002_ValidateDataRequestCatalogPublishBlocker"/>
+          <exclude name="TC001_ValidateCreateDataRequestFlowsInPulsESG"/>
+          <exclude name="TC005_ValidateCatalogPeriodAggregationsWithDRFlow"/>
+          <exclude name="TC001_ValidateAllMetricInputDataTypesInCatalogForDRNoApprovalFlow"/>
+          <exclude name="TC002_ValidateDataRequestsandTasksChips"/>
+          <exclude name="TC006_ValidateDataRequestApprovalcompareTasksDetailsAndEventLogs"/>
+        </methods>
+      </class>
+    </classes>
+  </test>
+</suite>
