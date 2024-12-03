@@ -46,7 +46,6 @@ public class GHGCalculator_BusinessTravelCalculatorPageTests extends Common {
 
 	@Test
 	public void TC013_ValidateAddActivitiesForBusinessTravelDistanceBaseMethodCalculator() {
-		System.out.println("");
 		String strName = new Exception().getStackTrace()[0].getMethodName();
 		data = new Data(Constants.BusinessTravelDistBasedCalc);
 		datasets = data.getDataSets();
