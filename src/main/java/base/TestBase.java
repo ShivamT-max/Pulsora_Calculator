@@ -88,7 +88,7 @@ public abstract class TestBase extends Common {
 			driver.get(URL);
 			driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
 			driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-			zoomOut();
+			
 		} catch (Exception e) {
 			failAssert("Unable to launch application , Exception is : " + e.getMessage());
 		}
@@ -514,7 +514,9 @@ public abstract class TestBase extends Common {
 		try {
 			if (!waitForElement(we)) {
 				((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", we);
+				
 			}
+			takeScreenshot(driver);
 			String strProp = we.toString();
 			if (isElementPresent(we)) {
 				we.click();
@@ -532,6 +534,7 @@ public abstract class TestBase extends Common {
 
 	public void clickElement(WebElement we, String elemName) {
 		try {
+			takeScreenshot(driver);
 			if (isElementPresent(we)) {
 				we.click();
 				passed("Clicked on WebElement-" + elemName);
@@ -548,6 +551,7 @@ public abstract class TestBase extends Common {
 		if (!waitForElement(we)) {
 			((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", we);
 		}
+		takeScreenshot(driver);
 		if (isElementPresent(we)) {
 			we.click();
 			passed("Clicked on WebElement-" + elemName);
@@ -569,6 +573,7 @@ public abstract class TestBase extends Common {
 			WebElement we = driver.findElement(By.xpath(xpath));
 			waitForElement(we);
 			String strProp = we.toString();
+			takeScreenshot(driver);
 			if (isElementPresent(we)) {
 				we.click();
 				passed("Clicked on WebElement-" + elemName);
@@ -1179,20 +1184,9 @@ public abstract class TestBase extends Common {
 		return new GHGCalculatorsPage(driver, data);
 	}
 	
-	
-	public static void zoomOut(){
-		try {
-			Robot robot = new Robot();
-			 for (int i = 0; i < 3; i++) {
-				 robot.keyPress(KeyEvent.VK_CONTROL);
-				 robot.keyPress(KeyEvent.VK_SUBTRACT);
-				 robot.keyRelease(KeyEvent.VK_SUBTRACT);
-				 robot.keyRelease(KeyEvent.VK_CONTROL);
-			 }
-		} catch (AWTException e) {
-			e.printStackTrace();
-		}
-		
+	public void highlightTheElement(WebElement we) {
+		JavascriptExecutor js=(JavascriptExecutor) driver;
+		js.executeScript("arguments[0].style.border='3px solid red'",we);
 	}
 	
 }

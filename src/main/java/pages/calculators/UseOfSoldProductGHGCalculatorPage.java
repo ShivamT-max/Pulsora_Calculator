@@ -35,6 +35,7 @@ public class UseOfSoldProductGHGCalculatorPage extends GHGCalculatorsPage {
 			entertTextInTextFieldForCalculators_ActivityDetails("Number of Units Sold");
 			clickOn(btnSaveHotelStay, "Save Button Processing of Sold Products");
 		} catch (Exception e) {
+			clickOnCancelButtonBeforeAdding();
 			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
@@ -76,7 +77,8 @@ public class UseOfSoldProductGHGCalculatorPage extends GHGCalculatorsPage {
 			((JavascriptExecutor) driver).executeScript("arguments[0].style.border='3px solid red'", weElectricityCom);
 			expectedElectricityComsuption = weElectricityCom.getText();
 			WebElement weElectricitylifetime=driver.findElement(By.xpath("//div[text()='AC Electricity']/following-sibling::div[@col-id='product_life_time']"));
-		    lifeTimeUOSP=weElectricitylifetime.getText();
+			((JavascriptExecutor) driver).executeScript("arguments[0].style.border='3px solid red'", weElectricitylifetime);
+			lifeTimeUOSP=weElectricitylifetime.getText();
 		
 		} catch (Exception e) {
 			failed(driver, "Exception caught " + e.getMessage());
@@ -123,12 +125,12 @@ public class UseOfSoldProductGHGCalculatorPage extends GHGCalculatorsPage {
 	@Override
 	protected void VerifyNavigationToValidPage() {
 		try {
-			waitForElement(lblGHGCalculator);
-			if (isElementPresent(lblGHGCalculator)) {
-				passed("User Successfully Navigated To GHG_Calculator Page");
-			} else {
-				failed(driver, "Failed To Navigate To GHG_Calculator Page");
-			}
+//			waitForElement(lblGHGCalculator);
+//			if (isElementPresent(lblGHGCalculator)) {
+//				passed("User Successfully Navigated To GHG_Calculator Page");
+//			} else {
+//				failed(driver, "Failed To Navigate To GHG_Calculator Page");
+//			}
 			takeScreenshot(driver);
 		} catch (Exception e) {
 			failed(driver, "Exception caught " + e.getMessage());

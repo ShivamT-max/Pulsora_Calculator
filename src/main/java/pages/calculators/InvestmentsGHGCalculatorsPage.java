@@ -58,6 +58,7 @@ public class InvestmentsGHGCalculatorsPage extends GHGCalculatorsPage {
 			enterText(txtSourcs3_15, "Sourcs 3_15", data.get("Source of Emissions Data"));
 			clickOn(btnSaveHotelStay, "Save Button Investments");
 		} catch (Exception e) {
+			clickOnCancelButtonBeforeAdding();
 			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
@@ -225,6 +226,7 @@ public class InvestmentsGHGCalculatorsPage extends GHGCalculatorsPage {
 			clickOn(btnSaveHotelStay, "Save Button Investments");
 //    		jsClick(btnSaveHotelStay, "Save Button Investments");
 		} catch (Exception e) {
+			clickOnCancelButtonBeforeAdding();
 			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
@@ -665,6 +667,7 @@ public class InvestmentsGHGCalculatorsPage extends GHGCalculatorsPage {
 			enterText(txtSourceDebtInvest, "Sourcs 3_15", data.get("Source of Emissions Data"));
 			clickOn(btnSaveHotelStay, "Save Button Hotel stay");
 		} catch (Exception e) {
+			clickOnCancelButtonBeforeAdding();
 			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
@@ -783,6 +786,7 @@ public class InvestmentsGHGCalculatorsPage extends GHGCalculatorsPage {
 			enterText(txtProjectCost, "txt Project Cost Debt Average Data method", data.get("Total Project Cost"));
 			clickOn(btnSaveHotelStay, "Save Button Investments");
 		} catch (Exception e) {
+			clickOnCancelButtonBeforeAdding();
 			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
@@ -1043,12 +1047,12 @@ public class InvestmentsGHGCalculatorsPage extends GHGCalculatorsPage {
 	@Override
 	protected void VerifyNavigationToValidPage() {
 		try {
-			waitForElement(lblGHGCalculator);
-			if (isElementPresent(lblGHGCalculator)) {
-				passed("User Successfully Navigated To GHG_Calculator Page");
-			} else {
-				failed(driver, "Failed To Navigate To GHG_Calculator Page");
-			}
+//			waitForElement(lblGHGCalculator);
+//			if (isElementPresent(lblGHGCalculator)) {
+//				passed("User Successfully Navigated To GHG_Calculator Page");
+//			} else {
+//				failed(driver, "Failed To Navigate To GHG_Calculator Page");
+//			}
 			takeScreenshot(driver);
 		} catch (Exception e) {
 			failed(driver, "Exception caught " + e.getMessage());

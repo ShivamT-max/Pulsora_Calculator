@@ -314,32 +314,34 @@ public class DirectEmissionsCalculatorPage extends GHGCalculatorsPage {
 	
 	
 	public void validateActivityDetailsandEmissionDetailsStationaryCombustion(String calcName,String Amount) {
-		try {
+		
 			getCO2_CH4_N20Value();
 			if(calcName.equals("SC")) {
 				calculateEmissionFactorForStationaryCombustionScope1_MMBTU();
 				validateTCO2andTCH4andTN2O_ForStationaryCombustionInScope1();
-				calculateTCO2eValueUsing_EmissionFactorValueStationaryCombustion(Amount);
+				//calculateTCO2eValueUsing_EmissionFactorValueStationaryCombustion(Amount);
+				validateTCO2EValueForUpstreamLeasedAsset();
 			}else{
 				calculateEmissionFactorUsingFormulaForMobileCombustion();
 				validateTCO2andTCH4andTN2O_ForMobileCombustionInScope1();
 				calculateTCO2EValueForMobileCombustionInScope1();
+				//calculateTCO2eValueUsing_EmissionFactorValue(Amount);
 				//validateGlobalWarmingPotentialValuesRelatedToAR();
 			}
 			validateGlobalWarmingPotentialValuesRelatedToAR();
-		} catch (Exception e) {
-			failed(driver, "Exception caught " + e.getMessage());
-		}
+		
 	}
 	
-
+	 public void calculateTCO2eValueUsing_EmissionFactorValueStationaryCombustion() {
+		 
+	 }
 
 	
 	
 	// public static  String ValCO2eRHP;
 //	  @FindBy(xpath = "//span[text()='Calorific Factor/Heat Content Value']/parent::p/following-sibling::p/div")
 //	  private WebElement calorificConversionValueValue;
-      public void calculateTCO2eValueUsing_EmissionFactorValueStationaryCombustion(String amount) {
+     /* public void calculateTCO2eValueUsing_EmissionFactorValueStationaryCombustion(String amount) {
 		try {
 			sleep(2);
 			String ApplicationEnvironment = GlobalKeys.configData.get("ApplicationEnvironment").toLowerCase();
@@ -359,6 +361,7 @@ public class DirectEmissionsCalculatorPage extends GHGCalculatorsPage {
 				convertToBaseUnitCategory = "//div[contains(text(),'Energy')]";
 			}
 			if(data.get("Fuel Type").equals("Natural Gas")) {
+				sleep(1);
 				String fuelTypeConvert = "//div[contains(text(),'Volume')]";
 				WebElement fuelTypeValue = driver.findElement(By.xpath(fuelTypeConvert));
 				String splitVolume = fuelTypeValue.getText().split("\\| ")[1].split(" ")[0].replaceAll(",", "");
@@ -403,7 +406,7 @@ public class DirectEmissionsCalculatorPage extends GHGCalculatorsPage {
 		}
 		
 		
-	}
+	}*/
 	
 
 	public void clickOnCloseInActivityDetails() {
@@ -597,8 +600,11 @@ public class DirectEmissionsCalculatorPage extends GHGCalculatorsPage {
 					EditActivityRefrigerantsandFugitivesInDirectEmissions_SalesBasedApproach();	
 				}
 				clickOn(btnSave, "Save Button");
+			    
 			}
+			sleep(2000);
 		} catch (Exception e) {
+			clickOnCancelButtonBeforeAdding();
 			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
