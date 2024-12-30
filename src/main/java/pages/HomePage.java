@@ -24,6 +24,7 @@ public class HomePage extends TestBase {
 	@Override
 	protected void VerifyNavigationToValidPage() {
 		try {
+			System.out.println();
 //			waitForElement(lblHomePage);
 //			if (isElementPresent(lblHomePage)) {
 //				passed("User Successfully Navigated To Home Page");
