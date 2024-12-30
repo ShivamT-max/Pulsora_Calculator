@@ -69,7 +69,7 @@ public class GHGCalculators_EndOfLifeTreatmentCalculatorPageTests extends Common
 				gHGCalculatorsPage = TestBase.navigateToGHGCalculatorPage(data);
 				String[] ActivityDetails = Constants.activityDetailFieldsEOLT;
 				String CalcName = "EOLT";
-				String ActivityAmount = data.get("Mass of Waste after Consumer Use");
+				String ActivityAmount = data.get("Mass of Waste After Consumer Use");
 				gHGCalculatorsPage.Add$Edit$OverLapActivitiesFor_Calculators(ActivityDetails,CalcName,ActivityAmount);
 			}
 			datasetEnd();

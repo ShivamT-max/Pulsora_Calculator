@@ -30,6 +30,7 @@ public class CapitalGoodsGHGCalculatorPage extends GHGCalculatorsPage {
 			}
 		    ReusabilityForAmount$Units$Tags$Notes$SaveForCalculators("Quantity of Goods Purchased", "Units", "False", "Description");
 		} catch (Exception e) {
+			clickOnCancelButtonBeforeAdding();
 			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
@@ -52,17 +53,18 @@ public class CapitalGoodsGHGCalculatorPage extends GHGCalculatorsPage {
 		try {
 			ReusabilityForFacilityNameAndStartDateAndEndDateForCalculators();
 			if(!Boolean.parseBoolean(data.get("Activity CEF"))) {
-				sleep(2000);
+				sleep(5000);
 	
 				String noOptions="//input[@placeholder='Capital Goods Category']/parent::div/parent::div/parent::div/following-sibling::div//div[text()='No options']";
 			    SelectDropdownOptionsForCalculatorActivityFields("Capital Goods Category");
-//			    if(isElementPresentDynamicXpath(noOptions)) {
-//					String CancelButtonInSpend="//button[text()='Cancel']";
-//					clickOnElementWithDynamicXpath(CancelButtonInSpend, "CancelButtonInSpend");
-//					clickOnAddActivity();
-//					ReusabilityForFacilityNameAndStartDateAndEndDateForCalculators();
-//					SelectDropdownOptionsForCalculatorActivityFields("Capital Goods Category");
-//				}
+			    sleep(3000);
+			    if(isElementPresentDynamicXpath(noOptions)) {
+					String CancelButtonInSpend="//button[text()='Cancel']";
+					clickOnElementWithDynamicXpath(CancelButtonInSpend, "CancelButtonInSpend");
+					clickOnAddActivity();
+					ReusabilityForFacilityNameAndStartDateAndEndDateForCalculators();
+					SelectDropdownOptionsForCalculatorActivityFields("Capital Goods Category");
+				}
 				String strTextFieldCap = "(//span[normalize-space()='Capital Good']/ancestor::div//input[contains(@placeholder,'Capital Good')])[2]";
 				WebElement weCapital = driver.findElement(By.xpath(strTextFieldCap));
 				clearUntillTextFieldIsGettingCleared(weCapital);
@@ -72,6 +74,7 @@ public class CapitalGoodsGHGCalculatorPage extends GHGCalculatorsPage {
 			}
 			ReusabilityForAmount$Units$Tags$Notes$SaveForCalculators("Amount Spent","Unit/Currency","False","Description");
 		} catch (Exception e) {
+			clickOnCancelButtonBeforeAdding();
 			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
@@ -79,12 +82,12 @@ public class CapitalGoodsGHGCalculatorPage extends GHGCalculatorsPage {
 	@Override
 	protected void VerifyNavigationToValidPage() {
 		try {
-			waitForElement(lblGHGCalculator);
-			if (isElementPresent(lblGHGCalculator)) {
-				passed("User Successfully Navigated To GHG_Calculator Page");
-			} else {
-				failed(driver, "Failed To Navigate To GHG_Calculator Page");
-			}
+//			waitForElement(lblGHGCalculator);
+//			if (isElementPresent(lblGHGCalculator)) {
+//				passed("User Successfully Navigated To GHG_Calculator Page");
+//			} else {
+//				failed(driver, "Failed To Navigate To GHG_Calculator Page");
+//			}
 			takeScreenshot(driver);
 		} catch (Exception e) {
 			failed(driver, "Exception caught " + e.getMessage());

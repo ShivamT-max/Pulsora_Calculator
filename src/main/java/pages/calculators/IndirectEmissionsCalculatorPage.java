@@ -68,23 +68,18 @@ public class IndirectEmissionsCalculatorPage extends CalculatorElements {
 			clickOn(drpUnitsIndirect, "Unit");
 			we = driver.findElement(By.xpath("//li[text()='" + data.get("Units") + "']"));
 			clickOn(we, data.get("Units"));
-			if (!data.get("Edit").equals("YES")) {
-				try {
-				if (dptag.isDisplayed()) {
-					clickOn(dptag, "Tags");
-					WebElement selecttag = driver
-							.findElement(By.xpath("(//ul[@aria-labelledby='tag_id-label']//li)[1]"));
-					((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", selecttag);
-					act.moveToElement(selecttag).click().perform(); //
-				} else {
-				}
-			}
-				catch (Exception e) {
-					failed(driver, "Exception caught " + e.getMessage());
-				}
-			}
+			/*
+			 * if (!data.get("Edit").equals("YES")) { try { if (dptag.isDisplayed()) {
+			 * clickOn(dptag, "Tags"); WebElement selecttag = driver
+			 * .findElement(By.xpath("(//ul[@aria-labelledby='tag_id-label']//li)[1]"));
+			 * ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();",
+			 * selecttag); act.moveToElement(selecttag).click().perform(); // } else { } }
+			 * catch (Exception e) { failed(driver, "Exception caught " + e.getMessage()); }
+			 * }
+			 */
 			sleep(2000);
-			clickOn(btnSave, "Save Button");
+			waitForElement(btnSave);
+			act.moveToElement(btnSave).doubleClick().perform();
 			verifyAddActivityUpdatedToastMessage();
 			try {
 				if (btnClose.isDisplayed()) {

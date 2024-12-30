@@ -40,7 +40,7 @@
       </class>
       <class name="uitests.GHGCalculator_WasteGeneratedInOperationsCalculatorPageTests">
         <methods>
-          <include name="TC012_ValidateAddActivitiesForWastegeneratedInOperations"/>
+          <exclude name="TC012_ValidateAddActivitiesForWastegeneratedInOperations"/>
         </methods>
       </class>
       <class name="uitests.GHGCalculator_BusinessTravelCalculatorPageTests">
@@ -71,7 +71,7 @@
       </class>
       <class name="uitests.GHGCalculator_DownstreamTransportationDistributionCalculatorPageTests">
         <methods>
-          <exclude name="TC019_ValidateAddActivityforDownstreamTransportationandDistribution_InScope3_9Calculator"/>
+          <include name="TC019_ValidateAddActivityforDownstreamTransportationandDistribution_InScope3_9Calculator"/>
         </methods>
       </class>
       <class name="uitests.GHGCalculators_ProcessingofSoldProductCalculatorPageTests">

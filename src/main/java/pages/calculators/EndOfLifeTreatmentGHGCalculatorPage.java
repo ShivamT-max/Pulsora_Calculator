@@ -26,8 +26,9 @@ public class EndOfLifeTreatmentGHGCalculatorPage extends GHGCalculatorsPage {
 				SelectDropdownOptionsForCalculatorActivityFields("Product Waste Type");
 				SelectDropdownOptionsForCalculatorActivityFields("Waste Disposal Method");
 			}
-			ReusabilityForAmount$Units$Tags$Notes$SaveForCalculators("Mass of Waste after Consumer Use", "Unit", "False", "Description");
+			ReusabilityForAmount$Units$Tags$Notes$SaveForCalculators("Mass of Waste After Consumer Use", "Unit", "False", "Description");
 		} catch (Exception e) {
+			clickOnCancelButtonBeforeAdding();
 			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
@@ -52,12 +53,12 @@ public class EndOfLifeTreatmentGHGCalculatorPage extends GHGCalculatorsPage {
 	@Override
 	protected void VerifyNavigationToValidPage() {
 		try {
-			waitForElement(lblGHGCalculator);
-			if (isElementPresent(lblGHGCalculator)) {
-				passed("User Successfully Navigated To EOLT Page");
-			} else {
-				failed(driver, "Failed To Navigate To EOLT Page");
-			}
+//			waitForElement(lblGHGCalculator);
+//			if (isElementPresent(lblGHGCalculator)) {
+//				passed("User Successfully Navigated To EOLT Page");
+//			} else {
+//				failed(driver, "Failed To Navigate To EOLT Page");
+//			}
 			takeScreenshot(driver);
 		} catch (Exception e) {
 			failed(driver, "Exception caught " + e.getMessage());

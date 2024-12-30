@@ -68,6 +68,7 @@ public class GHGCalculator_InDirectEmissionCalculatorPageTests extends Common {
 				MenuBarPage.clickOnHamburgerMenu();
 				gHGCalculatorsPage = MenuBarPage.clickOnGHGCalculatorsMenu();
 				gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+				gHGCalculatorsPage.clickOnCarbonManagementNavigationMenu();
 				IndirectEmissionsCalculatorPage = gHGCalculatorsPage.clickOnIndirectemissionCalculator();
 				gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
 				gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
@@ -81,6 +82,7 @@ public class GHGCalculator_InDirectEmissionCalculatorPageTests extends Common {
 			} else {
 				if (data.get("gwp year").equals("AR6")) {
 					gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+					gHGCalculatorsPage.clickOnCarbonManagementNavigationMenu();
 					 gHGCalculatorsPage.clickOnIndirectemissionCalculator();
 					gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
 					gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();

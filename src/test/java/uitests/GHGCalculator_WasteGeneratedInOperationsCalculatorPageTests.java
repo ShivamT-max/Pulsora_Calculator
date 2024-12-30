@@ -60,6 +60,7 @@ public class GHGCalculator_WasteGeneratedInOperationsCalculatorPageTests extends
 				MenuBarPage.clickOnHamburgerMenu();
 				gHGCalculatorsPage = MenuBarPage.clickOnGHGCalculatorsMenu();
 				gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+				gHGCalculatorsPage.clickOnCarbonManagementNavigationMenu();
 				WasteGeneratedInOperationsCalculatorPage = gHGCalculatorsPage
 						.clickOnWasteGeneratedInOperationsCalculator();
 				gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
@@ -74,6 +75,7 @@ public class GHGCalculator_WasteGeneratedInOperationsCalculatorPageTests extends
 			} else {
 				if (data.get("gwp year").equals("AR6")) {
 					gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+					gHGCalculatorsPage.clickOnCarbonManagementNavigationMenu();
 					gHGCalculatorsPage.clickOnWasteGeneratedInOperationsCalculator();
 					gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
 					gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();

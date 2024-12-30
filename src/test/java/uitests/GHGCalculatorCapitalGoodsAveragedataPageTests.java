@@ -95,7 +95,7 @@ public class GHGCalculatorCapitalGoodsAveragedataPageTests extends Common {
 					SignInPage = TestBase.setUp(data);
 					gHGCalculatorsPage = TestBase.navigateToGHGCalculatorPage(data);
 			    	gHGCalculatorsPage.stepsToNavigateGHGCalculators();
-					capitalGoodsGHGCalculatorPage = gHGCalculatorsPage.clickOnScope3_2CapitalGoods();
+					//capitalGoodsGHGCalculatorPage = gHGCalculatorsPage.clickOnScope3_2CapitalGoods();
 				} 
 				gHGCalculatorsPage = TestBase.navigateToGHGCalculatorPage(data);
 				String[] ActivityDetails = Constants.activityDetailsCapitalGoodsSpend;

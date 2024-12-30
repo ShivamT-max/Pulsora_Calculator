@@ -66,6 +66,7 @@ public class GHGCalculatorEmployeeCommutingCalculatorPageTests extends Common {
 				MenuBarPage.clickOnHamburgerMenu();
 				gHGCalculatorsPage = MenuBarPage.clickOnGHGCalculatorsMenu();
 				gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+				gHGCalculatorsPage.clickOnCarbonManagementNavigationMenu();
 				employeeCommutingCalculatorPage = gHGCalculatorsPage.clickOnEmployeeCommutingCalculator();
 				gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
 				gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
@@ -78,6 +79,7 @@ public class GHGCalculatorEmployeeCommutingCalculatorPageTests extends Common {
 			} else {
 				if (data.get("gwp year").equals("AR6")) {
 					gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+					gHGCalculatorsPage.clickOnCarbonManagementNavigationMenu();
 					gHGCalculatorsPage.clickOnEmployeeCommutingCalculator();
 					gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
 					gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();

@@ -59,32 +59,41 @@ public class GHGCalculator_FranchisesCalculatorPageTests extends Common {
 				MenuBarPage.clickOnHamburgerMenu();
 				gHGCalculatorsPage = MenuBarPage.clickOnGHGCalculatorsMenu();
 				gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+				gHGCalculatorsPage.clickOnCarbonManagementNavigationMenu();
 				FranchisesCalculatorPage = gHGCalculatorsPage.clickOnScope3_14_Franchises();
-				//gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
+				gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
 			}
-			gHGCalculatorsPage.calculateGHGEmissionBefore();
 			if (data.get("Edit").equals("YES")) {
-				gHGCalculatorsPage.clickOnActivityInActivitiesGridMultipleTiffany();
+				gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
+				gHGCalculatorsPage.clickOnAddedActivity();
 				gHGCalculatorsPage.clickOnEditButtonInActivityDetails_1();
+				FranchisesCalculatorPage.EditActivityScope3_14Emissions();
 			} else {
-				gHGCalculatorsPage.clickOnAddActivity();
-				gHGCalculatorsPage.verifyAddLabelRHP();
+				if (data.get("gwp year").equals("AR6")) {
+					gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+					gHGCalculatorsPage.clickOnCarbonManagementNavigationMenu();
+					FranchisesCalculatorPage = gHGCalculatorsPage.clickOnScope3_14_Franchises();
+					gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
+					gHGCalculatorsPage.clickOnAddActivity();
+					gHGCalculatorsPage.verifyAddLabelRHP();
+					FranchisesCalculatorPage.EditActivityScope3_14Emissions();
+				} else {
+					gHGCalculatorsPage.clickOnAddActivity();
+					gHGCalculatorsPage.verifyAddLabelRHP();
+					FranchisesCalculatorPage.EditActivityScope3_14Emissions();
+				}
 			}
-			FranchisesCalculatorPage.EditActivityScope3_14Emissions();
-			// gHGCalculatorsPage.verifyAddActivityUpdatedToastMessage();
-			gHGCalculatorsPage.selectPeriodToAll();
 			gHGCalculatorsPage.clickOnAddedActivity();
 			FranchisesCalculatorPage.validateTOTALCO2EforFranchises();
 			FranchisesCalculatorPage.ValidateActivityDetailsInViewActivityScope3_14();
-			gHGCalculatorsPage.extractTco2Value();
 			gHGCalculatorsPage.VerifyEvidence();
 			gHGCalculatorsPage.ValidateEvidenceDetails();
 			gHGCalculatorsPage.validateAuditLogForAllCalc();
 			gHGCalculatorsPage.clickOnCloseInActivityDetails();
-			gHGCalculatorsPage.clickOnGenerateButtonAlternate1();
+			gHGCalculatorsPage.clickOnGenerateButtonAfterActivity();
 			datasetEnd();
 		}
-		// MenuBarPage.logOut();
+		MenuBarPage.logOut();
 		TestBase.tearDown();
 
 	}

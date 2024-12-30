@@ -59,6 +59,7 @@ public class GHGCalculator_FuelAndEnergyRelatedActivitiesCalculatorPageTests ext
 				MenuBarPage.clickOnHamburgerMenu();
 				gHGCalculatorsPage = MenuBarPage.clickOnGHGCalculatorsMenu();
 				gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+				gHGCalculatorsPage.clickOnCarbonManagementNavigationMenu();
 				FuelandEnergyRelatedActivitiesCalculatorPage = gHGCalculatorsPage
 						.clickOnScope3_3_Fuel_and_Energy_Related_Activities();
 				gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
@@ -72,6 +73,7 @@ public class GHGCalculator_FuelAndEnergyRelatedActivitiesCalculatorPageTests ext
 			} else {
 				if (data.get("gwp year").equals("AR6")) {
 					gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+					gHGCalculatorsPage.clickOnCarbonManagementNavigationMenu();
 					gHGCalculatorsPage.clickOnScope3_3_Fuel_and_Energy_Related_Activities();				
 					gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
 					gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();

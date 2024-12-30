@@ -61,6 +61,7 @@ public class GHGCalculator_HomeOfficeTelecomCalculatorPageTests extends Common {
 				MenuBarPage.clickOnHamburgerMenu();
 				gHGCalculatorsPage = MenuBarPage.clickOnGHGCalculatorsMenu();
 				gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+				gHGCalculatorsPage.clickOnCarbonManagementNavigationMenu();
 				HomeOfficeTelecommutingCalculatorPage = gHGCalculatorsPage.clickOnScope3_7_Home_Office_Telecommuting();
 				gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
 			}
@@ -72,6 +73,7 @@ public class GHGCalculator_HomeOfficeTelecomCalculatorPageTests extends Common {
 			} else {
 				if(data.get("gwp year").equals("AR6")) {
 					gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+					gHGCalculatorsPage.clickOnCarbonManagementNavigationMenu();
 					gHGCalculatorsPage.clickOnScope3_7_Home_Office_Telecommuting();
 					gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
 					gHGCalculatorsPage.clickOnAddActivity();

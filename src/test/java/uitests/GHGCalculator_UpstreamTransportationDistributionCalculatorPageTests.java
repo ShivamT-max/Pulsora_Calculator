@@ -60,6 +60,7 @@ public class GHGCalculator_UpstreamTransportationDistributionCalculatorPageTests
 				MenuBarPage.clickOnHamburgerMenu();
 				gHGCalculatorsPage = MenuBarPage.clickOnGHGCalculatorsMenu();
 				gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+				gHGCalculatorsPage.clickOnCarbonManagementNavigationMenu();
 				UpstreamTransportationandDistributionCalculatorPage = gHGCalculatorsPage
 						.clickOnScope3_4_Upstream_Transportation_and_Distribution();
 				gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
@@ -72,6 +73,7 @@ public class GHGCalculator_UpstreamTransportationDistributionCalculatorPageTests
 			} else {
 				if(data.get("gwp year").equals("AR6")) {
 					gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+					gHGCalculatorsPage.clickOnCarbonManagementNavigationMenu();
 					UpstreamTransportationandDistributionCalculatorPage = gHGCalculatorsPage.clickOnScope3_4_Upstream_Transportation_and_Distribution();
 					gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
 					gHGCalculatorsPage.clickOnAddActivity();

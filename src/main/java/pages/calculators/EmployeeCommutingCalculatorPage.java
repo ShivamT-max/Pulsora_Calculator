@@ -92,6 +92,7 @@ public class EmployeeCommutingCalculatorPage extends CalculatorElements {
 			} catch (Exception e) {
 				System.out.println("Activity details RHP Closed");
 			}
+			System.out.println("-------Validate Emission Factor and tCO2e details---------");
 		} catch (Exception e) {
 			failed(driver, "Exception caught " + e.getMessage());
 		}

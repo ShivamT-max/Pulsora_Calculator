@@ -62,6 +62,7 @@ public class GHGCalculator_BusinessTravelCalculatorPageTests extends Common {
 				MenuBarPage.clickOnHamburgerMenu();
 				gHGCalculatorsPage = MenuBarPage.clickOnGHGCalculatorsMenu();
 				gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+				gHGCalculatorsPage.clickOnCarbonManagementNavigationMenu();
 				BusinessTravelCalculatorPage = gHGCalculatorsPage.clickOnBusinessTravelCalculator();
 				BusinessTravelCalculatorPage = gHGCalculatorsPage
 						.clickOnDistancebasedMethodInBusinessTravelCalculator();
@@ -77,6 +78,7 @@ public class GHGCalculator_BusinessTravelCalculatorPageTests extends Common {
 			} else {
 				if (data.get("gwp year").equals("AR6")) {
 					gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+					gHGCalculatorsPage.clickOnCarbonManagementNavigationMenu();
 					gHGCalculatorsPage.clickOnBusinessTravelCalculator();
 					gHGCalculatorsPage.clickOnDistancebasedMethodInBusinessTravelCalculator();
 					gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
@@ -127,6 +129,7 @@ public class GHGCalculator_BusinessTravelCalculatorPageTests extends Common {
 				MenuBarPage.clickOnHamburgerMenu();
 				gHGCalculatorsPage = MenuBarPage.clickOnGHGCalculatorsMenu();
 				gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+				gHGCalculatorsPage.clickOnCarbonManagementNavigationMenu();
 				BusinessTravelCalculatorPage = gHGCalculatorsPage.clickOnBusinessTravelCalculator();
 				BusinessTravelCalculatorPage = gHGCalculatorsPage.clickOnSpendbasedMethodInBusinessTravelCalculator();
 				gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
@@ -141,6 +144,7 @@ public class GHGCalculator_BusinessTravelCalculatorPageTests extends Common {
 			} else {
 				if (data.get("gwp year").equals("AR6")) {
 					gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+					gHGCalculatorsPage.clickOnCarbonManagementNavigationMenu();
 					BusinessTravelCalculatorPage = gHGCalculatorsPage.clickOnBusinessTravelCalculator();
 					BusinessTravelCalculatorPage = gHGCalculatorsPage.clickOnSpendbasedMethodInBusinessTravelCalculator();					gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
 					gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
