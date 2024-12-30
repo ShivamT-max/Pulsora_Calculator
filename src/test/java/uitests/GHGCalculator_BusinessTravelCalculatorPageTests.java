@@ -66,37 +66,48 @@ public class GHGCalculator_BusinessTravelCalculatorPageTests extends Common {
 				BusinessTravelCalculatorPage = gHGCalculatorsPage
 						.clickOnDistancebasedMethodInBusinessTravelCalculator();
 				gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
+				gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
 			}
-			gHGCalculatorsPage.calculateGHGEmissionBefore();
-			if(data.get("Edit").equals("YES")) {
-				gHGCalculatorsPage.clickOnActivityInActivitiesGridMultipleTiffany();
+			if (data.get("Edit").equals("YES")) {
+				gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
+				gHGCalculatorsPage.clickOnAddedActivity();
 				gHGCalculatorsPage.clickOnEditButtonInActivityDetails_1();
+				BusinessTravelCalculatorPage
+						.addActivityDetailsForBusinessTravelDistanceBasedCalculatorInActivityDetailsPannel();
 			} else {
-				gHGCalculatorsPage.clickOnAddActivity();
-				gHGCalculatorsPage.verifyAddLabelRHP();
+				if (data.get("gwp year").equals("AR6")) {
+					gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+					gHGCalculatorsPage.clickOnBusinessTravelCalculator();
+					gHGCalculatorsPage.clickOnDistancebasedMethodInBusinessTravelCalculator();
+					gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
+					gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
+					gHGCalculatorsPage.clickOnAddActivity();
+					gHGCalculatorsPage.verifyAddLabelRHP();
+					BusinessTravelCalculatorPage
+							.addActivityDetailsForBusinessTravelDistanceBasedCalculatorInActivityDetailsPannel();
+				}
+					 else {
+					gHGCalculatorsPage.clickOnAddActivity();
+					gHGCalculatorsPage.verifyAddLabelRHP();
+					BusinessTravelCalculatorPage
+							.addActivityDetailsForBusinessTravelDistanceBasedCalculatorInActivityDetailsPannel();
+				}
 			}
-			BusinessTravelCalculatorPage
-					.addActivityDetailsForBusinessTravelDistanceBasedCalculatorInActivityDetailsPannel();
-			//gHGCalculatorsPage.verifyAddActivityUpdatedToastMessage();
-			gHGCalculatorsPage.selectPeriodToAll();
 			gHGCalculatorsPage.clickOnAddedActivity();
 			BusinessTravelCalculatorPage.validateTOTALCO2EforBusinessDistanceBased();
 			BusinessTravelCalculatorPage
 					.validateaddActivityDetailsInViewActivityForBusinessTravelDistanceBasedCalculator();
 			gHGCalculatorsPage.validateGlobalWarmingPotentialvalues();
-			gHGCalculatorsPage.extractTco2Value();
-			gHGCalculatorsPage.collectGHGEmissionAfter();
 			gHGCalculatorsPage.VerifyEvidence();
 			gHGCalculatorsPage.ValidateEvidenceDetails();
 			gHGCalculatorsPage.validateAuditLogForAllCalc();
 			gHGCalculatorsPage.clickOnCloseInActivityDetails();
-			gHGCalculatorsPage.clickOnGenerateButtonAlternate1();
+			gHGCalculatorsPage.clickOnGenerateButtonAfterActivity();
 			datasetEnd();
 		}
-//		MenuBarPage.logOut();
+		MenuBarPage.logOut();
 		TestBase.tearDown();
 	}
-
 
 	@Test
 	public void TC014_ValidateAddActivitiesForBusinessTravelSpendBaseMethodCalculator() {
@@ -119,37 +130,44 @@ public class GHGCalculator_BusinessTravelCalculatorPageTests extends Common {
 				BusinessTravelCalculatorPage = gHGCalculatorsPage.clickOnBusinessTravelCalculator();
 				BusinessTravelCalculatorPage = gHGCalculatorsPage.clickOnSpendbasedMethodInBusinessTravelCalculator();
 				gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
+				gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
 			}
-			gHGCalculatorsPage.calculateGHGEmissionBefore();
-			if(data.get("Edit").equals("YES")) {
-				gHGCalculatorsPage.clickOnActivityInActivitiesGridMultipleTiffany();
+			if (data.get("Edit").equals("YES")) {
+				gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
+				gHGCalculatorsPage.clickOnAddedActivity();
 				gHGCalculatorsPage.clickOnEditButtonInActivityDetails_1();
+				BusinessTravelCalculatorPage
+				.addActivityDetailsForBusinessTravelSpendBasedCalculatorInActivityDetailsPannel();
 			} else {
-				gHGCalculatorsPage.clickOnAddActivity();
-				gHGCalculatorsPage.verifyAddLabelRHP();
+				if (data.get("gwp year").equals("AR6")) {
+					gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+					BusinessTravelCalculatorPage = gHGCalculatorsPage.clickOnBusinessTravelCalculator();
+					BusinessTravelCalculatorPage = gHGCalculatorsPage.clickOnSpendbasedMethodInBusinessTravelCalculator();					gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
+					gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
+					gHGCalculatorsPage.clickOnAddActivity();
+					gHGCalculatorsPage.verifyAddLabelRHP();
+					BusinessTravelCalculatorPage
+					.addActivityDetailsForBusinessTravelSpendBasedCalculatorInActivityDetailsPannel();
+				} else {
+					gHGCalculatorsPage.clickOnAddActivity();
+					gHGCalculatorsPage.verifyAddLabelRHP();
+					BusinessTravelCalculatorPage
+					.addActivityDetailsForBusinessTravelSpendBasedCalculatorInActivityDetailsPannel();
+				}
 			}
-			BusinessTravelCalculatorPage
-			.addActivityDetailsForBusinessTravelSpendBasedCalculatorInActivityDetailsPannel();
-			//gHGCalculatorsPage.verifyAddActivityUpdatedToastMessage();
-			gHGCalculatorsPage.selectPeriodToAll();
 			gHGCalculatorsPage.clickOnAddedActivity();
 			BusinessTravelCalculatorPage.validateTOTALCO2EforBTSpendBased();
 			BusinessTravelCalculatorPage
 					.validateAddActivityDetailsInViewActivityForSpendBasedBusinessTravelCalculator();
-			gHGCalculatorsPage.extractTco2Value();
 			gHGCalculatorsPage.VerifyEvidence();
 			gHGCalculatorsPage.ValidateEvidenceDetails();
-			gHGCalculatorsPage.clickOnCloseInActivityDetails();
-			gHGCalculatorsPage.clickOnActivityInActivitiesGridMultipleTiffany();
 			gHGCalculatorsPage.validateAuditLogForAllCalc();
 			gHGCalculatorsPage.clickOnCloseInActivityDetails();
-			gHGCalculatorsPage.clickOnGenerateButtonAlternate1();
+			gHGCalculatorsPage.clickOnGenerateButtonAfterActivity();
 			datasetEnd();
 		}
-//		MenuBarPage.logOut();
+		MenuBarPage.logOut();
 		TestBase.tearDown();
 	}
-	
-	}
 
-
+}

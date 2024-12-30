@@ -74,7 +74,7 @@ public class Constants {
 	public static String UpstreamLeasedAsset = "UpstreamLeasedAsset";
 	public static String UpstreamWeight_DistanceMethod = "UpstreamWeight-DistanceMethod";
 	public static String UseOfSoldProducts = "UseOfSoldProducts";
-	public static String WasteGeneratedInOpsCalculator = "WasteGeneratedInOps";
+	public static String WasteGeneratedInOpsCalculator = "WasteGeneratedInOps (2)";
 	public static String CapitalGoodsAvreageBased = "CapitalGoodsAvreageBased";
 	public static String CapitalGoodsSpendBased = "CapitalGoodsSpendBased";
 	public static String EmployeeCommutingCalculator = "EmployeeCommutingCalculator";

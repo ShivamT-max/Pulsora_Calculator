@@ -55,7 +55,7 @@ import utilities.GlobalVariables;
 import utilities.MultiDataExcelReader;
 
 public class GHGCalculatorsPage extends CalculatorElements {
-	
+
 	private HomePage homePage;
 	private MenuBarPage menuBarPage;
 	private InvestmentsGHGCalculatorsPage investmentsGHGCalculatorsPage;
@@ -69,42 +69,63 @@ public class GHGCalculatorsPage extends CalculatorElements {
 	private DownStreamLeasedAssetsGHGCalculatorPage DLA;
 	private UpstreamLeasedAssetsGHGCalculatorPage ULA;
 	private DirectEmissionsCalculatorPage directEmissionsCalculatorPage;
-	
-	
+
 	public GHGCalculatorsPage(WebDriver driver2, Data data) {
 		super(driver2, data);
 	}
+
 	Actions action = new Actions(driver);
 	@FindBy(xpath = "//div[text()='Tiffany']")
 	private WebElement lblFacility;
-	
+
 	public void selectFacilityFromOrgViewScreen(String facilityName) {
 		try {
+			Actions act = new Actions(driver);
 			WebElement viewOrgScreen = driver.findElement(By.xpath("//article[@aria-label='View Organization Data']"));
 			if (viewOrgScreen.isEnabled()) {
-				clickOnfilterOrgLabels(data.get("navigationType"));
-				waitForElement(lblFacility);
-				clickOn(lblFacility, " ");
-				//		WebElement lblFacilityName = driver.findElement(By.xpath("//div[text()='"+data.get("Facility Name")+"']"));
-				//		waitForElement(lblFacilityName);
-				// clickOn(lblFacility, "clicked on facilitiy name: " + lblFacility.getText());
-				sleep(4000);
-				WebElement facilityFromOrgViewScreen = driver
-						.findElement(By.xpath("//ul[@role='group']//div//li//div[text()='" + facilityName + "']"));
-				((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();",
-						facilityFromOrgViewScreen);
-				waitForElement(facilityFromOrgViewScreen);
-				clickOn(facilityFromOrgViewScreen, "selected facilitiy from view prg screen: " + facilityName);
-			}else {
+				clickOnfilterOrgLabels(data.get("NavigationType"));
+				WebElement lblEnt = driver.findElement(
+						By.xpath("//ul//li[@role='treeitem']//div[contains(text(),'" + data.get("Enterprise") + "')]"));
+				((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", lblEnt);
+				if (lblEnt.getText().trim().equals("Aut HQ")) {
+					WebElement orglocaton = driver
+							.findElement(By.xpath("//div[contains(text(),'" + data.get("OrgLocation")
+									+ "')]//parent::div//parent::div//following::*[local-name()='svg']"));
+					clickOn(orglocaton, "clicked on Org Location");
+					sleep(100);
+					WebElement lblorg = driver.findElement(By.xpath("//div[contains(text(),'" + data.get("OrglblType")
+							+ "')]//parent::div//parent::div//*[@data-testid='ChevronRightIcon']"));
+					waitForElement(lblorg);
+					clickOn(lblorg, "clicked on Org LabelRType");
+					sleep(100);
+					WebElement facilityFromOrgViewScreen = driver.findElement(
+							By.xpath("//ul[@role='group']//li//div[text()='" + data.get("Facility Name") + "']"));
+					((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();",
+							facilityFromOrgViewScreen);
+					waitForElement(facilityFromOrgViewScreen);
+					clickOn(facilityFromOrgViewScreen, "selected facility from view prg screen: " + facilityName);
+				} else {
+					WebElement lblEnt1 = driver.findElement(By.xpath(
+							"(//ul//li[@role='treeitem']//div//parent::div//parent::div//*[@data-testid='ExpandMoreIcon'])[2]"));
+					act.moveToElement(lblEnt1).doubleClick().perform();
+					sleep(1000);
+					WebElement facilityFromOrgViewScreen = driver.findElement(
+							By.xpath("//ul[@role='group']//li//div[text()='" + data.get("Facility Name") + "']"));
+					((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();",
+							facilityFromOrgViewScreen);
+					waitForElement(facilityFromOrgViewScreen);
+					clickOn(facilityFromOrgViewScreen, "selected facility from view prg screen: " + facilityName);
+				}
+			} else {
 				System.out.println("There is no view organization Data ");
 			}
-		
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void clickOnfilterOrgLabels(String navigationType) {
 		try {
 			WebElement orgHierarchyTyep = driver
@@ -118,14 +139,13 @@ public class GHGCalculatorsPage extends CalculatorElements {
 			failed(driver, "Exceptio caught " + e.getMessage());
 		}
 	}
-	
+
 	public void clickOnActivityInActivitiesGridMultipleTiffany() {
 		try {
 			sleep(3000);
-			
-			
-			WebElement weActivity = driver
-					.findElement(By.xpath("(//div[@role='gridcell']//following::div[@col-id='facility_name']//span[text()='"
+
+			WebElement weActivity = driver.findElement(
+					By.xpath("(//div[@role='gridcell']//following::div[@col-id='facility_name']//span[text()='"
 							+ data.get("Facility Name") + "'])"));
 			clickOn(weActivity, "Activity of Facility" + data.get("Facility Name"));
 		} catch (Exception e) {
@@ -133,61 +153,77 @@ public class GHGCalculatorsPage extends CalculatorElements {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void verifyAddLabelRHP() {
 		verifyIfElementPresent(lblAddActivityIndirect, "lblAddActivity", "add activity ");
 	}
-	
+
 	public void clickOnAddedActivity() {
 		try {
-			sleep(4000);
+			sleep(20);
+			System.out.println("cef is " + HomeOfficeTelecommutingCalculatorPage.customEmissionAfctorHome);
+			Actions act = new Actions(driver);
 			try {
-				WebElement viewOrgScreen = driver.findElement(By.xpath("//article[@aria-label='View Organization Data']"));
-				WebElement weActivity = driver
-						.findElement(By.xpath("(//*[text()='" + data.get("Facility Name") + "']//parent::div)[3]"));
-				waitForElement(weActivity);
-				clickOn(weActivity, "Activity of Facility" + data.get("Facility Name"));
-			}catch (Exception e) {
-				
-				if(data.get("Calc Name").equals("Home Office")) {
-					WebElement weActivity = driver
-							.findElement(By.xpath("//*[text()='" + data.get("Facility / Location") + "']//parent::div"));
+				WebElement viewOrgScreen = driver
+						.findElement(By.xpath("//article[@aria-label='View Organization Data']"));
+				if (viewOrgScreen.isDisplayed()) {
+					WebElement weActivity = driver.findElement(By.xpath(
+							"((//div[@role='row']//following::div[@col-id='facility_name'])[2])//div//span[contains(text(),'"
+									+ data.get("Facility Name") + "')]"));
 					waitForElement(weActivity);
-					clickOn(weActivity, "Activity of Facility" + data.get("Facility Name"));
-				}else {
+					act.moveToElement(weActivity).doubleClick().build().perform();
+				}
+			} catch (Exception e) {
+				if (data.get("CalcName").equals("Scope 3.7 - Home Office/Telecommuting")) {
+					WebElement wecef = driver
+							.findElement(By.xpath("(//div[@role='row']//div[@col-id='custom_emission_name'])[2]"));
+					String cef = wecef.getText().trim();
+					if (cef.equals(HomeOfficeTelecommutingCalculatorPage.customEmissionAfctorHome)) {
+						clickOn(wecef,
+								"clicked on row" + HomeOfficeTelecommutingCalculatorPage.customEmissionAfctorHome);
+					} else {
+						WebElement weActivity = driver.findElement(
+								By.xpath("(//*[text()='" + data.get("Custom Emission Factor") + "']//parent::div)[1]"));
+						waitForElement(weActivity);
+						act.moveToElement(weActivity).doubleClick().perform();
+					}
+				} else {
 					WebElement weActivity = driver
 							.findElement(By.xpath("//*[text()='" + data.get("Facility Name") + "']//parent::div"));
 					waitForElement(weActivity);
-					clickOn(weActivity, "Activity of Facility" + data.get("Facility Name"));
+					act.moveToElement(weActivity).doubleClick().perform();
 				}
-				
 			}
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	@FindBy(xpath = "//button[contains(text(),'Browse Files')]")
-	private WebElement browfil;
 
-	public void VerifyEvidence() {
-		try {sleep(1000);
-			WebElement evid = driver.findElement(By.xpath(
-					"//*[text()='Evidence']//parent::div//following-sibling::div//*[@data-testid='ExpandMoreIcon']"));
-			clickOnElement(evid, "Evidence");
-			sleep(2000);
-			WebElement plicon = driver.findElement(By.xpath("//*[@data-testid='AddOutlinedIcon']"));
-			clickOnElement(plicon, "Plus icon Evidence");
-			uploadEvidenceDynamicallyInCatalogMetricRHP();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
-	
+
+	@FindBy(xpath = "//button[contains(text(),'Browse Files')]")
+	private WebElement browfil;
+	@FindBy(xpath = "//*[text()='Evidence']//parent::div//following-sibling::div//*[@data-testid='ExpandMoreIcon']")
+	private WebElement evid;
+	@FindBy(xpath = "//*[@data-testid='AddOutlinedIcon']")
+	private WebElement pluicon;
+
+	public void VerifyEvidence() {
+		try {
+			waitForElement(evid);
+			clickOnElement(evid, "Evidence");
+			sleep(200);
+			if (pluicon.isDisplayed()) {
+				clickOnElement(pluicon, " Upload file ");
+				uploadEvidenceDynamicallyInCatalogMetricRHP();
+			}
+		} catch (Exception e) {
+			WebElement uploadli = driver.findElement(By.xpath("//span[contains(text(),'Upload')]"));
+			waitForElement(uploadli);
+			clickOnElement(uploadli, " Upload file ");
+			uploadEvidenceDynamicallyInCatalogMetricRHP();
+		}
+	}
+
 	@FindBy(xpath = "//button[text()='Browse Files']")
 	private WebElement btnBrowseFiles;
 	@FindBy(xpath = "(//button[text()='Upload'])[2]")
@@ -206,7 +242,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 			waitForElement(btnBrowseFiles);
 			System.out.println(waitForElement(btnBrowseFiles));
 			act.moveToElement(btnBrowseFiles).doubleClick().build().perform();
-			//jsClick(btnBrowseFiles, "Browse Files");
+			// jsClick(btnBrowseFiles, "Browse Files");
 			// clickOnElement(btnBrowseFiles, "Browse Files");
 			String path = System.getProperty("user.dir");
 			sharedEvidenceFileName = "evidence.txt";
@@ -252,75 +288,119 @@ public class GHGCalculatorsPage extends CalculatorElements {
 			System.out.println("Expection At Uploading---->" + e.getMessage());
 		}
 	}
-	
-	public void ValidateEvidenceDetails() {
-	try {
-			sleep(2000);
-			WebElement wedtetime = driver.findElement(
-					By.xpath("//th[contains(text(),'Date')]//parent::tr//parent::thead//following::tr//th"));
-			String DateTime = wedtetime.getText();
-			String[] splitdate1 = date1.split(" ");
-			String res1 = splitdate1[1];
-			int returnVal = res.compareTo(res1);
-			if (returnVal > 0 || returnVal == 0) {
-				passed("Successfully Uploaded the EvidenceFile as :" + sharedEvidenceFileName);
-			} else {
-				failed(driver, "Failed to upload the Evidence File as :" + sharedEvidenceFileName);
-			}
 
-			/*
-			 * if(DateTime.trim().equals("date1")) {
-			 * passed("Successfully displayed DateAndTime of Uploading the file "+date1); }
-			 * else { failed(driver,
-			 * "Failed to display DateAndTime of Uploading the file as"
-			 * +DateTime+" but Actual is "+date1); }
-			 */
-			WebElement weUser = driver.findElement(By.xpath(
-					"//th[contains(text(),'User/App')]//parent::tr//parent::thead//following::tr//th[@value='createdBy']"));
-			if (weUser.getText().trim().equals(data.get("UserName"))) {
-				passed("Successfully validated the User/App as " + weUser.getText());
-			} else {
-				failed(driver,
-						"Failed to validate User/App as" + data.get("UserName") + " but Actual is " + weUser.getText());
-			}
-			WebElement weEvi = driver.findElement(
-					By.xpath("//th[contains(text(),'Evidence')]//parent::tr//parent::thead//following::tr//th[3]"));
-			if (weEvi.getText().trim().equals(sharedEvidenceFileName)) {
-				passed("Successfully validated the EvidenceFile Uploaded as :" + sharedEvidenceFileName);
-			} else {
-				failed(driver, "Failed to validate the EvidenceFile Uploaded as :" + weEvi.getText() + " but Actual is "
-						+ sharedEvidenceFileName);
+	@FindBy(xpath = "//span[contains(text(),'Upload')]")
+	private WebElement uploadorlink;
+
+	public void ValidateEvidenceDetails() {
+		try {
+			sleep(2000);
+			try {
+				sleep(4500);
+				if (uploadorlink.isDisplayed()) {
+					System.out.println("Evidence details not displayed");
+					clickOnCloseInActivityDetails();
+					clickOnAddedActivity();
+					sleep(2000);
+					clickOnElement(evid, "Evidence");
+					sleep(2000);
+					if (uploadorlink.isDisplayed()) {
+						System.out.println("Evidence details not displayed");
+					} else {
+						WebElement wedtetime = driver.findElement(By.xpath(
+								"(//div[contains(text(),'Date')]//parent::div//ancestor::div//following::div[@role='gridcell'])[5]"));
+						String DateTime = wedtetime.getText();
+						String[] splitdate1 = date1.split(" ");
+						String res1 = splitdate1[1];
+						int returnVal = res.compareTo(res1);
+						if (returnVal > 0 || returnVal == 0) {
+							passed("Successfully Uploaded the EvidenceFile as :" + sharedEvidenceFileName);
+						} else {
+							failed(driver, "Failed to upload the Evidence File as :" + sharedEvidenceFileName);
+						}
+						WebElement weUser = driver.findElement(By.xpath(
+								"//div[contains(text(),'User/App')]//parent::div//parent::div//following::div//div[@col-id='createdBy']"));
+						if (weUser.getText().trim().equals(data.get("UserName"))) {
+							passed("Successfully validated the User/App as " + weUser.getText());
+						} else {
+							failed(driver, "Failed to validate User/App as " + data.get("UserName") + " but Actual is "
+									+ weUser.getText());
+						}
+						WebElement weEvi = driver.findElement(By.xpath(
+								"(//div[contains(text(),'Evidence')]//parent::div//ancestor::div//following::div[@role='gridcell'])[3]"));
+						if (weEvi.getText().trim().equals(sharedEvidenceFileName)) {
+							passed("Successfully validated the EvidenceFile Uploaded as :" + sharedEvidenceFileName);
+						} else {
+							failed(driver, "Failed to validate the EvidenceFile Uploaded as :" + weEvi.getText()
+									+ " but Actual is " + sharedEvidenceFileName);
+						}
+					}
+				}
+			} catch (Exception e) {
+				WebElement wedtetime = driver.findElement(By.xpath(
+						"(//div[contains(text(),'Date')]//parent::div//ancestor::div//following::div[@role='gridcell'])[5]"));
+				String DateTime = wedtetime.getText();
+				String[] splitdate1 = date1.split(" ");
+				String res1 = splitdate1[1];
+				int returnVal = res.compareTo(res1);
+				if (returnVal > 0 || returnVal == 0) {
+					passed("Successfully Uploaded the EvidenceFile as :" + sharedEvidenceFileName);
+				} else {
+					failed(driver, "Failed to upload the Evidence File as :" + sharedEvidenceFileName);
+				}
+
+				/*
+				 * if(DateTime.trim().equals("date1")) {
+				 * passed("Successfully displayed DateAndTime of Uploading the file "+date1); }
+				 * else { failed(driver,
+				 * "Failed to display DateAndTime of Uploading the file as"
+				 * +DateTime+" but Actual is "+date1); }
+				 */
+				WebElement weUser = driver.findElement(By.xpath(
+						"//div[contains(text(),'User/App')]//parent::div//parent::div//following::div//div[@col-id='createdBy']"));
+				if (weUser.getText().trim().equals(data.get("UserName"))) {
+					passed("Successfully validated the User/App as " + weUser.getText());
+				} else {
+					failed(driver, "Failed to validate User/App as " + data.get("UserName") + " but Actual is "
+							+ weUser.getText());
+				}
+				WebElement weEvi = driver.findElement(By.xpath(
+						"(//div[contains(text(),'Evidence')]//parent::div//ancestor::div//following::div[@role='gridcell'])[3]"));
+				if (weEvi.getText().trim().equals(sharedEvidenceFileName)) {
+					passed("Successfully validated the EvidenceFile Uploaded as :" + sharedEvidenceFileName);
+				} else {
+					failed(driver, "Failed to validate the EvidenceFile Uploaded as :" + weEvi.getText()
+							+ " but Actual is " + sharedEvidenceFileName);
+				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			failed(driver, "Exception caught " + e.getMessage());
-
 		}
 	}
-	
+
 	@FindBy(xpath = "//span[text()='Period']//parent::div/div/*[@data-testid='ArrowDropDownIcon']")
-    private WebElement drpPeriodDwn1;
-    String[] splittedValue1;
-    @FindBy(xpath = "//ul[@aria-label='icon expansion']//li")
-    private WebElement lblDropPeriod1;
-    @FindBy(xpath = "//article[@aria-label='View Organization Data']")
-    private WebElement viewOrgScreen;
-    @FindBy(xpath = "(//ul[@aria-label='icon expansion'])[2]//li")
-    private List<WebElement> drpActvityType;
-    @FindBy(xpath = "//ul[@aria-label='icon expansion']//li")
-    private List<WebElement> drpActvityType1;
-	
+	private WebElement drpPeriodDwn1;
+	String[] splittedValue1;
+	@FindBy(xpath = "//ul[@aria-label='icon expansion']//li")
+	private WebElement lblDropPeriod1;
+	@FindBy(xpath = "//article[@aria-label='View Organization Data']")
+	private WebElement viewOrgScreen;
+	@FindBy(xpath = "(//ul[@aria-label='icon expansion'])[2]//li")
+	private List<WebElement> drpActvityType;
+	@FindBy(xpath = "//ul[@aria-label='icon expansion']//li")
+	private List<WebElement> drpActvityType1;
+
 	public void clickOnGenerateButtonAlternate1() {
 		try {
 			clickOn(drpPeriodDwn, "period drop down");
-			
-			WebElement perioddrp = driver 
-					.findElement(By.xpath("//ul//*[text()='"+Constants.overlapPeriodYear2022+"']"));
+
+			WebElement perioddrp = driver
+					.findElement(By.xpath("//ul//*[text()='" + Constants.overlapPeriodYear2022 + "']"));
 			scrollTo(perioddrp);
-			actionsClick(perioddrp, "clicked "+data.get("Period Year")+"");
+			actionsClick(perioddrp, "clicked " + data.get("Period Year") + "");
 			sleep(1000);
-			WebElement btnGenerateRefresh = driver.findElement(By.xpath(
-					"//span[contains(text(),'i')]//parent::div//div//following::span//*[local-name()='svg']"));
+			WebElement btnGenerateRefresh = driver.findElement(
+					By.xpath("//span[contains(text(),'i')]//parent::div//div//following::span//*[local-name()='svg']"));
 			clickOn(btnGenerateRefresh, "generate button");
 			WebElement totalco2Value = driver.findElement(By.xpath("//span[contains(text(),'Total(tCO2e)')]"));
 			String afteregenrtvalue = totalco2Value.getText();
@@ -329,8 +409,8 @@ public class GHGCalculatorsPage extends CalculatorElements {
 			System.out.println("generated emission are" + ":-" + afteregenrtvalue);
 			if (GlobalVariables.initialTotaltCo2e.toString().equals(afteregenrtvalue.toString())) {
 				System.out.println("Generate button not working");
-				failed(driver, "failed to validate generate button functionality" + CO2valueafter[1] + " previous value "
-						+ GlobalVariables.initialTotaltCo2e);
+				failed(driver, "failed to validate generate button functionality" + CO2valueafter[1]
+						+ " previous value " + GlobalVariables.initialTotaltCo2e);
 			} else {
 				passed("successfully validated generate button functionality" + CO2valueafter[1]);
 			}
@@ -339,82 +419,64 @@ public class GHGCalculatorsPage extends CalculatorElements {
 			e.printStackTrace();
 		}
 	}
-	
-	
 
 	@FindBy(xpath = "//p[text()='Global Warming Potential Values']")
-    private WebElement taggwp;
-    public void validateGlobalWarmingPotentialvalues() {
-        try {
-            verifyIfElementPresent(taggwp, "Global Warming Potential Values", "");
-            sleep(20);
-            int n = 0;
-            String gwp[] = { "Assessment", "CO2", "CH4", "N2O"};
-            for (int i = 0; i < gwp.length; i++) {
-                WebElement gwpvalue = driver.findElement(By.xpath(
-                        "//p[text()='Global Warming Potential Values']//parent::div//parent::div//following-sibling::div//span[text()='"
-                                + gwp[i] + "']//parent::p//following-sibling::p"));
-                sleep(2);
-                if (Constants.selectedGWP.equals("2007 IPCC Fourth Assessment (AR4, 100-Year GWP)")) {
-                    String gwp4[] = { "2007 IPCC Fourth Assessment (AR4)", "1.0000", "25.0000", "298.0000" };
-                    for (int j = n; j < gwp4.length; j++) {
-                        if (gwpvalue.getText().trim().equals(gwp4[j])) {
-                            passed("Successfully Validated " + gwp4[j] + " In Activity Details As"
-                                    + gwpvalue.getText().trim());
-                            n = j + 1;
-                            break;
-                        } else {
-                            failed(driver, "Failed To validate " + gwp[i] + " In Activity Details Expected As "
-                                    + gwp4[j] + "But Actual is" + gwpvalue.getText().trim());
-                            n = j + 1;
-                            break;
-                        }
-                    }
-                }
-                else if (Constants.selectedGWP.equals("2023 IPCC Sixth Assessment (AR6, 100-Year GWP)")) {
-                    String gwp6[] = { "2007 IPCC Fourth Assessment (AR6)", "1", "27.9", "273" };
-                    for (int j = n; j < gwp6.length; j++) {
-                        if (gwpvalue.getText().trim().equals(gwp6[j])) {
-                            passed("Successfully Validated " + gwp6[j] + " In Activity Details As"
-                                    + gwpvalue.getText().trim());
-                            n = j + 1;
-                            break;
-                        } else {
-                            failed(driver, "Failed To validate " + gwp6[j] + " In Activity Details Expected As "
-                                    + gwp6[j] + "But Actual is" + gwpvalue.getText().trim());
-                            n = j + 1;
-                            break;
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
+	private WebElement taggwp;
 
+	public void validateGlobalWarmingPotentialvalues() {
+		try {
+			verifyIfElementPresent(taggwp, "Global Warming Potential Values", "");
+			sleep(20);
+			int n = 0;
+			String gwp[] = { "Assessment", "CO2", "CH4", "N2O" };
+			for (int i = 0; i < gwp.length; i++) {
+				WebElement gwpvalue = driver.findElement(By.xpath(
+						"//p[text()='Global Warming Potential Values']//parent::div//parent::div//following-sibling::div//span[text()='"
+								+ gwp[i] + "']//parent::p//following-sibling::p"));
+				sleep(2);
+				if (Constants.selectedGWP.equals("2007 IPCC Fourth Assessment (AR4, 100-Year GWP)")) {
+					String gwp4[] = { "2007 IPCC Fourth Assessment (AR4)", "1.0000", "25.0000", "298.0000" };
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+					for (int j = n; j < gwp4.length; j++) {
+						if (gwpvalue.getText().trim().equals(gwp4[j])) {
+							passed("Successfully Validated " + gwp4[j] + " In Activity Details As"
+									+ gwpvalue.getText().trim());
+							n = j + 1;
+							break;
+						} else {
+							failed(driver, "Failed To validate " + gwp[i] + " In Activity Details Expected As "
+									+ gwp4[j] + "But Actual is" + gwpvalue.getText().trim());
+							n = j + 1;
+							break;
+
+						}
+					}
+				}
+
+				else if (Constants.selectedGWP.equals("2023 IPCC Sixth Assessment (AR6, 100-Year GWP)")) {
+					String gwp6[] = { "2007 IPCC Fourth Assessment (AR6)", "1", "27.9", "273" };
+					for (int j = n; j < gwp6.length; j++) {
+						if (gwpvalue.getText().trim().equals(gwp6[j])) {
+							passed("Successfully Validated " + gwp6[j] + " In Activity Details As"
+									+ gwpvalue.getText().trim());
+							n = j + 1;
+							break;
+						} else {
+							failed(driver, "Failed To validate " + gwp6[j] + " In Activity Details Expected As "
+									+ gwp6[j] + "But Actual is" + gwpvalue.getText().trim());
+							n = j + 1;
+							break;
+						}
+					}
+				}
+
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	public void ReusabilityForFacilityNameAndStartDateAndEndDateForCalculators() {
 		try {
 			sleep(2);
@@ -424,7 +486,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 			WebElement weFacilityName = driver.findElement(By.xpath(txtFacilityName));
 			clearUntillTextFieldIsGettingCleared(weFacilityName);
 			enterText(weFacilityName, "Facility Name", data.get("Facility Name"));
-			String strFacilityXpath = "//li[text()='"+data.get("Facility Name")+"']";
+			String strFacilityXpath = "//li[text()='" + data.get("Facility Name") + "']";
 			clickOnElementWithDynamicXpath(strFacilityXpath, data.get("Facility Name"));
 //			WebElement description=driver.findElement(By.xpath("//input[@placeholder='Description']"));
 //			enterText(description, "des", data.get("Description"));
@@ -432,45 +494,44 @@ public class GHGCalculatorsPage extends CalculatorElements {
 			enterText(txtStartDate, "Start Date", data.get("Start Date"));
 			clickOn(txtEndDate, "end date");
 			enterText(txtEndDate, "End Date", data.get("End Date"));
-			if(Boolean.parseBoolean(data.get("Activity CEF")) && !data.get("CardName").equals("Direct Emissions")) {
-				if(data.get("CardName").contains("Upstream")) {
+			if (Boolean.parseBoolean(data.get("Activity CEF")) && !data.get("CardName").equals("Direct Emissions")) {
+				if (data.get("CardName").contains("Upstream")) {
 					SelectDropdownOptionsForCalculatorActivityFields("Energy Category");
 				}
 				VerifyCEFReflected_ActivityForCalculators();
 			}
 		} catch (Exception e) {
-			failed(driver,"Exception caught "+e.getMessage());
+			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
-	
-	
+
 	public void clearUntillTextFieldIsGettingCleared(WebElement we) {
 		try {
-			for(int i=1;i<=50;i++) {
+			for (int i = 1; i <= 50; i++) {
 				String strTextField1 = we.getAttribute("value");
-				if(!strTextField1.isEmpty()) {
-					we.sendKeys(Keys.chord(Keys.CONTROL,"a"));
+				if (!strTextField1.isEmpty()) {
+					we.sendKeys(Keys.chord(Keys.CONTROL, "a"));
 					we.sendKeys(Keys.BACK_SPACE);
-				}else {
+				} else {
 					break;
 				}
 			}
 		} catch (Exception e) {
-			failed(driver,"Exception caught "+e.getMessage());
+			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
-	
+
 	public void VerifyCEFReflected_ActivityForCalculators() {
 		try {
 			Actions action = new Actions(driver);
-			if(!btnCustomBasedCEF.isSelected()) {
+			if (!btnCustomBasedCEF.isSelected()) {
 				action.doubleClick(btnCustomBasedCEF).build().perform();
 				passed("clicked on webelement - Check Box Using CEF");
 			}
-			if( data.get("CardName").contains("Downstream")) {
+			if (data.get("CardName").contains("Downstream")) {
 				SelectDropdownOptionsForCalculatorActivityFields("Energy Category");
 			}
-			if(data.get("CardName").equals("Processing of Sold Products")) {
+			if (data.get("CardName").equals("Processing of Sold Products")) {
 				drpCustomEmiFactorActivityMobile = driver.findElement(By.xpath("//input[@id='Emission']"));
 			}
 			clickOn(drpCustomEmiFactorActivityMobile, "Click on of Custom EF ");
@@ -491,24 +552,23 @@ public class GHGCalculatorsPage extends CalculatorElements {
 			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
-	
-	
-	public void ReusabilityForAmount$Units$Tags$Notes$SaveForCalculators(String Amount,
-			                                          String Unit,String Tags,String Notes) {
+
+	public void ReusabilityForAmount$Units$Tags$Notes$SaveForCalculators(String Amount, String Unit, String Tags,
+			String Notes) {
 		try {
-			
-			if(data.get("subCalcName").equals("Stationary Combustion")) {
+
+			if (data.get("subCalcName").equals("Stationary Combustion")) {
 				WebElement fuelAmountSC = driver.findElement(By.xpath("//input[@id='fuelAmount']"));
 				clearUntillTextFieldIsGettingCleared(fuelAmountSC);
 				enterText(fuelAmountSC, "Fuel Amount", data.get("Fuel Amount"));
-			}
-			else {
+			} else {
 				entertTextInTextFieldForCalculators_ActivityDetails(Amount);
 			}
-			if(data.get("CardName").equals("Capital Goods") && Boolean.parseBoolean(data.get("Activity CEF")) 
-					||data.get("CardName").contains("End-of-Life Treatment") && Boolean.parseBoolean(data.get("Activity CEF"))) {
+			if (data.get("CardName").equals("Capital Goods") && Boolean.parseBoolean(data.get("Activity CEF"))
+					|| data.get("CardName").contains("End-of-Life Treatment")
+							&& Boolean.parseBoolean(data.get("Activity CEF"))) {
 				System.out.println("Unit is Disabled");
-			}else {
+			} else {
 				SelectDropdownOptionsForCalculatorActivityFields(Unit);
 			}
 //			if(!Tags.equals("False")) {
@@ -519,142 +579,141 @@ public class GHGCalculatorsPage extends CalculatorElements {
 			entertTextInTextFieldForCalculators_ActivityDetails(Notes);
 			clickOn(btnSave, "Save Button");
 		} catch (Exception e) {
-			failed(driver,"Exception caught "+e.getMessage());
+			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
-	
-	
-	
-	
+
 	public void entertTextInTextFieldForCalculators_ActivityDetails(String textField) {
 		try {
 			sleep(2);
-			String strTextField = "//span[normalize-space()='"+textField+"']/ancestor::div//input[contains(@placeholder,'"+textField+"')]";
-			//clickOnElementWithDynamicXpath(strTextField, textField);
+			String strTextField = "//span[normalize-space()='" + textField
+					+ "']/ancestor::div//input[contains(@placeholder,'" + textField + "')]";
+			// clickOnElementWithDynamicXpath(strTextField, textField);
 			WebElement weTextField = driver.findElement(By.xpath(strTextField));
 			clearUntillTextFieldIsGettingCleared(weTextField);
 			enterText(weTextField, textField, data.get(textField));
 		} catch (Exception e) {
-			failed(driver,"Exception caught "+e.getMessage());
+			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
-	
-	
-	
-	
-	
+
 	public void SelectDropdownOptionsForCalculatorActivityFields(String fieldName) {
 		try {
 			sleep(2000);
-			//System.out.println(data.get("Quantity of refrigerant purchase/use/leak"));
-			String strExpandIcon = "//span[normalize-space()='"+fieldName+"']/ancestor::div/following-sibling::div/div//div//input[@placeholder='"+fieldName+"']";
+			// System.out.println(data.get("Quantity of refrigerant purchase/use/leak"));
+			String strExpandIcon = "//span[normalize-space()='" + fieldName
+					+ "']/ancestor::div/following-sibling::div/div//div//input[@placeholder='" + fieldName + "']";
 			WaitForElementWithDynamicXpath(strExpandIcon);
 			clickOnElementWithDynamicXpath(strExpandIcon, fieldName);
 			sleep(3000);
-			String strOptions = "//li[normalize-space()='"+data.get(fieldName)+"']";
+			String strOptions = "//li[normalize-space()='" + data.get(fieldName) + "']";
 			WebElement weOptions = driver.findElement(By.xpath(strOptions));
 			clickOn(weOptions, data.get(fieldName));
 		} catch (Exception e) {
 			clickFirstElementInADropdownIfanyExceptionHappenedForActivityFields(fieldName);
 		}
 	}
-	
-	
-	@FindBy(xpath="//input[@id='product_name']")
+
+	@FindBy(xpath = "//input[@id='product_name']")
 	public WebElement soldProduct;
+
 	public void selectDropDownOptionsForCalculatorActivityFieldsForUOSP() {
 		try {
 			clickOn(soldProduct, "soldProduct");
-			String strExpandIconOfsoldProduct="//li[text()='"+data.get("Sold Product")+"']";
-			clickOnElementWithDynamicXpath(strExpandIconOfsoldProduct,data.get("Sold Product"));
+			String strExpandIconOfsoldProduct = "//li[text()='" + data.get("Sold Product") + "']";
+			clickOnElementWithDynamicXpath(strExpandIconOfsoldProduct, data.get("Sold Product"));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	public static ArrayList<String> arrayOfActivityDetails;
-    public void clickFirstElementInADropdownIfanyExceptionHappenedForActivityFields(String fieldName) {
-        String strFE = "//ul[@role='listbox']//li";
-        if(isElementPresentDynamicXpath(strFE) == true) {
-            WebElement FEleDrp = driver.findElement(By.xpath("//ul[@role='listbox']//li"));
-            clickOn(FEleDrp, fieldName);
-            arrayOfActivityDetails.add(fieldName);
-        }else {
-            String strFE1 = "//div[text()='No options']";
-            WebElement FEleDrp1 = driver.findElement(By.xpath(strFE1));
-            if(FEleDrp1.getText().equals("No options")) {
-                failed(driver,"No Options -------> "+ fieldName + "in "+ data.get("CardName")+"_"+data.get("subCalcName"));
-            }
-        }
-    }
-	
-	
-	// ------------------------------------------ cef -----------------------------------------------------------//
-	
-	  public static String CustomEmissionFactorName;
-	    public void commonFieldsForAddingCUSTOMEMISSIONFACTOR_ParameterInput(String source,String CO2e) {
-	    	try {
-	    		CustomEmissionFactorName = Constants.CEFName + generateRandomNumber(4);
-	    		clearUntillTextFieldIsGettingCleared(txtCutsomEFName_1);
-				enterText(txtCutsomEFName_1, "entered Name of Custom EF", CustomEmissionFactorName);
-				entertTextInTextFieldForCalculators_ActivityDetails(source);
-				if(CO2e.equals("true")) {
-					entertTextInTextFieldForCalculators_ActivityDetails("CO2e");
-				}
-				SelectDropdownOptionsForCalculatorActivityFields("Unit of Custom EF (Numerator)");
-				if(data.get("subCalcName").equals("Spend Based Method") && data.get("CardName").equals("Purchased Goods and Services") ) {
-					System.out.println("Unit of Custom EF (Denominator) is not there");
-				}else {
-					SelectDropdownOptionsForCalculatorActivityFields("Unit of Custom EF (Denominator)");
-				}
-				if( !data.get("CardName").equals("Investments")) {
-					String strNotes = "//span[normalize-space()='Notes']/ancestor::div/following-sibling::div//*[contains(@placeholder,'Notes')]";
-					WebElement weNotes = driver.findElement(By.xpath(strNotes));
-					clearUntillTextFieldIsGettingCleared(weNotes);
-					enterText(weNotes, "Notes", data.get("Notes"));
-				}
-				clickOn(btnSave, "Save Button");
-			} catch (Exception e) {
-				failed(driver,"Exception caught "+e.getMessage());
+
+	public void clickFirstElementInADropdownIfanyExceptionHappenedForActivityFields(String fieldName) {
+		String strFE = "//ul[@role='listbox']//li";
+		if (isElementPresentDynamicXpath(strFE) == true) {
+			WebElement FEleDrp = driver.findElement(By.xpath("//ul[@role='listbox']//li"));
+			clickOn(FEleDrp, fieldName);
+			arrayOfActivityDetails.add(fieldName);
+		} else {
+			String strFE1 = "//div[text()='No options']";
+			WebElement FEleDrp1 = driver.findElement(By.xpath(strFE1));
+			if (FEleDrp1.getText().equals("No options")) {
+				failed(driver, "No Options -------> " + fieldName + "in " + data.get("CardName") + "_"
+						+ data.get("subCalcName"));
 			}
-	    }
-	
+		}
+	}
+
+	// ------------------------------------------ cef
+	// -----------------------------------------------------------//
+
+	public static String CustomEmissionFactorName;
+
+	public void commonFieldsForAddingCUSTOMEMISSIONFACTOR_ParameterInput(String source, String CO2e) {
+		try {
+			CustomEmissionFactorName = Constants.CEFName + generateRandomNumber(4);
+			clearUntillTextFieldIsGettingCleared(txtCutsomEFName_1);
+			enterText(txtCutsomEFName_1, "entered Name of Custom EF", CustomEmissionFactorName);
+			entertTextInTextFieldForCalculators_ActivityDetails(source);
+			if (CO2e.equals("true")) {
+				entertTextInTextFieldForCalculators_ActivityDetails("CO2e");
+			}
+			SelectDropdownOptionsForCalculatorActivityFields("Unit of Custom EF (Numerator)");
+			if (data.get("subCalcName").equals("Spend Based Method")
+					&& data.get("CardName").equals("Purchased Goods and Services")) {
+				System.out.println("Unit of Custom EF (Denominator) is not there");
+			} else {
+				SelectDropdownOptionsForCalculatorActivityFields("Unit of Custom EF (Denominator)");
+			}
+			if (!data.get("CardName").equals("Investments")) {
+				String strNotes = "//span[normalize-space()='Notes']/ancestor::div/following-sibling::div//*[contains(@placeholder,'Notes')]";
+				WebElement weNotes = driver.findElement(By.xpath(strNotes));
+				clearUntillTextFieldIsGettingCleared(weNotes);
+				enterText(weNotes, "Notes", data.get("Notes"));
+			}
+			clickOn(btnSave, "Save Button");
+		} catch (Exception e) {
+			failed(driver, "Exception caught " + e.getMessage());
+		}
+	}
+
 	public void addAndValidateParameters_CustomEmissionFactor(String[] actDetails) {
-		try { 
-			if(!Constants.arrayCardPresent.contains(data.get("CardName"))) {
+		try {
+			if (!Constants.arrayCardPresent.contains(data.get("CardName"))) {
 				Constants.arrayCardPresent.add(data.get("CardName"));
 				clickOnCarbonManagementNavigationMenu();
-				String strCalcCard = "//div[text()='"+data.get("CardName")+"']";
+				String strCalcCard = "//div[text()='" + data.get("CardName") + "']";
 				clickOnElementWithDynamicXpath(strCalcCard, data.get("CardName"));
 			}
-			if(data.get("CardName").equals("Direct Emissions")) {
+			if (data.get("CardName").equals("Direct Emissions")) {
 				clickOnEmissionFactorsForDirectEmission();
 				clickOnbuttonParameterInputGHGCalculatorScope1();
-			}else {
+			} else {
 				clickOnParameneterInputGHGCalculator();
 				clickOnbuttonParameneterInputGHGCalculator();
 			}
-			AddCustomEmissionFactorsForCalculators(data.get("CardName"),data.get("subCalcName"));
-			if(data.get("Activity").equals("Add")) {
+			AddCustomEmissionFactorsForCalculators(data.get("CardName"), data.get("subCalcName"));
+			if (data.get("Activity").equals("Add")) {
 				verifyCEFAddToastMessage();
-			}else {
+			} else {
 				verifyCEFEditToastMessage();
 			}
 			validateRHPActivityDetailsForAllCalculators(actDetails, data.get("CardName"));
-			if(data.get("CardName").equals("Upstream Leased Assets") || data.get("CardName").equals("Downstream Leased Assets")) {
+			if (data.get("CardName").equals("Upstream Leased Assets")
+					|| data.get("CardName").equals("Downstream Leased Assets")) {
 				validateTCO2EvalueForCustomEmissionFactorRHP();
 				verifyCO2eFactorForCustomEmissionFactorRHP();
 			}
 			clickOnCloseInActivityDetails();
 		} catch (Exception e) {
-			failed(driver,"Exception caught "+e.getMessage());
+			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
-	
-	
-	public void AddCustomEmissionFactorsForCalculators(String calcCardName,String subCalc) {
+
+	public void AddCustomEmissionFactorsForCalculators(String calcCardName, String subCalc) {
 		try {
 			switch (calcCardName) {
 			case "Direct Emissions":
@@ -663,9 +722,9 @@ public class GHGCalculatorsPage extends CalculatorElements {
 				break;
 			case "Purchased Goods and Services":
 				PGS = new PurchasedGoodsAndServicesGHGCalculatorPage(driver, data);
-				if(subCalc.equals("Average Data Method")) {
+				if (subCalc.equals("Average Data Method")) {
 					PGS.Add_CustomEmissionFactor_Purchased_Godds_Services_Average_Data_Scope3_1("Average Data Method");
-				}else {
+				} else {
 					PGS.Add_CustomEmissionFactor_Purchased_Godds_Services_Average_Data_Scope3_1("Spend Based Method");
 				}
 				break;
@@ -674,7 +733,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 				CGS.Add_CustomEmissionFactor_Capital_Goods_Aversge_Spend_Data_Scope3_1();
 				break;
 			case "Hotel Stay":
-				commonFieldsForAddingCUSTOMEMISSIONFACTOR_ParameterInput("Source of Emission Factor","true");
+				commonFieldsForAddingCUSTOMEMISSIONFACTOR_ParameterInput("Source of Emission Factor", "true");
 				break;
 			case "Downstream Leased Assets":
 			case "Upstream Leased Assets":
@@ -698,336 +757,336 @@ public class GHGCalculatorsPage extends CalculatorElements {
 				break;
 			}
 		} catch (Exception e) {
-			failed(driver,"Exception caught "+e.getMessage());
+			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
-	
-	
+
 	public void validateTCO2EvalueForCustomEmissionFactorRHP() {
 		Double co2;
 		Double ch4;
 		Double n2o;
 		sleep(1);
-		
+
 		System.out.println(data.get("gwp year"));
-		if(data.get("gwp year").contains("AR4")) {
-			 co2 = Constants.GWParCO2 * Double.parseDouble(data.get("CO2"));
-			 ch4 = Constants.GWPar4CH4 * Double.parseDouble(data.get("CH4"));                 
-			 n2o = Constants.GWPar4N2O  * Double.parseDouble(data.get("N2O"));
-		}else if(data.get("gwp year").contains("AR5")){
-			 co2 = Constants.GWParCO2 * Double.parseDouble(data.get("CO2"));;
-			 ch4 = Constants.GWPar5CH4 * Double.parseDouble(data.get("CH4"));                 
-			 n2o = Constants.GWPar5N2O  * Double.parseDouble(data.get("N2O"));
-		}else {
-			 co2 = Constants.GWParCO2 * Double.parseDouble(data.get("CO2"));;
-			 ch4 = Constants.GWPar6CH4 * Double.parseDouble(data.get("CH4"));                 
-			 n2o = Constants.GWPar6N2O  * Double.parseDouble(data.get("N2O"));
+		if (data.get("gwp year").contains("AR4")) {
+			co2 = Constants.GWParCO2 * Double.parseDouble(data.get("CO2"));
+			ch4 = Constants.GWPar4CH4 * Double.parseDouble(data.get("CH4"));
+			n2o = Constants.GWPar4N2O * Double.parseDouble(data.get("N2O"));
+		} else if (data.get("gwp year").contains("AR5")) {
+			co2 = Constants.GWParCO2 * Double.parseDouble(data.get("CO2"));
+			;
+			ch4 = Constants.GWPar5CH4 * Double.parseDouble(data.get("CH4"));
+			n2o = Constants.GWPar5N2O * Double.parseDouble(data.get("N2O"));
+		} else {
+			co2 = Constants.GWParCO2 * Double.parseDouble(data.get("CO2"));
+			;
+			ch4 = Constants.GWPar6CH4 * Double.parseDouble(data.get("CH4"));
+			n2o = Constants.GWPar6N2O * Double.parseDouble(data.get("N2O"));
 		}
-		Double emmissionFactorValueExp1 = co2 + ch4 + n2o;	
+		Double emmissionFactorValueExp1 = co2 + ch4 + n2o;
 		emmissionFactorValueExp = emmissionFactorValueExp1.toString();
 	}
-	
-	public void AddandValidateActivityForCalculators_CEF(String[] actDetails,String Amount) {
-		 try {
-			 String strSubCalc = "//button[text()='"+data.get("subCalcName")+"']";
-			 clickOnElementWithDynamicXpath(strSubCalc, data.get("subCalcName"));
-			 if(data.get("CardName").equals("Investments")) {
-				 String investmentsSubCalc = "//button[text()='Average Data Method']";
-				 clickOnElementWithDynamicXpath(investmentsSubCalc, "Average Data Method");
-			 }
-			 if(Boolean.parseBoolean(data.get("OrgVisibility"))) {
-			       SelectOrganizationForTiffany();
-			 }
+
+	public void AddandValidateActivityForCalculators_CEF(String[] actDetails, String Amount) {
+		try {
+			String strSubCalc = "//button[text()='" + data.get("subCalcName") + "']";
+			clickOnElementWithDynamicXpath(strSubCalc, data.get("subCalcName"));
+			if (data.get("CardName").equals("Investments")) {
+				String investmentsSubCalc = "//button[text()='Average Data Method']";
+				clickOnElementWithDynamicXpath(investmentsSubCalc, "Average Data Method");
+			}
+			if (Boolean.parseBoolean(data.get("OrgVisibility"))) {
+				SelectOrganizationForTiffany();
+			}
 			SelectPeriod2022();
-			if(data.get("Activity").equals("Add")) {
+			if (data.get("Activity").equals("Add")) {
 				clickOnAddActivityButton();
-			}else if(data.get("Activity").equals("Edit")) {
+			} else if (data.get("Activity").equals("Edit")) {
 				clickOnActivityInActivitiesGridMultipleForAGGridEdit();
 				clickOnEditButtonInActivityDetails();
 			}
-			AddActivityForCalculatorsUsingCustomEmissionFactors(data.get("CardName"),data.get("subCalcName"));
-			if(data.get("Activity").equals("Add")) {
+			AddActivityForCalculatorsUsingCustomEmissionFactors(data.get("CardName"), data.get("subCalcName"));
+			if (data.get("Activity").equals("Add")) {
 				verifyAddActivityUpdatedToastMessage();
-			}else {
+			} else {
 				verifyEditActivityToastMessage();
 			}
-			validateRHPActivityDetailsForAllCalculators(actDetails, data.get("CardName"));               //RHP ActDetails
-			validateEmissionDetailsForAddCEF_EditCEF(data.get("CardName"), Amount);                      //Enission Details
+			validateRHPActivityDetailsForAllCalculators(actDetails, data.get("CardName")); // RHP ActDetails
+			validateEmissionDetailsForAddCEF_EditCEF(data.get("CardName"), Amount); // Enission Details
 			clickOnCloseInActivityDetails();
 		} catch (Exception e) {
-			failed(driver,"Exception caught "+e.getMessage());
+			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
-	
-	    public void AddActivityForCalculatorsUsingCustomEmissionFactors(String calcCardName,String subCalc) {
-	    	try {
-				switch (calcCardName) {
-				case "Direct Emissions":
-					directEmissionsCalculatorPage = new DirectEmissionsCalculatorPage(driver, data);
-					if(subCalc.equals("Stationary Combustion")) {
-						directEmissionsCalculatorPage.AddActivityForCEFStationaryCombutionInDirectEmissions();
-					}else {
-						directEmissionsCalculatorPage.EditActivityMobileCombutionInDirectEmissions();
-					}
-					break;
-				case "Purchased Goods and Services":
-					PGS = new PurchasedGoodsAndServicesGHGCalculatorPage(driver, data);
-					if(subCalc.equals("Average Data Method")) {
-						PGS.EditActivityScope3EmissionsScope3_1_AverageBased();
-					}else {
-						PGS.EdittActivityScope3_1SpendBasedEmissions();
-					}
-					break;
-				case "Capital Goods":
-					CGS = new CapitalGoodsGHGCalculatorPage(driver, data);
-					if(subCalc.equals("Average Data Method")) {
-						CGS.EditActivityScopeCapitalGoods3_2EmissionsAverageBased();
-					}else {
-						CGS.EditActivityCapitalGoodsScope3_2SpendBasedEmissions();
-					}
-					break;
-				case "Hotel Stay":
-					hotelStay = new HotelStayGHGCalculatorPage(driver, data);
-					hotelStay.EditActivityScope3_6HotelStayEmissions();
-					break;
-				case "Downstream Leased Assets":
-					DLA = new DownStreamLeasedAssetsGHGCalculatorPage(driver, data);
-					DLA.EditActivityScope3_13DownstreamLeasedAssets();
-					break;
-				case "Upstream Leased Assets":
-					ULA = new UpstreamLeasedAssetsGHGCalculatorPage(driver, data);
-					ULA.EditActivityScope3_8UpstreamLeasedAssets();
-					break;
-				case "Processing of Sold Products":
-					POSP = new ProcessingofSoldProductsCalculatorPage(driver, data);
-					POSP.EditActivityScope3_10PrcessingofSoldProdutcs();
-					break;
-				case "Use of Sold Products":
-					UOSP = new UseOfSoldProductGHGCalculatorPage(driver, data);
-					UOSP.EditActivityScope3_11UseofSoldProdutcs();
-					break;
-				case "End-of-Life Treatment of Sold Products":
-					EOLT = new EndOfLifeTreatmentGHGCalculatorPage(driver, data);
-					EOLT.EditActivityEndOfLifeTreatmentScope3_12Emissions();
-					break;
-				case "Investments":
-					Investments = new InvestmentsGHGCalculatorsPage(driver, data);
-					if(subCalc.equals("Equity Investments")) {
-						Investments.EditActivityScope3_15InvestmentsAverageDataMethod();
-					}else if(subCalc.equals("Debt & Project Financing")) {
-						Investments.EditActivityScope3_15InvestmentsDebtProjectFinancingAverageDataMethod();
-					}
-					break;
-             }
-			} catch (Exception e) {
-				failed(driver, "Exception caught " + e.getMessage());
-			}
-	   }
-	    
-	    public void validateEmissionDetailsForAddCEF_EditCEF(String calcName,String Amount) {
-	    	try {
-				if(calcName.equals("Upstream Leased Assets") || calcName.equals("Downstream Leased Assets") 
-						|| calcName.equals("Direct Emissions")) {
-					VerifyCustomEmissionFactorActivitiesDetailsRHPGHGCalculator();
-					validateTCO2_TCH4_TN2OvaluesIfWeHaveValues_CEF(Amount);
-					calculateTCO2eValueUsing_EmissionFactorValue(Amount);
-				}else if(calcName.equals("Investments")){
-					VerifyCustomEmissionFactorActivitiesDetailsRHPGHGCalculator();
-				}else {
-					VerifyCustomEmissionFactorActivitiesDetailsRHPGHGCalculator();
-					validateEmissionDtailsForCalculatorsHavingCo2eField_TCO2E_CEF(Amount);
-				}
-			} catch (Exception e) {	
-				failed(driver, "Exception caught " + e.getMessage());
-			}	
-	    }
-	    
-	    public void VerifyCustomEmissionFactorActivitiesDetailsRHPGHGCalculator() {
-			try {
-				String strCEF;
-				if(data.get("CardName").equals("Investments")) {
-					 strCEF = "//span[text()='Custom Emission Factor']//parent::div//following-sibling::div";
-				}else if(data.get("CardName").equals("Capital Goods") || data.get("CardName").equals("Processing of Sold Products")) {
-					strCEF = "//span[text()='Custom EF']//parent::p//following-sibling::p";
-				}
-				else {
-					 strCEF = "//span[contains(text(),'Custom Emission Factor')]//parent::p//following-sibling::p";
-				}
-				WebElement weCEFNameRHP = driver.findElement(By.xpath(strCEF));
-				if (weCEFNameRHP.getText().trim().equals(CustomEmissionFactorName)) {
-					passed("Successfully Validated Custom Emisiion Factor in Activity Details RHP"
-							+ weCEFNameRHP.getText());
+
+	public void AddActivityForCalculatorsUsingCustomEmissionFactors(String calcCardName, String subCalc) {
+		try {
+			switch (calcCardName) {
+			case "Direct Emissions":
+				directEmissionsCalculatorPage = new DirectEmissionsCalculatorPage(driver, data);
+				if (subCalc.equals("Stationary Combustion")) {
+					directEmissionsCalculatorPage.AddActivityForCEFStationaryCombutionInDirectEmissions();
 				} else {
-					failed(driver, " Failed to Validated Custom Emisiion Factor in Activity Details RHP Expected is "
-							+ CustomEmissionFactorName + "But Actual is" + weCEFNameRHP.getText());
+					directEmissionsCalculatorPage.EditActivityMobileCombutionInDirectEmissions();
 				}
-			} catch (Exception e) {
-				failed(driver, "Exception caught " + e.getMessage());
+				break;
+			case "Purchased Goods and Services":
+				PGS = new PurchasedGoodsAndServicesGHGCalculatorPage(driver, data);
+				if (subCalc.equals("Average Data Method")) {
+					PGS.EditActivityScope3EmissionsScope3_1_AverageBased();
+				} else {
+					PGS.EdittActivityScope3_1SpendBasedEmissions();
+				}
+				break;
+			case "Capital Goods":
+				CGS = new CapitalGoodsGHGCalculatorPage(driver, data);
+				if (subCalc.equals("Average Data Method")) {
+					CGS.EditActivityScopeCapitalGoods3_2EmissionsAverageBased();
+				} else {
+					CGS.EditActivityCapitalGoodsScope3_2SpendBasedEmissions();
+				}
+				break;
+			case "Hotel Stay":
+				hotelStay = new HotelStayGHGCalculatorPage(driver, data);
+				hotelStay.EditActivityScope3_6HotelStayEmissions();
+				break;
+			case "Downstream Leased Assets":
+				DLA = new DownStreamLeasedAssetsGHGCalculatorPage(driver, data);
+				DLA.EditActivityScope3_13DownstreamLeasedAssets();
+				break;
+			case "Upstream Leased Assets":
+				ULA = new UpstreamLeasedAssetsGHGCalculatorPage(driver, data);
+				ULA.EditActivityScope3_8UpstreamLeasedAssets();
+				break;
+			case "Processing of Sold Products":
+				POSP = new ProcessingofSoldProductsCalculatorPage(driver, data);
+				POSP.EditActivityScope3_10PrcessingofSoldProdutcs();
+				break;
+			case "Use of Sold Products":
+				UOSP = new UseOfSoldProductGHGCalculatorPage(driver, data);
+				UOSP.EditActivityScope3_11UseofSoldProdutcs();
+				break;
+			case "End-of-Life Treatment of Sold Products":
+				EOLT = new EndOfLifeTreatmentGHGCalculatorPage(driver, data);
+				EOLT.EditActivityEndOfLifeTreatmentScope3_12Emissions();
+				break;
+			case "Investments":
+				Investments = new InvestmentsGHGCalculatorsPage(driver, data);
+				if (subCalc.equals("Equity Investments")) {
+					Investments.EditActivityScope3_15InvestmentsAverageDataMethod();
+				} else if (subCalc.equals("Debt & Project Financing")) {
+					Investments.EditActivityScope3_15InvestmentsDebtProjectFinancingAverageDataMethod();
+				}
+				break;
 			}
+		} catch (Exception e) {
+			failed(driver, "Exception caught " + e.getMessage());
 		}
-	    
-	    
-	    public void validateTCO2_TCH4_TN2OvaluesIfWeHaveValues_CEF(String ActivityAmount) {
-	    	try {
-				String[] emissionDetails = {"CO2","CH4","N2O"};
-				for(int i=0;i<emissionDetails.length;i++) {
-					Double formulae = Double.parseDouble(data.get(emissionDetails[i])) 
-							                                    * Double.parseDouble(ActivityAmount) /1000;
-					String emissionExpectedValues = formulae.toString();
-					WebElement weActualEmissionValues = driver.findElement(By
-							          .xpath("//span[text()='t"+emissionDetails[i]+"']/parent::p/following-sibling::p/div"));
-					String actualEmissionValues = weActualEmissionValues.getText().replaceAll(",", "");
-					if(emissionExpectedValues.equals(actualEmissionValues)) {
-						passed("Successfully validated, t"+emissionDetails[i]+" Expected as "+emissionExpectedValues+" " 
-					                              + "and the Actual as " + actualEmissionValues);
-					}else {
-						Double doubleDiff= Double.parseDouble(emissionExpectedValues)- Double.parseDouble(actualEmissionValues);
-						if(doubleDiff<1 && doubleDiff>-0.4) {    
-							passed("Successfully validated, t"+emissionDetails[i]+" Expected as "+emissionExpectedValues+" " 
-				                      + "and the Actual as " + actualEmissionValues);
-						}else {
-							failed(driver,"failed to validate, t"+emissionDetails[i]+" Expected as "+emissionExpectedValues+" " 
-				                    + "and the Actual as " + actualEmissionValues);
-						}
-					}
-				}
-			} catch (NumberFormatException e) {
-				failed(driver, "Exception caught " + e.getMessage());
+	}
+
+	public void validateEmissionDetailsForAddCEF_EditCEF(String calcName, String Amount) {
+		try {
+			if (calcName.equals("Upstream Leased Assets") || calcName.equals("Downstream Leased Assets")
+					|| calcName.equals("Direct Emissions")) {
+				VerifyCustomEmissionFactorActivitiesDetailsRHPGHGCalculator();
+				validateTCO2_TCH4_TN2OvaluesIfWeHaveValues_CEF(Amount);
+				calculateTCO2eValueUsing_EmissionFactorValue(Amount);
+			} else if (calcName.equals("Investments")) {
+				VerifyCustomEmissionFactorActivitiesDetailsRHPGHGCalculator();
+			} else {
+				VerifyCustomEmissionFactorActivitiesDetailsRHPGHGCalculator();
+				validateEmissionDtailsForCalculatorsHavingCo2eField_TCO2E_CEF(Amount);
 			}
-	    	
-	    }
-	    public void verifyCO2eFactor() {
-			try {
-				WebElement cefValueRHP = driver
-						.findElement(By.xpath("//span[contains(text(),'CO2e')]//parent::div//following-sibling::div"));
-				String newPlainValue = approximateDecimalValueWithBigDecimal(cefValueRHP.getText());
-				if (newPlainValue.equals(emmissionFactorValueExp)) {
-					passed("Succesfully validated tCO2e value" + newPlainValue + " And Actual is " + emmissionFactorValueExp);
-				} else {
-					fail("Failed validated tCO2e value" + " " + newPlainValue + " But Actual is " + emmissionFactorValueExp);
-				}
-				WebElement weNameOfCEF = driver.findElement(
-						By.xpath("//span[contains(text(),'Name of Custom EF')]//parent::div//following-sibling::div"));
-				if (weNameOfCEF.getText().equals(CustomEmissionFactorName)) {
-					passed("successfully validated name of custom emission factor");
-				} else {
-					fail("failed to validate name of custom emission factor");
-				}
-			} catch (Exception e) {
-				failed(driver, "Exception caught " + e.getMessage());
-			}
+		} catch (Exception e) {
+			failed(driver, "Exception caught " + e.getMessage());
 		}
-	    
-	    
-	    public void verifyCO2eFactorForCustomEmissionFactorRHP() {
-	    	try {
-	    		sleep(1);
-				WebElement cefValueRHP = driver
-						.findElement(By.xpath("//span[contains(text(),'CO2e')]//parent::div//following-sibling::div"));
-				System.out.println(cefValueRHP.getText());
-				String newPlainValue = approximateDecimalValueWithBigDecimal(cefValueRHP.getText().replaceAll(",", ""));
-				if (newPlainValue.equals(emmissionFactorValueExp)) {
-					passed("Succesfully validated tCO2e value" + newPlainValue + " And Actual is " + emmissionFactorValueExp);
-				} else {
-					Double doubleDiff= Double.parseDouble(newPlainValue)- Double.parseDouble(emmissionFactorValueExp);
-					if(doubleDiff<1 && doubleDiff>-0.4) {    
-						passed("Succesfully validated activityDetail" + newPlainValue + " And Actual is " + 
-								emmissionFactorValueExp);
-					}else {
-					    failed(driver,
-							    "Failed validated activityDetail" + " " + newPlainValue + " But Actual is " 
-					                                              + emmissionFactorValueExp);
-					}
-				}
-			} catch (Exception e) {
-				failed(driver, "Exception caught " + e.getMessage());
+	}
+
+	public void VerifyCustomEmissionFactorActivitiesDetailsRHPGHGCalculator() {
+		try {
+			String strCEF;
+			if (data.get("CardName").equals("Investments")) {
+				strCEF = "//span[text()='Custom Emission Factor']//parent::div//following-sibling::div";
+			} else if (data.get("CardName").equals("Capital Goods")
+					|| data.get("CardName").equals("Processing of Sold Products")) {
+				strCEF = "//span[text()='Custom EF']//parent::p//following-sibling::p";
+			} else {
+				strCEF = "//span[contains(text(),'Custom Emission Factor')]//parent::p//following-sibling::p";
 			}
-	    }
-	    
-	    public void validateEmissionDtailsForCalculatorsHavingCo2eField_TCO2E_CEF(String Amount) {
-			try {
-				sleep(2);
-				WebElement CO2eActivity = driver
-						.findElement(By.xpath("//span[contains(text(),'CO2e')]/parent::p/following-sibling::p/div"));
-				String strCO2E;
-				if(data.get("CardName").equals("Use of Sold Products")) {
-					 strCO2E = data.get("CO2e (Yearly)");
-				}else {
-					 strCO2E = data.get("CO2e");
-				}
-				Double ValCO2e = Double.parseDouble(strCO2E)
-						                         * Double.parseDouble(Amount) / 1000;
-				String ValCO2eRHP1 = ValCO2e.toString();
-				String ValCO2eRHP = approximateDecimalValueWithBigDecimal(ValCO2eRHP1);
-				if (CO2eActivity.getText().equals(ValCO2eRHP)) {
-					passed("Succesfully validated tCO2e value" + ValCO2eRHP + " And Actual is " + CO2eActivity.getText());
-				} else {
-					Double doubleDiff= Double.parseDouble(ValCO2eRHP) - Double.parseDouble(CO2eActivity.getText());
-					if(doubleDiff<1 && doubleDiff>-0.4) {
-						passed("Succesfully validated tCO2e value" + ValCO2eRHP + " And Actual is " + CO2eActivity.getText());
-					}else {
-					    failed(driver,
-							    "Failed validated tCO2e value" + " " + ValCO2eRHP + " But Actual is " + CO2eActivity.getText());
-					}
-				}
-				WebElement EFActivity = driver.findElement(By.xpath
-					("//p[text()='Emission Details']/ancestor::div//span[text()='Emission Factor']/parent::p/following-sibling::p/div"));
-				String s2 = EFActivity.getText().trim();
-				String[] EFValueRHP = s2.split(" ");
-				String tco2eCEFRHP = approximateDecimalValueWithBigDecimal(strCO2E);
-				if (EFValueRHP[0].equals(tco2eCEFRHP)) {
-					passed("Succesfully validated Emission factor value" + EFValueRHP[0] + " And Actual is " + tco2eCEFRHP);
-				} else {
-					Double doubleDiff= Double.parseDouble(EFValueRHP[0]) - Double.parseDouble(tco2eCEFRHP);
-					if(doubleDiff<1 && doubleDiff>-0.4) {
-						passed("Succesfully validated Emission factor value" + EFValueRHP[0] + " And Actual is " + tco2eCEFRHP);
-					}else {
-					    failed(driver,
-							    "Failed validated Emission factor value" + " " + EFValueRHP[0] + " But Actual is " + tco2eCEFRHP);
-					}
-				}
-			} catch (Exception e) {
-				failed(driver, "Exception caught " + e.getMessage());
+			WebElement weCEFNameRHP = driver.findElement(By.xpath(strCEF));
+			if (weCEFNameRHP.getText().trim().equals(CustomEmissionFactorName)) {
+				passed("Successfully Validated Custom Emisiion Factor in Activity Details RHP"
+						+ weCEFNameRHP.getText());
+			} else {
+				failed(driver, " Failed to Validated Custom Emisiion Factor in Activity Details RHP Expected is "
+						+ CustomEmissionFactorName + "But Actual is" + weCEFNameRHP.getText());
 			}
+		} catch (Exception e) {
+			failed(driver, "Exception caught " + e.getMessage());
 		}
-	    
-	    
-	    
-	    
-	  public void addCustomEmissionFactorForULA_DLA_ParameterInput() {
-		  try {
-			  SelectDropdownOptionsForCalculatorActivityFields("Energy Category");
-			  entertTextInTextFieldForCalculators_ActivityDetails("CO2");
-			  entertTextInTextFieldForCalculators_ActivityDetails("CH4");
-			  entertTextInTextFieldForCalculators_ActivityDetails("N2O");
+	}
+
+	public void validateTCO2_TCH4_TN2OvaluesIfWeHaveValues_CEF(String ActivityAmount) {
+		try {
+			String[] emissionDetails = { "CO2", "CH4", "N2O" };
+			for (int i = 0; i < emissionDetails.length; i++) {
+				Double formulae = Double.parseDouble(data.get(emissionDetails[i])) * Double.parseDouble(ActivityAmount)
+						/ 1000;
+				String emissionExpectedValues = formulae.toString();
+				WebElement weActualEmissionValues = driver.findElement(
+						By.xpath("//span[text()='t" + emissionDetails[i] + "']/parent::p/following-sibling::p/div"));
+				String actualEmissionValues = weActualEmissionValues.getText().replaceAll(",", "");
+				if (emissionExpectedValues.equals(actualEmissionValues)) {
+					passed("Successfully validated, t" + emissionDetails[i] + " Expected as " + emissionExpectedValues
+							+ " " + "and the Actual as " + actualEmissionValues);
+				} else {
+					Double doubleDiff = Double.parseDouble(emissionExpectedValues)
+							- Double.parseDouble(actualEmissionValues);
+					if (doubleDiff < 1 && doubleDiff > -0.4) {
+						passed("Successfully validated, t" + emissionDetails[i] + " Expected as "
+								+ emissionExpectedValues + " " + "and the Actual as " + actualEmissionValues);
+					} else {
+						failed(driver, "failed to validate, t" + emissionDetails[i] + " Expected as "
+								+ emissionExpectedValues + " " + "and the Actual as " + actualEmissionValues);
+					}
+				}
+			}
+		} catch (NumberFormatException e) {
+			failed(driver, "Exception caught " + e.getMessage());
+		}
+
+	}
+
+	public void verifyCO2eFactor() {
+		try {
+			WebElement cefValueRHP = driver
+					.findElement(By.xpath("//span[contains(text(),'CO2e')]//parent::div//following-sibling::div"));
+			String newPlainValue = approximateDecimalValueWithBigDecimal(cefValueRHP.getText());
+			if (newPlainValue.equals(emmissionFactorValueExp)) {
+				passed("Succesfully validated tCO2e value" + newPlainValue + " And Actual is "
+						+ emmissionFactorValueExp);
+			} else {
+				fail("Failed validated tCO2e value" + " " + newPlainValue + " But Actual is "
+						+ emmissionFactorValueExp);
+			}
+			WebElement weNameOfCEF = driver.findElement(
+					By.xpath("//span[contains(text(),'Name of Custom EF')]//parent::div//following-sibling::div"));
+			if (weNameOfCEF.getText().equals(CustomEmissionFactorName)) {
+				passed("successfully validated name of custom emission factor");
+			} else {
+				fail("failed to validate name of custom emission factor");
+			}
+		} catch (Exception e) {
+			failed(driver, "Exception caught " + e.getMessage());
+		}
+	}
+
+	public void verifyCO2eFactorForCustomEmissionFactorRHP() {
+		try {
+			sleep(1);
+			WebElement cefValueRHP = driver
+					.findElement(By.xpath("//span[contains(text(),'CO2e')]//parent::div//following-sibling::div"));
+			System.out.println(cefValueRHP.getText());
+			String newPlainValue = approximateDecimalValueWithBigDecimal(cefValueRHP.getText().replaceAll(",", ""));
+			if (newPlainValue.equals(emmissionFactorValueExp)) {
+				passed("Succesfully validated tCO2e value" + newPlainValue + " And Actual is "
+						+ emmissionFactorValueExp);
+			} else {
+				Double doubleDiff = Double.parseDouble(newPlainValue) - Double.parseDouble(emmissionFactorValueExp);
+				if (doubleDiff < 1 && doubleDiff > -0.4) {
+					passed("Succesfully validated activityDetail" + newPlainValue + " And Actual is "
+							+ emmissionFactorValueExp);
+				} else {
+					failed(driver, "Failed validated activityDetail" + " " + newPlainValue + " But Actual is "
+							+ emmissionFactorValueExp);
+				}
+			}
+		} catch (Exception e) {
+			failed(driver, "Exception caught " + e.getMessage());
+		}
+	}
+
+	public void validateEmissionDtailsForCalculatorsHavingCo2eField_TCO2E_CEF(String Amount) {
+		try {
+			sleep(2);
+			WebElement CO2eActivity = driver
+					.findElement(By.xpath("//span[contains(text(),'CO2e')]/parent::p/following-sibling::p/div"));
+			String strCO2E;
+			if (data.get("CardName").equals("Use of Sold Products")) {
+				strCO2E = data.get("CO2e (Yearly)");
+			} else {
+				strCO2E = data.get("CO2e");
+			}
+			Double ValCO2e = Double.parseDouble(strCO2E) * Double.parseDouble(Amount) / 1000;
+			String ValCO2eRHP1 = ValCO2e.toString();
+			String ValCO2eRHP = approximateDecimalValueWithBigDecimal(ValCO2eRHP1);
+			if (CO2eActivity.getText().equals(ValCO2eRHP)) {
+				passed("Succesfully validated tCO2e value" + ValCO2eRHP + " And Actual is " + CO2eActivity.getText());
+			} else {
+				Double doubleDiff = Double.parseDouble(ValCO2eRHP) - Double.parseDouble(CO2eActivity.getText());
+				if (doubleDiff < 1 && doubleDiff > -0.4) {
+					passed("Succesfully validated tCO2e value" + ValCO2eRHP + " And Actual is "
+							+ CO2eActivity.getText());
+				} else {
+					failed(driver, "Failed validated tCO2e value" + " " + ValCO2eRHP + " But Actual is "
+							+ CO2eActivity.getText());
+				}
+			}
+			WebElement EFActivity = driver.findElement(By.xpath(
+					"//p[text()='Emission Details']/ancestor::div//span[text()='Emission Factor']/parent::p/following-sibling::p/div"));
+			String s2 = EFActivity.getText().trim();
+			String[] EFValueRHP = s2.split(" ");
+			String tco2eCEFRHP = approximateDecimalValueWithBigDecimal(strCO2E);
+			if (EFValueRHP[0].equals(tco2eCEFRHP)) {
+				passed("Succesfully validated Emission factor value" + EFValueRHP[0] + " And Actual is " + tco2eCEFRHP);
+			} else {
+				Double doubleDiff = Double.parseDouble(EFValueRHP[0]) - Double.parseDouble(tco2eCEFRHP);
+				if (doubleDiff < 1 && doubleDiff > -0.4) {
+					passed("Succesfully validated Emission factor value" + EFValueRHP[0] + " And Actual is "
+							+ tco2eCEFRHP);
+				} else {
+					failed(driver, "Failed validated Emission factor value" + " " + EFValueRHP[0] + " But Actual is "
+							+ tco2eCEFRHP);
+				}
+			}
+		} catch (Exception e) {
+			failed(driver, "Exception caught " + e.getMessage());
+		}
+	}
+
+	public void addCustomEmissionFactorForULA_DLA_ParameterInput() {
+		try {
+			SelectDropdownOptionsForCalculatorActivityFields("Energy Category");
+			entertTextInTextFieldForCalculators_ActivityDetails("CO2");
+			entertTextInTextFieldForCalculators_ActivityDetails("CH4");
+			entertTextInTextFieldForCalculators_ActivityDetails("N2O");
 //			  if(!data.get("CardName").equals("Downstream Leased Assets")) {
 //				  entertTextInTextFieldForCalculators_ActivityDetails("Biofuel CO2");
 //			  }
-			  commonFieldsForAddingCUSTOMEMISSIONFACTOR_ParameterInput("Source of Emission Factor","false");
+			commonFieldsForAddingCUSTOMEMISSIONFACTOR_ParameterInput("Source of Emission Factor", "false");
 		} catch (Exception e) {
-			failed(driver,"Exception caught "+e.getMessage());
+			failed(driver, "Exception caught " + e.getMessage());
 		}
-	  }
-	
-	   
-	//--------------------------------------- cef end --------------------------------------------------------//
-	
-	
+	}
+
+	// --------------------------------------- cef end
+	// --------------------------------------------------------//
+
 	public UpstreamLeasedAssetsGHGCalculatorPage navigateToUpStreamLeasedAssert() {
 		return new UpstreamLeasedAssetsGHGCalculatorPage(driver, data);
-		
+
 	}
-	
+
 	public InvestmentsGHGCalculatorsPage navigateInvestmentsPage() {
 		return new InvestmentsGHGCalculatorsPage(driver, data);
-		
+
 	}
-	
+
 	public DirectEmissionsCalculatorPage navigateToDirectEmissionPage(Data data) {
 		return new DirectEmissionsCalculatorPage(driver, data);
-		
+
 	}
-	
+
 	public BusinessTravelCalculatorPage clickOnDistancebasedMethodInBusinessTravelCalculator() {
 		clickOn(btnDistanceBasedMethod, "DistanceBasedMethodCalculator");
 		sleep(3000);
@@ -1053,7 +1112,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		clickOn(weWasteGeneratedInOperations, "WasteGeneratedInOperations");
 		return new WasteGeneratedInOperationsCalculatorPage(driver, data);
 	}
-	
+
 	Date date = new Date();
 	Random rnd = new Random();
 	@FindBy(xpath = "//div[@class='activity-item']//article/*")
@@ -1062,7 +1121,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 	public WebElement btnStationary;
 	@FindBy(xpath = "//button[@aria-label='Close']")
 	public WebElement btnCloseProcessingofsoldProduct;
-	@FindBy (xpath = "//li[@aria-label='Transactions']")
+	@FindBy(xpath = "//li[@aria-label='Transactions']")
 	public WebElement btnTransactions;
 	@FindBy(xpath = "//li[@aria-label='Emission Factors']")
 	public WebElement btnParameterScope1;
@@ -1074,8 +1133,8 @@ public class GHGCalculatorsPage extends CalculatorElements {
 	public WebElement bttnCloseAdd;
 	@FindBy(xpath = "//div[@name='center']")
 	public WebElement agGridForCalculators;
-	
-	@FindBy(xpath = "//div[text()='Waste Generated in Operations']")
+
+	@FindBy(xpath = "//*[text()='Waste Generated in Operations']")
 	public WebElement weWasteGeneratedInOperations;
 	@FindBy(xpath = "//article[@aria-label='Add Activity']")
 	public WebElement btnAddActivities3_1;
@@ -1085,9 +1144,12 @@ public class GHGCalculatorsPage extends CalculatorElements {
 	public WebElement btnCancelActivity;
 	@FindBy(xpath = "(//span[text()='Next']//parent::button//parent::span//following-sibling::button)[2]")
 	public WebElement btnEditActivityMobileComb;
-	
-	/* -----------------------------------------------  Common --------------------------------------------------------*/
-	
+
+	/*
+	 * ----------------------------------------------- Common
+	 * --------------------------------------------------------
+	 */
+
 //	public TransactionsPage clickOnTransactionsSubMenu() {
 //		try {
 //			waitForElement(btnTransactions);
@@ -1098,7 +1160,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //		}
 //		return null;
 //	}
-	
+
 	public void clickOnCloseInActivityDetails() {
 
 		try {
@@ -1107,7 +1169,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
-	
+
 	public void clickOnCloseInActivityDetailsSoldProduct() {
 		clickOn(btnCloseProcessingofsoldProduct, "Close Button");
 	}
@@ -1118,15 +1180,14 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		System.out.println(newValue);
 		return newValue.toPlainString();
 	}
-	
-	
-	public static String approximateDecimalValueWithBigDecimalWitgDecimal(String value,int DecimalCount) {
+
+	public static String approximateDecimalValueWithBigDecimalWitgDecimal(String value, int DecimalCount) {
 		BigDecimal myBigDecimal = new BigDecimal(value);
 		BigDecimal newValue = myBigDecimal.setScale(DecimalCount, RoundingMode.DOWN).stripTrailingZeros();
 		System.out.println(newValue);
 		return newValue.toPlainString();
 	}
-	
+
 	public static String approximateDecimalValueWithBigDecimal_Up(String value) {
 		BigDecimal myBigDecimal = new BigDecimal(value);
 		BigDecimal newValue = myBigDecimal.setScale(2, RoundingMode.UP).stripTrailingZeros();
@@ -1134,27 +1195,26 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		return newValue.toPlainString();
 	}
 
-	
-	
 	@FindBy(xpath = "//span[text()='Period']//parent::div//child::div//*[@data-testid='ArrowDropDownIcon']")
-    private WebElement drpPeriodDwnLatest;
-    public void selectPeriodToAll() {
-        try {
-            clickOn(drpPeriodDwnLatest, "period drop down");
-            String periodDesc = "//ul[@role='tree']//li//div//div[text()='All']";
-            sleep(2000);
-            clickOnElementWithDynamicXpath(periodDesc, "period selected");
-            sleep(2000);
-        } catch (Exception e) {
-            failed(driver, "Exception caught " + e.getMessage());
-        }
-    }
-	
+	private WebElement drpPeriodDwnLatest;
+
+	public void selectPeriodToAll() {
+		try {
+			clickOn(drpPeriodDwnLatest, "period drop down");
+			String periodDesc = "//ul[@role='tree']//li//div//div[text()='All']";
+			sleep(2000);
+			clickOnElementWithDynamicXpath(periodDesc, "period selected");
+			sleep(2000);
+		} catch (Exception e) {
+			failed(driver, "Exception caught " + e.getMessage());
+		}
+	}
+
 	String customEmissionName;
 
 	public void clickOnCloseInActivityDetailsInScope2() {
 		clickOn(btnCloselatest, "Close Button");
-		//clickOnGenerateButtonAlternateScoep2();
+		// clickOnGenerateButtonAlternateScoep2();
 	}
 
 	public void clickOnGenerateButtonAlternateScoep2() {
@@ -1180,24 +1240,25 @@ public class GHGCalculatorsPage extends CalculatorElements {
 
 	public void clickOnGenerateButtonAlternate() {
 		try {
-		    SelectPeriod2022();
-		    String strGenerate = "//*[@aria-label='Select refresh to calculate emissions totals. Any activities spread across multiple periods will be prorated by the number of days.']";
-		    WebElement btnGenerate = driver.findElement(By.xpath(strGenerate));
+			SelectPeriod2022();
+			String strGenerate = "//*[@aria-label='Select refresh to calculate emissions totals. Any activities spread across multiple periods will be prorated by the number of days.']";
+			WebElement btnGenerate = driver.findElement(By.xpath(strGenerate));
 			actionsClick(btnGenerate, "generate button");
 			validateGenerateButtonToastMessage();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	@FindBy(xpath="//div[text()='Emissions Value Refreshed Successfully']")
+
+	@FindBy(xpath = "//div[text()='Emissions Value Refreshed Successfully']")
 	public WebElement generatButtonToastMessage;
-	public void validateGenerateButtonToastMessage(){
+
+	public void validateGenerateButtonToastMessage() {
 		try {
-			if(isElementPresent(generatButtonToastMessage)){
-				passed("Successfully Validated,toast Message as"+generatButtonToastMessage.getText());
-			}else {
-				failed(driver,"Failed to Validate Generate Button Toast Message");
+			if (isElementPresent(generatButtonToastMessage)) {
+				passed("Successfully Validated,toast Message as" + generatButtonToastMessage.getText());
+			} else {
+				failed(driver, "Failed to Validate Generate Button Toast Message");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -1230,9 +1291,9 @@ public class GHGCalculatorsPage extends CalculatorElements {
 	public void clickOnbuttonParameneterInputGHGCalculator() {
 		try {
 			Actions action = new Actions(driver);
-			if(data.get("Activity").equals("Add")) {
-			      clickOn(btnAddCstmEmsonFctr, "clicked on Add parameter Button");
-			}else if(data.get("Activity").equals("Edit")) {
+			if (data.get("Activity").equals("Add")) {
+				clickOn(btnAddCstmEmsonFctr, "clicked on Add parameter Button");
+			} else if (data.get("Activity").equals("Edit")) {
 				String strCefName = "//*[text()='" + CustomEmissionFactorName + "']//parent::div";
 				WebElement weCEFGRID = driver.findElement(By.xpath(strCefName));
 				action.doubleClick(weCEFGRID).build().perform();
@@ -1240,7 +1301,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 				clickOnEditButtonInActivityDetails();
 			}
 		} catch (Exception e) {
-			failed(driver,"Exception caught "+e.getMessage());
+			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
 
@@ -1251,41 +1312,45 @@ public class GHGCalculatorsPage extends CalculatorElements {
 	public void clickOnEditParameneterInputGHGCalculator() {
 		clickOn(btnEditCstmEmsonFctr, "clicked on Edit parameter Button");
 	}
-	
-	/* -----------------------------------------------  Common close--------------------------------------------------------*/
-	
-	/* -----------------------------------------------  Calculators --------------------------------------------------------*/
-	
-	
-	
+
+	/*
+	 * ----------------------------------------------- Common
+	 * close--------------------------------------------------------
+	 */
+
+	/*
+	 * ----------------------------------------------- Calculators
+	 * --------------------------------------------------------
+	 */
+
 	public void clickOnActivityInActivitiesGridMultipleForAGGridEdit() {
 		try {
 			String name;
 			waitForElementForCalculators(agGridForCalculators, "AG grid");
-			//extractEmissionValueBeforeGenerate();
-			if(data.get("CardName").equals("Investments")) {
-				if(data.get("Investment subName").contains("Debt")) {
-					 name = data.get("Investee Company/Project");
-				}else {
-					 name = data.get("Investee Company");
+			// extractEmissionValueBeforeGenerate();
+			if (data.get("CardName").equals("Investments")) {
+				if (data.get("Investment subName").contains("Debt")) {
+					name = data.get("Investee Company/Project");
+				} else {
+					name = data.get("Investee Company");
 				}
-			}else {
-				  name = data.get("Facility Name");
+			} else {
+				name = data.get("Facility Name");
 			}
-			for(int i=0;i<10;i++) {
+			for (int i = 0; i < 10; i++) {
 				String agGridName;
-				String strAGRow = "//*[text()='"+name+"']//ancestor::div[@role='row']";
+				String strAGRow = "//*[text()='" + name + "']//ancestor::div[@role='row']";
 				WebElement weAGRow = driver.findElement(By.xpath(strAGRow));
-				if(!weAGRow.getAttribute("class").contains("ag-row-selected")) {
-					if(data.get("CardName").contains("End-of-Life Treatment of Sold Products")) {
-						agGridName="//*[text()='"+name+"']";
-					}else {
-						agGridName="//*[text()='"+name+"' and @aria-label='"+name+"']";
+				if (!weAGRow.getAttribute("class").contains("ag-row-selected")) {
+					if (data.get("CardName").contains("End-of-Life Treatment of Sold Products")) {
+						agGridName = "//*[text()='" + name + "']";
+					} else {
+						agGridName = "//*[text()='" + name + "' and @aria-label='" + name + "']";
 					}
 					WebElement we = driver.findElement(By.xpath(agGridName));
 					we.click();
-				}else {	
-					if(weAGRow.getAttribute("class").contains("ag-row-selected")) {
+				} else {
+					if (weAGRow.getAttribute("class").contains("ag-row-selected")) {
 						passed("Clicked on, Activity of Facility" + "AG GRID");
 						break;
 					}
@@ -1306,9 +1371,12 @@ public class GHGCalculatorsPage extends CalculatorElements {
 				.findElement(By.xpath("//*[text()='" + data.get("Facility / Location") + "']//parent::div"));
 		clickOn(weActivity, "Activity of Facility" + data.get("Facility / Location"));
 	}
-	
-	/* -----------------------------------------------  Direct Emissions  --------------------------------------------------------*/
-	
+
+	/*
+	 * ----------------------------------------------- Direct Emissions
+	 * --------------------------------------------------------
+	 */
+
 	public DirectEmissionsCalculatorPage clickOnScope1DirectEmissions() {
 		clickOn(weDirectEmissions, "Scope1DirectEmissions");
 		return new DirectEmissionsCalculatorPage(driver, data);
@@ -1327,7 +1395,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		weGHGCalculators.click();
 		// clickOnElement(weGHGEmissionSetUp, "GHGEmission setUp Menu");
 	}
-	
+
 	public DirectEmissionsCalculatorPage clickOnRefrigerantsandFugitivesScope1GHGCalculator() {
 		clickOn(btnRefrigerantsScope1, "Refrigerants Button Scope1");
 		return new DirectEmissionsCalculatorPage(driver, data);
@@ -1338,12 +1406,17 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		clickOn(btnRefrigerantsScope1, "Refrigerants Button Scope1");
 		return new DirectEmissionsCalculatorPage(driver, data);
 	}
-	
-	
-	/* -----------------------------------------------  Direct Emissions close --------------------------------------------------------*/
-	
-	/* ----------------------------------------  Purchhased Goods and Services --------------------------------------------------------*/
-	
+
+	/*
+	 * ----------------------------------------------- Direct Emissions close
+	 * --------------------------------------------------------
+	 */
+
+	/*
+	 * ---------------------------------------- Purchhased Goods and Services
+	 * --------------------------------------------------------
+	 */
+
 	@FindBy(xpath = "//div[text()='Purchased Goods and Services']")
 	public WebElement weScope3Purchased_Good_Ser;
 
@@ -1351,15 +1424,17 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		clickOn(weScope3Purchased_Good_Ser, "Scope1DirectEmissions");
 		return new PurchasedGoodsAndServicesGHGCalculatorPage(driver, data);
 	}
-	
+
 	public PurchasedGoodsAndServicesGHGCalculatorPage clickOnScope3_1PurchasedGoods_SerSpend() {
 		clickOn(btnScope3_1SpendBased, "purchasd spend");
 		return new PurchasedGoodsAndServicesGHGCalculatorPage(driver, data);
 	}
+
 	@FindBy(xpath = "//article[@aria-label='View Organization Data']")
 	public WebElement viewOrgData;
-	
+
 	public static String CO2valueBefore;
+
 	public void extractEmissionValueBeforeGenerate() {
 		try {
 			String totalco2ValueBeforeGenerate = "//span[contains(text(),'Total(tCO2e)')]";
@@ -1367,32 +1442,29 @@ public class GHGCalculatorsPage extends CalculatorElements {
 			WebElement totalco2Value = driver.findElement(By.xpath(totalco2ValueBeforeGenerate));
 			String afteregenrtvalue = totalco2Value.getText();
 			String[] CO2valueafter = afteregenrtvalue.split("- ");
-			 CO2valueBefore = CO2valueafter[1];
+			CO2valueBefore = CO2valueafter[1];
 			System.out.println("generated emission are" + ":-" + CO2valueBefore);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
-	
-	
+
 	public void clickOnAddActivityButton() {
 		try {
 			waitForElementForCalculators(agGridForCalculators, "Activity AG Grid");
 			sleep(1000);
-			//extractEmissionValueBeforeGenerate();
+			// extractEmissionValueBeforeGenerate();
 			clickOn(btnActivities_scope1, "btnActivities");
 		} catch (Exception e) {
 			System.err.println("While Selecting Add Plus Button");
 		}
 	}
 
-	
-
 	public void clickOnAddActivityButtonPurch() {
 		try {
-			//extractEmissionValueBeforeGenerate();
+			// extractEmissionValueBeforeGenerate();
 			waitForElement(btnAddActivities3_1);
 			clickOn(btnAddActivities3_1, "btnActivities");
 		} catch (Exception e) {
@@ -1404,13 +1476,14 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		try {
 			sleep(2000);
 			Actions action = new Actions(driver);
-		sleep(4000);
-		extractEmissionValueBeforeGenerate();
-		waitForElement(btnActivities_scope1);
-		jsClick(btnActivities_scope1, "btnActivities_scope1");
+			sleep(4000);
+			extractEmissionValueBeforeGenerate();
+			waitForElement(btnActivities_scope1);
+			jsClick(btnActivities_scope1, "btnActivities_scope1");
 			sleep(3000);
-			if(isElementPresentDynamicXpath("//article[@aria-label='View Organization Data']")) {
-				WebElement iconViewOrgData = driver.findElement(By.xpath("//article[@aria-label='View Organization Data']"));
+			if (isElementPresentDynamicXpath("//article[@aria-label='View Organization Data']")) {
+				WebElement iconViewOrgData = driver
+						.findElement(By.xpath("//article[@aria-label='View Organization Data']"));
 				jsClick(iconViewOrgData, "View Organization Data");
 			}
 			sleep(4000);
@@ -1419,12 +1492,13 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		} catch (Exception e) {
 			failed(driver, "Exception caught " + e.getMessage());
 		}
-		
+
 	}
-	//button[text()='Mobile Combustion']
-	
+	// button[text()='Mobile Combustion']
+
 	@FindBy(xpath = "//button[text()='Mobile Combustion']")
 	public WebElement mobilecombustionCalc;
+
 	public DirectEmissionsCalculatorPage clickOnMobileCombustion() {
 		try {
 			jsClick(mobilecombustionCalc, "Mobile Combustion");
@@ -1446,13 +1520,14 @@ public class GHGCalculatorsPage extends CalculatorElements {
 
 	public void clickOnActivityInActivitiesGrid() {
 		try {
-			WebElement weActivity = driver
-					.findElement(By.xpath("//div[text()='" + data.get("FacilityName") + "']//parent::div[@role='row']"));
+			WebElement weActivity = driver.findElement(
+					By.xpath("//div[text()='" + data.get("FacilityName") + "']//parent::div[@role='row']"));
 			clickOn(weActivity, "Activity of Facility" + data.get("FacilityName"));
 		} catch (Exception e) {
 			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
+
 	public void extractTco2ValueEmployeeCommuity() {
 		try {
 			WebElement tco2Filed = driver.findElement(By.xpath("//span[text()='tCO2e']//parent::div//parent::div"));
@@ -1466,17 +1541,16 @@ public class GHGCalculatorsPage extends CalculatorElements {
 			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
-	
-	
-	@FindBy(xpath = "//div[text()='Fuel and Energy Related Activities']")
+
+	@FindBy(xpath = "//*[text()='Fuel and Energy Related Activities']")
 	public WebElement weScope3_3FuelEnrgRelatAct;
-	@FindBy(xpath = "//div[text()='Upstream Transportation and Distribution']")
+	@FindBy(xpath = "//*[text()='Upstream Transportation and Distribution']")
 	public WebElement weScope3_4UpStrmTrnprtnDstrbtn;
-	@FindBy(xpath = "//div[text()='Downstream Transportation and Distribution']")
+	@FindBy(xpath = "//*[text()='Downstream Transportation and Distribution']")
 	public WebElement weScope3_9DownStrmTrnprtnDstrbtn;
-	@FindBy(xpath = "//div[text()='Franchises']")
+	@FindBy(xpath = "//*[text()='Franchises']")
 	public WebElement weScope3_14Franchises;
-	@FindBy(xpath = "//div[text()='Home Office / Telecommuting']")
+	@FindBy(xpath = "//*[text()='Home Office / Telecommuting']")
 	public WebElement weScope3_7HomeOfficeTelecommuting;
 
 	public FuelandEnergyRelatedActivitiesCalculatorPage clickOnScope3_3_Fuel_and_Energy_Related_Activities() {
@@ -1484,6 +1558,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		sleep(2000);
 		return new FuelandEnergyRelatedActivitiesCalculatorPage(driver, data);
 	}
+
 //
 	public UpstreamTransportationandDistributionCalculatorPage clickOnScope3_4_Upstream_Transportation_and_Distribution() {
 		jsClick(weScope3_4UpStrmTrnprtnDstrbtn, "Scope3.4Upstream Transportation and Distribution");
@@ -1501,13 +1576,14 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		sleep(2000);
 		return new DownstreamTransportationandDistributionCalculatorPage(driver, data);
 	}
+
 //
 	public FranchisesCalculatorPage clickOnScope3_14_Franchises() {
 		jsClick(weScope3_14Franchises, "Scope3.14 Franchises");
 		sleep(2000);
 		return new FranchisesCalculatorPage(driver, data);
 	}
-	
+
 	public void verifyEditActivityUpdatedToastMessage() {
 		try {
 			By toast = By.xpath("//div[text()='Activity updated successfully']");
@@ -1530,26 +1606,26 @@ public class GHGCalculatorsPage extends CalculatorElements {
 			if (isElementPresentDynamicXpath(toast)) {
 				passed("Successfully displayed toast message - Activity added successfully");
 			} else {
-					failed(driver, "Failed to display toast message");
-				}
-			
-			waitForElementForCalculators(lblActivityDetails_P,"RHP Navigation Buttons");
+				failed(driver, "Failed to display toast message");
+			}
+
+			waitForElementForCalculators(lblActivityDetails_P, "RHP Navigation Buttons");
 		} catch (Exception e) {
 			failed(driver, "Failed to display toast message");
 		}
 
 	}
-	
+
 	public void verifyEditActivityToastMessage() {
 		try {
 			sleep(1000);
-			String toast ="//*[contains(text(),'Activity updated successfully')]";
+			String toast = "//*[contains(text(),'Activity updated successfully')]";
 			if (isElementPresentDynamicXpath(toast)) {
 				passed("Successfully displayed toast message - Activity updated successfully");
 			} else {
-					failed(driver, "Failed to display toast message");
-				}
-			waitForElementForCalculators(lblActivityDetails_P,"RHP Navigation Buttons");
+				failed(driver, "Failed to display toast message");
+			}
+			waitForElementForCalculators(lblActivityDetails_P, "RHP Navigation Buttons");
 		} catch (Exception e) {
 			failed(driver, "Failed to display toast message");
 		}
@@ -1568,7 +1644,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 					failed(driver, "Failed to display toast message");
 				}
 			}
-			waitForElementForCalculators(lblActivityDetails_P,"RHP Navigation Buttons");
+			waitForElementForCalculators(lblActivityDetails_P, "RHP Navigation Buttons");
 		} catch (Exception e) {
 			failed(driver, "Failed to display toast message");
 		}
@@ -1576,6 +1652,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 
 	@FindBy(xpath = "//span[contains(text(),'Name of Custom')]/parent::*/following-sibling::*")
 	public WebElement CEFName;
+
 	public void verifyCEFEditToastMessage() {
 		try {
 			By toast = By.xpath("//div[text()='Custom Emission Factor updated successfully']");
@@ -1584,16 +1661,16 @@ public class GHGCalculatorsPage extends CalculatorElements {
 			} else {
 				if (isElementPresent(toast)) {
 					passed("Successfully displayed toast message - Custom Emission updated successfully");
-				}else {
+				} else {
 					failed(driver, "Failed to display toast message");
 				}
 			}
-			waitForElementForCalculators(lblActivityDetails_P,"RHP Navigation Buttons");
+			waitForElementForCalculators(lblActivityDetails_P, "RHP Navigation Buttons");
 		} catch (Exception e) {
 			failed(driver, "Failed to display toast message");
 		}
 	}
-	
+
 	@FindBy(xpath = "//div[text()='Capital Goods']")
 	public WebElement weScope3Capital_Good_Ser;
 
@@ -1601,8 +1678,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		clickOn(weScope3Capital_Good_Ser, "Scope1DirectEmissions");
 		return new CapitalGoodsGHGCalculatorPage(driver, data);
 	}
-	
-	
+
 	public void clickOnCancelButtonInActivityDetails() {
 		waitForElement(btnCancelActivity);
 		clickOn(btnCancelActivity, "btnCancelActivity");
@@ -1626,7 +1702,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		return new CapitalGoodsGHGCalculatorPage(driver, data);
 	}
 
-	
 	@FindBy(xpath = "//div[text()='End-of-Life Treatment of Sold Products']")
 	public WebElement weScope3_12EndOfLife;
 
@@ -1634,14 +1709,14 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		clickOn(weScope3_12EndOfLife, "Scope3_12End Of Life Treatment Sold Praducts");
 		return new EndOfLifeTreatmentGHGCalculatorPage(driver, data);
 	}
-	
+
 	public void extractTco2ValueEndOfLifeTreatment() {
 		WebElement tco2Filed = driver.findElement(By.xpath("//span[text()='tCO2e']//parent::p//following-sibling::p"));
 		String prevoiusTc02 = tco2Filed.getText();
 		GlobalVariables.tco2e = Double.parseDouble(prevoiusTc02);
 		System.out.println(GlobalVariables.tco2e);
 	}
-	
+
 	@FindBy(xpath = "//div[text()='Hotel Stay']")
 	public WebElement weScope3_HotelStay;
 
@@ -1649,7 +1724,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		clickOn(weScope3_HotelStay, "Click On Hotel Stay GHG Calculator");
 		return new HotelStayGHGCalculatorPage(driver, data);
 	}
-	
+
 	@FindBy(xpath = "//div[text()='Upstream Leased Assets']")
 	public WebElement weScope3_8UpstreamLeasedAsset;
 
@@ -1664,6 +1739,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 	public void clickOnCancelLeasedAssetInActivityDetails() {
 		clickOn(btncancelLeasedAssets, "Cancel Button");
 	}
+
 	@FindBy(xpath = "//div[text()='Downstream Leased Assets']")
 	public WebElement weScope3_8DownstreamLeasedAsset;
 
@@ -1679,12 +1755,12 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		waitForElement(btnEditActivitypurchased);
 		clickOn(btnEditActivitypurchased, "btnEditActivitypurchased");
 	}
-	
+
 	public ProcessingofSoldProductsCalculatorPage clickOnScope3_10ProcessingOfSoldProduct() {
 		clickOn(weScope3_10ProcessingSoldProduct, "Click On Processing of sold Products GHG Calculator");
 		return new ProcessingofSoldProductsCalculatorPage(driver, data);
 	}
-	
+
 	@FindBy(xpath = "//div[text()='Use of Sold Products']")
 	public WebElement weScope3_1UseSoldProduct;
 
@@ -1692,7 +1768,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		clickOn(weScope3_1UseSoldProduct, "Click On Use of sold Products GHG Calculator");
 		return new UseOfSoldProductGHGCalculatorPage(driver, data);
 	}
-	
+
 	@FindBy(xpath = "//div[text()='Investments']")
 	public WebElement weScope3_15Investments;
 
@@ -1700,7 +1776,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		clickOn(weScope3_15Investments, "Click On Investments GHG Calculator");
 		return new InvestmentsGHGCalculatorsPage(driver, data);
 	}
-	
+
 	public void clickOnActivityInActivitiesGridScope3_15InvestmentSpecificMethod() {
 		WebElement weActivityScope3_15 = driver
 				.findElement(By.xpath("//*[text()='" + data.get("Investee Company") + "']//parent::div"));
@@ -1712,7 +1788,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 				.findElement(By.xpath("//*[text()='" + data.get("Investee Company/Project") + "']//parent::div"));
 		clickOn(weActivityScope3_15, "Activity Investee Company" + data.get("Investee Company/Project"));
 	}
-	
+
 	@FindBy(xpath = "//button[contains(text(),'Average Data Method')]")
 	public WebElement btnInvestmentsAveargeMethod;
 
@@ -1728,7 +1804,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		sleep(3000);
 		clickOn(btnInvestmentsspecificMethod, "Click On Investment specific method Button GHG Calculator");
 	}
-	
+
 	@FindBy(xpath = "//button[contains(text(),'Debt & Project Financing')]")
 	public WebElement btnInvestmentsDebt_Project;
 
@@ -1736,7 +1812,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		clickOn(btnInvestmentsDebt_Project, "Click On Investment Debt and Project Financing Button GHG Calculator");
 		return new InvestmentsGHGCalculatorsPage(driver, data);
 	}
-	
+
 	public void SelectPeriod() {
 		clickOn(drpPeriodDwn, "period drop down");
 		verifyIfElementPresent(lblDropPeriod, "lblDropPeriod", "lblDropPeriod");
@@ -1746,31 +1822,31 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		clickOn(perioddrp, "clicked ");
 		sleep(2000);
 	}
-	public void SelectPeriod2022() {                                                                               //naveen
+
+	public void SelectPeriod2022() { // naveen
 		try {
 			sleep(2001);
-			WebElement drpPeriodDwn=driver.findElement(By.xpath("//span[text()='Period']//following-sibling::div"));
+			WebElement drpPeriodDwn = driver.findElement(By.xpath("//span[text()='Period']//following-sibling::div"));
 			jsClick(drpPeriodDwn, "period drop down");
-			WebElement perioddrp = driver 
-						.findElement(By.xpath("//ul//*[text()='"+data.get("Period Year")+"']"));
+			WebElement perioddrp = driver.findElement(By.xpath("//ul//*[text()='" + data.get("Period Year") + "']"));
 			scrollTo(perioddrp);
-			actionsClick(perioddrp, "clicked "+data.get("Period Year")+"");
+			actionsClick(perioddrp, "clicked " + data.get("Period Year") + "");
 		} catch (Exception e) {
-			System.err.println("Exception caught While Selecting Period Year ---> "+ data.get("Period Year"));
+			System.err.println("Exception caught While Selecting Period Year ---> " + data.get("Period Year"));
 		}
 	}
-	
-	public void SelectPeriod2024() {                                                                               //naveen
+
+	public void SelectPeriod2024() { // naveen
 		try {
 			clickOn(drpPeriodDwn, "period drop down");
-			WebElement perioddrp = driver 
-					.findElement(By.xpath("//li//div[text()='"+Constants.overlapPeriodYear2024+"']"));;
-			actionsClick(perioddrp, "clicked "+Constants.overlapPeriodYear2022+"");
+			WebElement perioddrp = driver
+					.findElement(By.xpath("//li//div[text()='" + Constants.overlapPeriodYear2024 + "']"));
+			;
+			actionsClick(perioddrp, "clicked " + Constants.overlapPeriodYear2022 + "");
 		} catch (Exception e) {
 			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
-	
 
 	@FindBy(xpath = "(//button[contains(text(),'Cancel')])[2]")
 	public WebElement btnCancelScope1stat;
@@ -1779,20 +1855,21 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		clickOn(btnCancelScope1stat, "Cancel Button Stationary");
 	}
 
-	@FindBy(xpath = "//span[text()='Period']//parent::div//child::div//*[local-name()='svg']") ////span[text()='Period']//parent::div//child::div/div[@role='button']
+	@FindBy(xpath = "//span[text()='Period']//parent::div//child::div//*[local-name()='svg']") //// span[text()='Period']//parent::div//child::div/div[@role='button']
 	public WebElement drpPeriodDwn;
 	String[] splittedValue;
-	@FindBy(xpath = "//div[@id='menu-']//child::ul")
+	@FindBy(xpath = "(//*//child::ul)[3]")
 	public WebElement lblDropPeriod;
 
 	public void calculateGHGEmissionBefore() {
 		try {
 			sleep(2000);
 			SelectPeriod2022();
-			WebElement btnGenerateRefresh = driver.findElement(By.xpath("//span[contains(text(),'i')]//parent::div//div//following::span//*[local-name()='svg']"));
+			WebElement btnGenerateRefresh = driver.findElement(
+					By.xpath("//span[contains(text(),'i')]//parent::div//div//following::span//*[local-name()='svg']"));
 			sleep(2000);
 			clickOn(btnGenerateRefresh, "generate button");
-			sleep(2000);                             
+			sleep(2000);
 			WebElement totalco2Value = driver.findElement(By.xpath("//span[contains(text(),'Total(tCO2e)')]"));
 			String beforeGertValue = totalco2Value.getText();
 			splittedValue = beforeGertValue.split("-");
@@ -1803,12 +1880,14 @@ public class GHGCalculatorsPage extends CalculatorElements {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void extractTco2Value() {
 		try {
 			sleep(2000);
-			WebElement tco2Filed = driver.findElement(By.xpath("//span[text()='tCO2e']//parent::p//following-sibling::p/div"));
-			//WebElement tco2Filed = driver.findElement(By.xpath("//span[text()='tCO2e']//parent::p//following-sibling::p"));
+			WebElement tco2Filed = driver
+					.findElement(By.xpath("//span[text()='tCO2e']//parent::p//following-sibling::p/div"));
+			// WebElement tco2Filed =
+			// driver.findElement(By.xpath("//span[text()='tCO2e']//parent::p//following-sibling::p"));
 //		WebElement tco2Filed = driver
 //				.findElement(By.xpath("//span[text()='tCO2e']//parent::p//following-sibling::p"));
 
@@ -1852,10 +1931,10 @@ public class GHGCalculatorsPage extends CalculatorElements {
 			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
-	
+
 	public void extractTco2Value_1_P() {
 		try {
-			String tco2Filed1 ="//span[text()='tCO2e']//parent::p//following-sibling::p/div";
+			String tco2Filed1 = "//span[text()='tCO2e']//parent::p//following-sibling::p/div";
 			System.out.println(WaitForElementWithDynamicXpath(tco2Filed1));
 			WebElement tco2Filed = driver.findElement(By.xpath(tco2Filed1));
 			String prevoiusTc02 = tco2Filed.getText().replaceAll(",", "");
@@ -1958,25 +2037,51 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		}
 	}
 
-	public void calculateGHGEmissionBeforeIndirect() {
+	public void calculateGHGEmissionBeforeActivity() {
 		try {
-			SelectPeriod2022();
+			sleep(2000);
+			Actions act = new Actions(driver);
+			clickOn(drpPeriodDwn, "period drop down");
+			verifyIfElementPresent(lblDropPeriod, "lblDropPeriod", "lblDropPeriod");
+			try {
+				if (viewOrgScreen.isDisplayed()) {
+					for (int j = 0; j < drpActvityType.size(); j++) {
+						if (drpActvityType.get(j).getText().trim().equals(data.get("Period Year"))) {
+							clickOn(drpActvityType.get(j), "selecting the period");
+							break;
+						}
+					}
+				}
+			} catch (Exception e) {
+				System.out.println("Non-Hierarchy");
+				for (int j = 0; j < drpActvityType1.size(); j++) {
+					if (drpActvityType1.get(j).getText().trim().equals(data.get("Period Year"))) {
+						clickOn(drpActvityType1.get(j), "selecting the period");
+						break;
+					}
+				}
+			}
+			sleep(2000);
+			WebElement btnGenerateRefresh = driver.findElement(By.xpath(
+					"//span[@aria-label='Select refresh to calculate emissions totals. Any activities spread across multiple periods will be prorated by the number of days.']//*[local-name()='path']"));
+			waitForElement(btnGenerateRefresh);//// span[contains(text(),'"
+			// + data.get("CalcName") +
+			// "')]//parent::div//div//following::span//*[local-name()='path']
+			act.moveToElement(btnGenerateRefresh).doubleClick(btnGenerateRefresh).build().perform();
 			sleep(1000);
-			WebElement btnGenerateRefresh = driver.findElement(By.xpath("//span[@aria-label='Select refresh to calculate emissions totals. Any activities spread across multiple periods will be prorated by the number of days']"));
-			sleep(2000);
-			clickOn(btnGenerateRefresh, "generate button");
-			sleep(2000);
+			// span[contains(text(),'Location Based Emissions(tCO2e)')]
 			WebElement totalco2Value = driver
-					.findElement(By.xpath("//span[contains(text(),'Location Based Emissions(tCO2e)')]"));
-			String beforeGertValue = totalco2Value.getText();
+					.findElement(By.xpath("//span[text()='" + data.get("CalcName") + "']/../div/div/span"));
+			String beforeGertValue = totalco2Value.getText().replaceAll(",", "");
+			GlobalVariables.valuebefore = beforeGertValue;
 			System.out.println(beforeGertValue);
 			splittedValue = beforeGertValue.split("-");
-			GlobalVariables.initialTotaltCo2e = Double.parseDouble(splittedValue[1].replaceAll(",", ""));
+			GlobalVariables.initialTotaltCo2e = Double.parseDouble(splittedValue[1]);
 			System.out.println(GlobalVariables.initialTotaltCo2e);
 			System.out.println(Arrays.toString(splittedValue));
-		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
+			failed(driver, "Exception caught" + e.getMessage());
 		}
 	}
 
@@ -1997,11 +2102,11 @@ public class GHGCalculatorsPage extends CalculatorElements {
 						/ 10000.0;
 			}
 			if ((roundOffCalculated - rounf_offActual) == 0.0) {
-				passed("activity passes overlap sceanrio as calculatd is" + " " + roundOffCalculated + " " + "and actual is"
-						+ " " + rounf_offActual);
+				passed("activity passes overlap sceanrio as calculatd is" + " " + roundOffCalculated + " "
+						+ "and actual is" + " " + rounf_offActual);
 			} else {
-				fail("activity failed overlap sceanrio as calculatd is" + " " + roundOffCalculated + " " + "and actual is"
-						+ " " + rounf_offActual);
+				fail("activity failed overlap sceanrio as calculatd is" + " " + roundOffCalculated + " "
+						+ "and actual is" + " " + rounf_offActual);
 				System.out.println(
 						"Failed beacuse of values are not matched and diffrenece between calculated and actual value are"
 								+ ":" + (roundOffCalculated - rounf_offActual));
@@ -2059,7 +2164,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		clickOn(btnIndirectEmisssion, "Scope 2 Indirect Emission");
 		return new IndirectEmissionsCalculatorPage(driver, data);
 	}
-	
+
 	public void clickOnMobileCombutionScope1GHGCalculator() {
 		try {
 			sleep(2000);
@@ -2072,6 +2177,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 
 	@FindBy(xpath = "//article[@aria-label='Add Activity']")
 	public WebElement btnActivities;
+
 	public void clickOnAddActivity() {
 		sleep(5000);
 		clickOn(btnActivities, "btnActivities");
@@ -2081,15 +2187,14 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		sleep(5000);
 		clickOn(btnActivitiesLanguage, "btnActivities");
 	}
-	
+
 	public CEFPage clickOnEmissionFactors() {
 		sleep(4000);
 		WebElement clickOnEmissionFactors = driver.findElement(By.xpath("(//ul[@role='tree']//li/div)[4]"));
 		clickOn(clickOnEmissionFactors, "clicked");
-	sleep(2000);		
+		sleep(2000);
 		return new CEFPage(driver, data);
 	}
-
 
 	public void clickOnGenerateBut() {
 		sleep(3000);
@@ -2105,9 +2210,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		sleep(3000);
 	}
 
-
-
-
 	@FindBy(xpath = "//article[@aria-label='View Organization Data']")
 	public WebElement viewOrg;
 
@@ -2116,8 +2218,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		clickOn(viewOrg, "clicked on View Organisation Data");
 	}
 
-	
-	
 	public void clickOnFacilities() {
 		try {
 			sleep(1000);
@@ -2132,9 +2232,9 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		}
 	}
 
-	//---------------------------------------------------------Transaction menu ------------------------------------------------>
-	
-	
+	// ---------------------------------------------------------Transaction menu
+	// ------------------------------------------------>
+
 	public void clickOnTransaction() {
 		try {
 			sleep(2000);
@@ -2144,16 +2244,17 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		} catch (Exception e) {
 			failed(driver, "Exception caught" + e.getMessage());
 		}
-		
+
 	}
-	
+
 	public void searchForOrganizationInAllOrganizations() {
 		try {
 			WebElement txtsearchingForOrganization = driver.findElement(By.xpath("//input[@placeholder='Search']"));
 			verifyIfElementPresent(txtsearchingForOrganization, "Search tab for Organization", "GHGCalculator");
 			clickOn(txtsearchingForOrganization, "Search tab for Organization");
 			enterText(txtsearchingForOrganization, "Search tab for Organization", data.get(""));
-			WebElement optOrganizationName = driver.findElement(By.xpath("//div[text()='"+data.get("OrganizationName")+"']"));
+			WebElement optOrganizationName = driver
+					.findElement(By.xpath("//div[text()='" + data.get("OrganizationName") + "']"));
 			waitForElement(optOrganizationName);
 			clickOn(optOrganizationName, data.get("OrganizationName"));
 			sleep(3000);
@@ -2161,11 +2262,11 @@ public class GHGCalculatorsPage extends CalculatorElements {
 			failed(driver, "Exception caught" + e.getMessage());
 		}
 	}
-	
+
 	public DirectEmissionsCalculatorPage clickOnButtonTransactionsTypes() {
 		try {
 			WebElement btnTransactionType = driver.findElement(By
-					              .xpath("//div[text()='"+data.get("Transaction Type")+"']/parent::div/preceding-sibling::div"));
+					.xpath("//div[text()='" + data.get("Transaction Type") + "']/parent::div/preceding-sibling::div"));
 			verifyIfElementPresent(btnTransactionType, "Transaction Type", "GHGCalculator");
 			clickOn(btnTransactionType, data.get("Transaction Type"));
 			sleep(5000);
@@ -2174,34 +2275,34 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		}
 		return new DirectEmissionsCalculatorPage(driver, data);
 	}
-	
+
 	@FindBy(xpath = "//div[@aria-label='Without label']")
 	public WebElement drpLanguage;
 	@FindBy(xpath = "//button[text()='Yes']")
 	public WebElement btnYes;
+
 	public void selectLanguage(String language) {
 		try {
 			waitForElement(drpLanguage);
 			clickOn(drpLanguage, "drpLanguage");
-			WebElement welanguageName = driver.findElement(By.xpath("//li[text()='"+language+"']"));
+			WebElement welanguageName = driver.findElement(By.xpath("//li[text()='" + language + "']"));
 			clickOn(welanguageName, language);
-			if(isElementPresent(btnYes)) {
+			if (isElementPresent(btnYes)) {
 				clickOn(btnYes, language);
 				sleep(1000);
 			}
-			WebElement weSelectedlanguage = driver.findElement(By.xpath("//div[text()='"+language+"']"));
-			if(isElementPresent(weSelectedlanguage)) {
-				passed("Successfully validated language  in application as _----->  " +   language);
-			}else {
-				failed(driver, "Failed to  validate language in application as _----->  " +   language);
+			WebElement weSelectedlanguage = driver.findElement(By.xpath("//div[text()='" + language + "']"));
+			if (isElementPresent(weSelectedlanguage)) {
+				passed("Successfully validated language  in application as _----->  " + language);
+			} else {
+				failed(driver, "Failed to  validate language in application as _----->  " + language);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	public boolean verifyElementAndHighlightIfExists(WebElement element, String elemName, String pageName) {
 		boolean blnFnd = false;
 		try {
@@ -2218,59 +2319,53 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		}
 		return blnFnd;
 	}
-	
+
 	public void clickOnCalculator(int indexCalc) {
 		sleep(1000);
-		WebElement weCalcName = driver.findElement(By.xpath("(//div[@class='cardContent'])["+indexCalc+"]"));
+		WebElement weCalcName = driver.findElement(By.xpath("(//div[@class='cardContent'])[" + indexCalc + "]"));
 		sleep(500);
 		verifyElementAndHighlightIfExists(weCalcName, "weCalcName", "weCalcName");
 		clickOn(weCalcName, "Clicked on the Calculator   ->");
 	}
+
 	@FindBy(xpath = "//div[text()='Transaction added successfully'")
 	public WebElement toastMessageForAddingTransaction;
-    public void verifyAddTransactionSuccessfulToastMessage() {
-    	try {
-			if(toastMessageForAddingTransaction.getText().trim().equals("Transaction added successfully"))    {
+
+	public void verifyAddTransactionSuccessfulToastMessage() {
+		try {
+			if (toastMessageForAddingTransaction.getText().trim().equals("Transaction added successfully")) {
 				passed("Successfully displayed toast message - Transaction added successfully");
-			}
-			else {
+			} else {
 				failed(driver, "Failed to display toast message");
 			}
 		} catch (Exception e) {
 			failed(driver, "Exception caught" + e.getMessage());
 		}
-    }
-    
-    
-    
-    public static String approximateDecimalValueWithBigDecimalZero(String value) {
-			BigDecimal myBigDecimal = new BigDecimal(value);
-			BigDecimal newValue = myBigDecimal.setScale(0, RoundingMode.DOWN).stripTrailingZeros();
-			System.out.println(newValue);
-			return newValue.toPlainString();
-		
 	}
-	
-	
-	
-	
-	
-	
+
+	public static String approximateDecimalValueWithBigDecimalZero(String value) {
+		BigDecimal myBigDecimal = new BigDecimal(value);
+		BigDecimal newValue = myBigDecimal.setScale(0, RoundingMode.DOWN).stripTrailingZeros();
+		System.out.println(newValue);
+		return newValue.toPlainString();
+
+	}
+
 	public static String ValCO2eRHP;
-	public void calculateTCO2eValueUsing_EmissionFactorValue(String amount) {                   //naveen
-		
+
+	public void calculateTCO2eValueUsing_EmissionFactorValue(String amount) { // naveen
+
 		try {
 			sleep(1);
 			Double ValCO2e;
 			WebElement CO2eActivity = driver
 					.findElement(By.xpath("//span[contains(text(),'CO2e')]/parent::p/following-sibling::p/div"));
-			WebElement emissionFactor = driver.findElement(By
-					            .xpath("//span[text()='Emission Factor']/parent::p/following-sibling::p/div"));
+			WebElement emissionFactor = driver
+					.findElement(By.xpath("//span[text()='Emission Factor']/parent::p/following-sibling::p/div"));
 			String[] emissionFactor1 = emissionFactor.getText().split(" ");
 			String emissionFactorValueRHP = emissionFactor1[0].replaceAll(",", "");
-			//Formula
-			ValCO2e = Double.parseDouble(emissionFactorValueRHP)
-					                       * Double.parseDouble(amount) / 1000;
+			// Formula
+			ValCO2e = Double.parseDouble(emissionFactorValueRHP) * Double.parseDouble(amount) / 1000;
 			String ValCO2eRHP1 = ValCO2e.toString();
 			ValCO2eRHP = approximateDecimalValueWithBigDecimal(ValCO2eRHP1);
 			String CO2eActivityStr = CO2eActivity.getText().replaceAll(",", "");
@@ -2278,24 +2373,21 @@ public class GHGCalculatorsPage extends CalculatorElements {
 			if (CO2eActivityStr3digit.equals(ValCO2eRHP)) {
 				passed("Succesfully validated tCO2e value " + ValCO2eRHP + " And Actual is " + CO2eActivityStr3digit);
 			} else {
-				Double doubleDiff= Double.parseDouble(ValCO2eRHP) - Double.parseDouble(CO2eActivityStr3digit);
-				if(doubleDiff<1 && doubleDiff>-1) {    
-					passed("Succesfully validated tCO2e value" + ValCO2eRHP + " And Actual is " + CO2eActivityStr3digit);
-				}else {
-				    failed(driver,
-						    "Failed validated tCO2e value" + " " + ValCO2eRHP + " But Actual is " + CO2eActivityStr3digit);
+				Double doubleDiff = Double.parseDouble(ValCO2eRHP) - Double.parseDouble(CO2eActivityStr3digit);
+				if (doubleDiff < 1 && doubleDiff > -1) {
+					passed("Succesfully validated tCO2e value" + ValCO2eRHP + " And Actual is "
+							+ CO2eActivityStr3digit);
+				} else {
+					failed(driver, "Failed validated tCO2e value" + " " + ValCO2eRHP + " But Actual is "
+							+ CO2eActivityStr3digit);
 				}
 			}
 		} catch (NumberFormatException e) {
 			failed(driver, "Exception caught" + e.getMessage());
 		}
-		
-		
+
 	}
-	
-	
-	
-	
+
 	@FindBy(xpath = "(//span[text()='CO2']/parent::*/following-sibling::*/div)[1]")
 	private static WebElement CO2inEmissionFactor;
 	@FindBy(xpath = "(//span[text()='CH4']/parent::p/following-sibling::p/div)[1]")
@@ -2311,287 +2403,335 @@ public class GHGCalculatorsPage extends CalculatorElements {
 	public static String expCH4DenoMinatorUnit;
 	public static String expN2ONumereatorUnit;
 	public static String expN2ODenoMinatorUnit;
-	public static void getCO2_CH4_N20Value() {                                                  //naveen
+
+	public static void getCO2_CH4_N20Value() { // naveen
 		try {
-            sleep(2);
-			     CO2Value		   = Double.parseDouble(CO2inEmissionFactor.getText().split(" ")[0].replaceAll(",", ""));
-			String[] ch4		   = CH4inEmissionFactor.getText().replaceAll(",", "").split(" ");
-			String[] n2o		   = N2OinEmissionFactor.getText().replaceAll(",", "").split(" ");
-			 expCO2NumereatorUnit  = CO2inEmissionFactor.getText().replaceAll(",", "").split(" ")[1].split("/")[0];
-			 expCO2DenoMinatorUnit = CO2inEmissionFactor.getText().replaceAll(",", "").split(" ")[1].split("/")[1].split(" ")[0];
-			 expCH4NumereatorUnit  = CH4inEmissionFactor.getText().replaceAll(",", "").split(" ")[1].split("/")[0];
-			 expCH4DenoMinatorUnit = CH4inEmissionFactor.getText().replaceAll(",", "").split(" ")[1].split("/")[1].split(" ")[0];
-			 expN2ONumereatorUnit  = N2OinEmissionFactor.getText().replaceAll(",", "").split(" ")[1].split("/")[0];
-			 expN2ODenoMinatorUnit = N2OinEmissionFactor.getText().replaceAll(",", "").split(" ")[1].split("/")[1].split(" ")[0];
-			//CH4
-			 String p = ch4[0];
-			Double CH4Value = Double.parseDouble(ch4[0]);            
+			sleep(2);
+			CO2Value = Double.parseDouble(CO2inEmissionFactor.getText().split(" ")[0].replaceAll(",", ""));
+			String[] ch4 = CH4inEmissionFactor.getText().replaceAll(",", "").split(" ");
+			String[] n2o = N2OinEmissionFactor.getText().replaceAll(",", "").split(" ");
+			expCO2NumereatorUnit = CO2inEmissionFactor.getText().replaceAll(",", "").split(" ")[1].split("/")[0];
+			expCO2DenoMinatorUnit = CO2inEmissionFactor.getText().replaceAll(",", "").split(" ")[1].split("/")[1]
+					.split(" ")[0];
+			expCH4NumereatorUnit = CH4inEmissionFactor.getText().replaceAll(",", "").split(" ")[1].split("/")[0];
+			expCH4DenoMinatorUnit = CH4inEmissionFactor.getText().replaceAll(",", "").split(" ")[1].split("/")[1]
+					.split(" ")[0];
+			expN2ONumereatorUnit = N2OinEmissionFactor.getText().replaceAll(",", "").split(" ")[1].split("/")[0];
+			expN2ODenoMinatorUnit = N2OinEmissionFactor.getText().replaceAll(",", "").split(" ")[1].split("/")[1]
+					.split(" ")[0];
+			// CH4
+			String p = ch4[0];
+			Double CH4Value = Double.parseDouble(ch4[0]);
 			String CH4Value1 = CH4Value.toString();
 			String CH4Value2 = approximateDecimalValueWithBigDecimal(CH4Value1);
-			 CH4ValueEXP = Double.parseDouble(CH4Value2);
-			 //N2O
-			 String s = n2o[0];
+			CH4ValueEXP = Double.parseDouble(CH4Value2);
+			// N2O
+			String s = n2o[0];
 			Double N2OValue = Double.parseDouble(n2o[0]);
 			String N2OValue1 = N2OValue.toString();
-			String N2OValue2 = N2OValue1;                         //approximateDecimalValueWithBigDecimal(N2OValue1);
-			 N2OValueEXP = Double.parseDouble(N2OValue2);
+			String N2OValue2 = N2OValue1; // approximateDecimalValueWithBigDecimal(N2OValue1);
+			N2OValueEXP = Double.parseDouble(N2OValue2);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	public static String emmissionFactorValueExp;
-	public void calculateEmissionFactorUsingFormula() {                                            //naveen
+
+	public void calculateEmissionFactorUsingFormula() { // naveen
 		try {
-			WebElement emissionFactor = driver.findElement(By
-			        .xpath("//span[text()='Emission Factor']/parent::p/following-sibling::p/div"));
+			WebElement emissionFactor = driver
+					.findElement(By.xpath("//span[text()='Emission Factor']/parent::p/following-sibling::p/div"));
 			String[] emissionFactor1 = emissionFactor.getText().split(" ");
 			String emissionFactorValueRHP = emissionFactor1[0];
 			getCO2_CH4_N20Value();
 			Double co2;
 			Double ch4;
 			Double n2o;
-			if(data.get("gwp year").contains("AR4")) {
-			 co2 = Constants.GWParCO2 * GHGCalculatorsPage.CO2Value;
-			 ch4 = Constants.GWPar4CH4 * GHGCalculatorsPage.CH4ValueEXP;                 
-			 n2o = Constants.GWPar4N2O * GHGCalculatorsPage.N2OValueEXP;
-			}else if(data.get("gwp year").contains("AR5")){
-				 co2 = Constants.GWParCO2 * GHGCalculatorsPage.CO2Value;
-				 ch4 = Constants.GWPar5CH4 * GHGCalculatorsPage.CH4ValueEXP;                 
-				 n2o = Constants.GWPar5N2O* GHGCalculatorsPage.N2OValueEXP;
-			}else {
-				 co2 = Constants.GWParCO2 * GHGCalculatorsPage.CO2Value;
-				 ch4 = Constants.GWPar6CH4 * GHGCalculatorsPage.CH4ValueEXP;                 
-				 n2o = Constants.GWPar6N2O * GHGCalculatorsPage.N2OValueEXP;
+			if (data.get("gwp year").contains("AR4")) {
+				co2 = Constants.GWParCO2 * GHGCalculatorsPage.CO2Value;
+				ch4 = Constants.GWPar4CH4 * GHGCalculatorsPage.CH4ValueEXP;
+				n2o = Constants.GWPar4N2O * GHGCalculatorsPage.N2OValueEXP;
+			} else if (data.get("gwp year").contains("AR5")) {
+				co2 = Constants.GWParCO2 * GHGCalculatorsPage.CO2Value;
+				ch4 = Constants.GWPar5CH4 * GHGCalculatorsPage.CH4ValueEXP;
+				n2o = Constants.GWPar5N2O * GHGCalculatorsPage.N2OValueEXP;
+			} else {
+				co2 = Constants.GWParCO2 * GHGCalculatorsPage.CO2Value;
+				ch4 = Constants.GWPar6CH4 * GHGCalculatorsPage.CH4ValueEXP;
+				n2o = Constants.GWPar6N2O * GHGCalculatorsPage.N2OValueEXP;
 			}
-			Double valOfEmission = co2 + ch4 + n2o;                           
-			 emmissionFactorValueExp = valOfEmission.toString();
+			Double valOfEmission = co2 + ch4 + n2o;
+			emmissionFactorValueExp = valOfEmission.toString();
 			String emmissionFactorValueExpected = approximateDecimalValueWithBigDecimal(emmissionFactorValueExp);
-			if(emissionFactorValueRHP.equals(emmissionFactorValueExpected)) {
+			if (emissionFactorValueRHP.equals(emmissionFactorValueExpected)) {
 				passed("Succesfully validated Emission Factor value" + emmissionFactorValueExpected + ""
 						+ " And Actual is " + emissionFactorValueRHP);
 			} else {
-				Double doubleDiff= Double.parseDouble(emmissionFactorValueExpected) - Double.parseDouble(emissionFactorValueRHP);
-				info(""+doubleDiff+"");
-				if(doubleDiff<1 && doubleDiff>-0.4) {
+				Double doubleDiff = Double.parseDouble(emmissionFactorValueExpected)
+						- Double.parseDouble(emissionFactorValueRHP);
+				info("" + doubleDiff + "");
+				if (doubleDiff < 1 && doubleDiff > -0.4) {
 					passed("Succesfully validated Emission Factor value" + emmissionFactorValueExpected + ""
 							+ " And Actual is " + emissionFactorValueRHP);
-				}else {
-					failed(driver,
-							"Failed validated Emission Factor value" + " " + emmissionFactorValueExpected + ""
-									+ " But Actual is " + emissionFactorValueRHP);
+				} else {
+					failed(driver, "Failed validated Emission Factor value" + " " + emmissionFactorValueExpected + ""
+							+ " But Actual is " + emissionFactorValueRHP);
 				}
 			}
 		} catch (Exception e) {
 			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
-	
-	
-	
-	
+
 	@FindBy(xpath = "//ul//li[contains(@aria-label,'GHG Settings')]")
-    public WebElement ghgemissionsetup;
-    @FindBy(xpath = "//h1[contains(text(),'GHG Settings')]")
-    public WebElement emissionsetup;
-    @FindBy(xpath = "//ui//li[text()='Carbon Management']")
-    public WebElement carbonManagementbtn;
-    @FindBy(xpath = "//button[text()='Save']")
-    public WebElement buttonSave;
-	
+	public WebElement ghgemissionsetup;
+	@FindBy(xpath = "//h1[contains(text(),'GHG Settings')]")
+	public WebElement emissionsetup;
+	@FindBy(xpath = "//ui//li[text()='Carbon Management']")
+	public WebElement carbonManagementbtn;
+	@FindBy(xpath = "//button[text()='Save']")
+	public WebElement buttonSave;
+
 	public void clickOnGHGEmissionsSetup1() { // new code
-        try {
-            Actions act = new Actions(driver);
-            clickOnElement(ghgemissionsetup, " GHG Emissions SetUp ");
-            verifyIfElementPresent(emissionsetup, "GHG Emissions Calculators SetUp ",
-                    " GHG Emissions Calculators Setup ");
-            sleep(2000);
-            WebElement gwpAR4 = driver.findElement(By
-                    .xpath("(//h4[text()='Global Warming Potential']//parent::div//following-sibling::div//span)[3]"));
-            scrollTo(gwpAR4);
-            WebElement gwpAR5 = driver.findElement(By
-                    .xpath("(//h4[text()='Global Warming Potential']//parent::div//following-sibling::div//span)[6]"));
-            if (gwpAR4.getText().trim().equals(Constants.selectedGWP)) {
-                sleep(2000);
-                WebElement btnGwp = driver.findElement(By.xpath(
-                        "(//input[@type='radio']//parent::span//*//*[@data-testid='RadioButtonCheckedIcon'])[4]"));
-                act.moveToElement(btnGwp).click().perform();
-                clickOn(buttonSave, "Save");
-            } else if (gwpAR5.getText().trim().equals(Constants.selectedGWP)) {
-                sleep(2000);
-                WebElement btnGwp = driver.findElement(By.xpath(
-                        "(//input[@type='radio']//parent::span//*//*[@data-testid='RadioButtonCheckedIcon'])[5]"));
-                act.moveToElement(btnGwp).click().perform();
-                clickOn(buttonSave, "Save");
-            }
-            clickOnElement(carbonManagementbtn, " Carbon Management ");
-            sleep(3000);
-        } catch (Exception e) {
-            failed(driver, "Exception caught" + e.getMessage());
-        }
-    }
-	
-	
+		try {
+			Actions act = new Actions(driver);
+			clickOnElement(ghgemissionsetup, " GHG Emissions SetUp ");
+			verifyIfElementPresent(emissionsetup, "GHG Emissions Calculators SetUp ",
+					" GHG Emissions Calculators Setup ");
+			sleep(2000);
+			WebElement gwpAR4 = driver.findElement(By
+					.xpath("(//h4[text()='Global Warming Potential']//parent::div//following-sibling::div//span)[3]"));
+			scrollTo(gwpAR4);
+			WebElement gwpAR5 = driver.findElement(By
+					.xpath("(//h4[text()='Global Warming Potential']//parent::div//following-sibling::div//span)[6]"));
+			if (gwpAR4.getText().trim().equals(Constants.selectedGWP)) {
+				sleep(2000);
+				WebElement btnGwp = driver.findElement(By.xpath(
+						"(//input[@type='radio']//parent::span//*//*[@data-testid='RadioButtonCheckedIcon'])[4]"));
+				act.moveToElement(btnGwp).click().perform();
+				clickOn(buttonSave, "Save");
+			} else if (gwpAR5.getText().trim().equals(Constants.selectedGWP)) {
+				sleep(2000);
+				WebElement btnGwp = driver.findElement(By.xpath(
+						"(//input[@type='radio']//parent::span//*//*[@data-testid='RadioButtonCheckedIcon'])[5]"));
+				act.moveToElement(btnGwp).click().perform();
+				clickOn(buttonSave, "Save");
+			}
+			clickOnElement(carbonManagementbtn, " Carbon Management ");
+			sleep(3000);
+		} catch (Exception e) {
+			failed(driver, "Exception caught" + e.getMessage());
+		}
+	}
+
 	@FindBy(xpath = "//h4[text()='Global Warming Potential']")
 	public WebElement headerGWp;
-	
-	public void clickOnGHGEmissionsSetup() {                                               // new code-Naveen
-        try {
-        	sleep(1);
-            Actions act = new Actions(driver);
-            clickOnElement(ghgemissionsetup, " GHG Settings");
-            verifyIfElementPresent(emissionsetup, "GHG Emissions Calculators SetUp ",
-                    " GHG Emissions Calculators Setup ");
-            sleep(3000);
-            scrollTo(headerGWp);
-            if(data.get("gwp year").equals("AR4")) {
-                System.out.println(data.get("gwp year"));
-                 WebElement gwpAR4 = driver.findElement(By
-                         .xpath("//span[contains(text(),'"+data.get("gwp year")+"')]//parent::label/span/input"));
-                 act.click(gwpAR4).build().perform();
-            }else if(data.get("gwp year").equals("AR5")) {
-                System.out.println(data.get("gwp year"));
-                WebElement gwpAR5 = driver.findElement(By
-                        .xpath("//span[contains(text(),'"+data.get("gwp year")+"')]//parent::label/span/input"));
-                sleep(1000);
-                act.click(gwpAR5).build().perform();
-            }else {
-                System.out.println(data.get("gwp year"));
-                WebElement gwpAR6 = driver.findElement(By
-                           .xpath("//span[contains(text(),'"+data.get("gwp year")+"')]//parent::label/span/input"));
-                   sleep(1000);
-                   act.doubleClick(gwpAR6).build().perform();
-            }
-            takeScreenshot(driver);
-            clickOn(buttonSave, "Save");    
-            clickOnElement(carbonManagementbtn, " Carbon Management ");
-            sleep(3000);
-        } catch (Exception e) {
-            failed(driver, "Exception caught" + e.getMessage());
-        }
-    }
-	
+	@FindBy(xpath = "//button[text()='GHG Inventory']")
+	public WebElement lblGHGInventory;
+	@FindBy(xpath = "//*[text()='Confirm']")
+	public WebElement btnConfirm;
+
+	public void clickOnGHGEmissionsSetup() {
+		try {
+			sleep(1000);
+			Actions act = new Actions(driver);
+			clickOnElement(ghgemissionsetup, " GHG Settings");
+			// verifyIfElementPresent(emissionsetup, "GHG Emissions Calculators SetUp ",
+			// " GHG Emissions Calculators Setup ");
+			sleep(1000);
+			// scrollTo(headerGWp);
+			verifyIfElementPresent(lblGHGInventory, "GHG Inventory", "GHG Settings");
+			WebElement periodGHG = driver.findElement(By.xpath("//div[@class='ghg-inventory-period']/div/div/div"));
+			waitForElement(periodGHG);
+			// act.moveToElement(periodGHG).click();
+			clickOn(periodGHG, "period drop down");
+			WebElement selectPeriod = driver.findElement(By.xpath("//li[text()='" + data.get("Period Year") + "']"));
+			waitForElement(selectPeriod);// *[text()='Global Warming
+											// Potential']/../../following-sibling::div//div[@aria-labelledby='demo-radio-buttons-group-label']/div/label/span/following-sibling::span/span
+			clickOn(selectPeriod, "Selected period is ==>" + data.get("Period Year"));
+			List<WebElement> GHGInveRadioButton = driver.findElements(By.xpath(
+					"//*[text()='Global Warming Potential']/../../following-sibling::div//div[@aria-labelledby='demo-radio-buttons-group-label']/div/label/span/input/.."));
+			sleep(3000);
+			List<WebElement> GWPValue = driver.findElements(By.xpath(
+					"//*[text()='Global Warming Potential']/../../following-sibling::div//div[@aria-labelledby='demo-radio-buttons-group-label']/div/label/span/following-sibling::span/span"));
+			sleep(3000);
+			// h4[text()='Global Warming
+			// Potential']/../../following-sibling::div//div[@aria-labelledby='demo-radio-buttons-group-label']/div/label/span/span[contains(@class,'y
+			// typo-sub-header')]
+			String ValueOfGWP = "";
+			for (int i = 0; i < GHGInveRadioButton.size(); i++) {
+				System.out.print(GWPValue.get(i).getText());
+				ValueOfGWP = GWPValue.get(i).getText();
+				String checked = GHGInveRadioButton.get(i).getAttribute("class");
+				sleep(2000);
+				if (checked.contains("Mui-checked")) {
+					sleep(2000);
+					System.out.println(" Checked by default");
+					break;
+				} else {
+					sleep(2000);
+					System.out.println(" Not Checked by default");
+				}
+			}
+
+			if (ValueOfGWP.contains(data.get("gwp year"))) {
+				System.out.println(data.get("gwp year") + " Checked by Auto");
+			} else {
+				WebElement gwpAR = driver.findElement(By.xpath("//span[contains(text(),'" + data.get("gwp year")
+						+ "')]//parent::span/parent::label/span/input"));
+				act.click(gwpAR).build().perform();
+				clickOn(btnConfirm, "Confirm Button");
+				for (int i = 0; i < GHGInveRadioButton.size(); i++) {
+					System.out.print(GWPValue.get(i).getText());
+					ValueOfGWP = GWPValue.get(i).getText();
+					String checked = GHGInveRadioButton.get(i).getAttribute("class");
+					if (checked.contains("Mui-checked")) {
+						System.out.println("Checked by Auto");
+						break;
+					} else {
+						System.out.println("Not Checked by Auto");
+					}
+				}
+			}
+			takeScreenshot(driver);
+			// clickOn(buttonSave, "Save");
+			clickOnCarbonManagementNavigationMenu();
+			sleep(3000);
+		} catch (Exception e) {
+			clickOnCarbonManagementNavigationMenu();
+			;
+			failed(driver, "Exception caught" + e.getMessage());
+		}
+	}
+
 	public void validateGlobalWarmingPotentialValuesRelatedToAR() {
 		try {
-			String[] gwpValues = {"Assessment","CO2","CH4","N2O"};
-			for(int i = 0; i<gwpValues.length; i++) {
-				WebElement weGwpValues = driver.findElement(By
-						.xpath("//p[text()='Global Warming Potential Values']/parent::div/parent::div/following-sibling::div"
-								+ "//span[text()='"+gwpValues[i]+"']/parent::p/following-sibling::p/div"));
+			String[] gwpValues = { "Assessment", "CO2", "CH4", "N2O" };
+			for (int i = 0; i < gwpValues.length; i++) {
+				WebElement weGwpValues = driver.findElement(By.xpath(
+						"//p[text()='Global Warming Potential Values']/parent::div/parent::div/following-sibling::div"
+								+ "//span[text()='" + gwpValues[i] + "']/parent::p/following-sibling::p/div"));
 				String gwpValuesAR;
-				if(data.get("gwp year").equals("AR4")) {
-					String[] gwpValuesAR4 = {"2007 IPCC Fourth Assessment (AR4)",String.valueOf(Constants.GWParCO2),String.valueOf(Constants.GWPar4CH4)
-							                 ,String.valueOf(Constants.GWPar4N2O)};  //2014 IPCC Fifth Assessment (AR5)
-					 gwpValuesAR = gwpValuesAR4[i];
-				}else if(data.get("gwp year").equals("AR5")) {
-					String[] gwpValuesAR5 = {"2014 IPCC Fifth Assessment (AR5)",String.valueOf(Constants.GWParCO2),String.valueOf(Constants.GWPar5CH4)
-							                 ,String.valueOf(Constants.GWPar5N2O)};
-					 gwpValuesAR = gwpValuesAR5[i];
-				}else {
-					String[] gwpValuesAR6 = {"2023 IPCC Sixth Assessment (AR6)",String.valueOf(Constants.GWParCO2),String.valueOf(Constants.GWPar6CH4)
-							                 ,String.valueOf(Constants.GWPar6N2O)};
-					 gwpValuesAR = gwpValuesAR6[i];
+				if (data.get("gwp year").equals("AR4")) {
+					String[] gwpValuesAR4 = { "2007 IPCC Fourth Assessment (AR4)", String.valueOf(Constants.GWParCO2),
+							String.valueOf(Constants.GWPar4CH4), String.valueOf(Constants.GWPar4N2O) }; // 2014 IPCC
+																										// Fifth
+																										// Assessment
+																										// (AR5)
+					gwpValuesAR = gwpValuesAR4[i];
+				} else if (data.get("gwp year").equals("AR5")) {
+					String[] gwpValuesAR5 = { "2014 IPCC Fifth Assessment (AR5)", String.valueOf(Constants.GWParCO2),
+							String.valueOf(Constants.GWPar5CH4), String.valueOf(Constants.GWPar5N2O) };
+					gwpValuesAR = gwpValuesAR5[i];
+				} else {
+					String[] gwpValuesAR6 = { "2023 IPCC Sixth Assessment (AR6)", String.valueOf(Constants.GWParCO2),
+							String.valueOf(Constants.GWPar6CH4), String.valueOf(Constants.GWPar6N2O) };
+					gwpValuesAR = gwpValuesAR6[i];
 				}
-				if(weGwpValues.getText().equals(gwpValuesAR)) {
-					passed("Successfully validated, "+data.get("gwp year")+" Expected value is "+gwpValuesAR+""
-							+ " and the Actual value as "+weGwpValues.getText()+"");
-				}else {
-					Double doubleDiff= Double.parseDouble(weGwpValues.getText())- Double.parseDouble(gwpValuesAR.trim());
-					//info(""+doubleDiff+"");
-					if(doubleDiff<1 && doubleDiff>-0.4) {    
-						passed("Succesfully validated activityDetail" + weGwpValues.getText() + " And Actual is " + gwpValuesAR.trim());
-					}else {
-					    failed(driver,
-							    "Failed validated activityDetail" + " " + weGwpValues.getText() + " But Actual is " + gwpValuesAR.trim());
+				if (weGwpValues.getText().equals(gwpValuesAR)) {
+					passed("Successfully validated, " + data.get("gwp year") + " Expected value is " + gwpValuesAR + ""
+							+ " and the Actual value as " + weGwpValues.getText() + "");
+				} else {
+					Double doubleDiff = Double.parseDouble(weGwpValues.getText())
+							- Double.parseDouble(gwpValuesAR.trim());
+					// info(""+doubleDiff+"");
+					if (doubleDiff < 1 && doubleDiff > -0.4) {
+						passed("Succesfully validated activityDetail" + weGwpValues.getText() + " And Actual is "
+								+ gwpValuesAR.trim());
+					} else {
+						failed(driver, "Failed validated activityDetail" + " " + weGwpValues.getText()
+								+ " But Actual is " + gwpValuesAR.trim());
 					}
-					
+
 				}
 			}
 		} catch (Exception e) {
 			failed(driver, "Exception caught" + e.getMessage());
 		}
 	}
-	
-	
-	@FindBy(xpath="//p[text()='Audit Log']")
+
+	@FindBy(xpath = "//p[text()='Audit Log']")
 	public WebElement audit;
-	@FindBy(xpath="(//div[text()='tCO2e']//following-sibling::div[1])[1]")
+	@FindBy(xpath = "(//div[text()='tCO2e']//following-sibling::div[1])[1]")
 	public WebElement tco2eValueinAuditLog;
-	@FindBy(xpath="//p[text()='Activity Details']")
+	@FindBy(xpath = "//p[text()='Activity Details']")
 	public WebElement panelHeaderOfActDetails;
-	@FindBy(xpath="//div[text()='tCO2e']/preceding-sibling::div/span/span/span[contains(@class,'closed')]")
+	@FindBy(xpath = "//div[text()='tCO2e']/preceding-sibling::div/span/span/span[contains(@class,'closed')]")
 	public WebElement auditOptionsExpand;
-	//((//div[@id='panel1d-content'])[3]//p//div[@role='grid']/div/following-sibling::div/div//span[@role='presentation'])[2]
-	//div[text()='tCO2e']/preceding-sibling::div/span/span/span[contains(@class,'closed')]
+	// ((//div[@id='panel1d-content'])[3]//p//div[@role='grid']/div/following-sibling::div/div//span[@role='presentation'])[2]
+	// div[text()='tCO2e']/preceding-sibling::div/span/span/span[contains(@class,'closed')]
 
 	private UpstreamLeasedAssetsGHGCalculatorPage upstreamLeasedAssetsGHGCalculatorPage;
-	public void validateAuditLogForAllCalc(String exceptedtco2e){
+
+	public void validateAuditLogForAllCalc(String exceptedtco2e) {
 		try {
-			clickOn(audit,"Audit log for calc");
+			clickOn(audit, "Audit log for calc");
 			sleep(1000);
-			if(waitForElement(auditOptionsExpand) == true) {
+			if (waitForElement(auditOptionsExpand) == true) {
 				clickOn(auditOptionsExpand, "Audit Expand");
-			}else {
-				 clickOnCloseInActivityDetails();
-				 clickOnActivityInActivitiesGridMultipleForAGGridEdit();
-				 clickOn(audit,"Audit log for calc");
-				 clickOn(auditOptionsExpand, "Audit Expand");
+			} else {
+				clickOnCloseInActivityDetails();
+				clickOnActivityInActivitiesGridMultipleForAGGridEdit();
+				clickOn(audit, "Audit log for calc");
+				clickOn(auditOptionsExpand, "Audit Expand");
 			}
 			sleep(100);
-			if(exceptedtco2e.equals(tco2eValueinAuditLog.getText())){
-				passed("Successfully validated ,tco2e value in auditlog as "+tco2eValueinAuditLog.getText()+" ");
-			}else{
-				Double doubleDiff= Double.parseDouble(exceptedtco2e) - Double.parseDouble(tco2eValueinAuditLog.getText());
-				//info(""+doubleDiff+"");
-				if(doubleDiff<1 && doubleDiff>-1) {    
-					passed("Succesfully validated tCO2e value" + exceptedtco2e + " And Actual is " + tco2eValueinAuditLog.getText());
-				}else {
-					failed(driver, "Failed to validate tco2e in auditlog --> excepted is "+exceptedtco2e+" "
-							+ "and the actual as "+tco2eValueinAuditLog.getText()+"");
-				}	
+			if (exceptedtco2e.equals(tco2eValueinAuditLog.getText())) {
+				passed("Successfully validated ,tco2e value in auditlog as " + tco2eValueinAuditLog.getText() + " ");
+			} else {
+				Double doubleDiff = Double.parseDouble(exceptedtco2e)
+						- Double.parseDouble(tco2eValueinAuditLog.getText());
+				// info(""+doubleDiff+"");
+				if (doubleDiff < 1 && doubleDiff > -1) {
+					passed("Succesfully validated tCO2e value" + exceptedtco2e + " And Actual is "
+							+ tco2eValueinAuditLog.getText());
+				} else {
+					failed(driver, "Failed to validate tco2e in auditlog --> excepted is " + exceptedtco2e + " "
+							+ "and the actual as " + tco2eValueinAuditLog.getText() + "");
+				}
 			}
 		} catch (Exception e) {
 			failed(driver, "Exception caught" + e.getMessage());
 		}
-		
+
 	}
-	
-	public void validateAuditLogForAllCalc(){
-        try {
-            clickOn(audit, "Audit log for calc");
-            sleep(1000);
-            if (waitForElement(auditOptionsExpand) == true) {
-                clickOn(auditOptionsExpand, "Audit Expand");
-            } else {
-                clickOnCloseInActivityDetails();
-                clickOnActivityInActivitiesGridMultipleTiffany();
-                clickOn(audit, "Audit log for calc");
-                clickOn(auditOptionsExpand, "Audit Expand");
-            }
-            sleep(500);
-            String s = GlobalVariables.exceptedtco2e.replaceAll(",.", "");
-            String c = tco2eValueinAuditLog.getText().trim().replaceAll(",.", "");
-            if (s.equals(c)) {
-                passed("Successfully validated ,tco2e value in auditlog as " + tco2eValueinAuditLog.getText() + " ");
-            } else {
-                Double doubleDiff = Double.parseDouble(s) - Double.parseDouble(c);
-                // info(""+doubleDiff+"");
-                if (doubleDiff < 1 && doubleDiff > -0.4) {
-                    passed("Succesfully validated tCO2e value" + GlobalVariables.exceptedtco2e + " And Actual is "
-                            + tco2eValueinAuditLog.getText());
-                } else {
-                    failed(driver,
-                            "Failed to validate tco2e in auditlog --> excepted is " + GlobalVariables.exceptedtco2e
-                                    + " " + "and the actual as " + tco2eValueinAuditLog.getText() + "");
-                }
-            }
-        } catch (Exception e) {
-            failed(driver, "Exception caught" + e.getMessage());
-        }
-    }
-	
-	
+
+	public void validateAuditLogForAllCalc() {
+		try {
+			clickOn(audit, "Audit log for calc");
+			sleep(1000);
+			if (waitForElement(auditOptionsExpand) == true) {
+				clickOn(auditOptionsExpand, "Audit Expand");
+			} else {
+				clickOnCloseInActivityDetails();
+				clickOnActivityInActivitiesGridMultipleTiffany();
+				clickOn(audit, "Audit log for calc");
+				clickOn(auditOptionsExpand, "Audit Expand");
+			}
+			sleep(500);
+			String s = GlobalVariables.exceptedtco2e.replaceAll(",.", "");
+			String c = tco2eValueinAuditLog.getText().trim().replaceAll(",.", "");
+			if (s.equals(c)) {
+				passed("Successfully validated ,tco2e value in auditlog as " + tco2eValueinAuditLog.getText() + " ");
+			} else {
+				Double doubleDiff = Double.parseDouble(s) - Double.parseDouble(c);
+				// info(""+doubleDiff+"");
+				if (doubleDiff < 1 && doubleDiff > -0.4) {
+					passed("Succesfully validated tCO2e value" + GlobalVariables.exceptedtco2e + " And Actual is "
+							+ tco2eValueinAuditLog.getText());
+				} else {
+					failed(driver,
+							"Failed to validate tco2e in auditlog --> excepted is " + GlobalVariables.exceptedtco2e
+									+ " " + "and the actual as " + tco2eValueinAuditLog.getText() + "");
+				}
+			}
+		} catch (Exception e) {
+			failed(driver, "Exception caught" + e.getMessage());
+		}
+	}
+
 	public void clickOnCarbonManagementNavigationMenu() {
 		try {
 			sleep(500);
@@ -2601,90 +2741,95 @@ public class GHGCalculatorsPage extends CalculatorElements {
 			((JavascriptExecutor) driver).executeScript("arguments[0].style.border='3px solid red'", btnGHGCalc);
 			action.doubleClick(btnGHGCalc).build().perform();
 			WebElement weGHGLabel = driver.findElement(By.xpath("//h5[text()='GHG Calculators']"));
-			if(weGHGLabel.getText().equals("GHG Calculators")) {
-				for(int i=0;i<10;i++) {System.out.println("user Navigated to GHG Calculators");}
+			if (weGHGLabel.getText().equals("GHG Calculators")) {
+				for (int i = 0; i < 10; i++) {
+					System.out.println("user Navigated to GHG Calculators");
+					break;
+				}
+				// System.out.println("user Navigated to GHG Calculators");
 			}
 		} catch (Exception e) {
-			//clickOnCarbonManagementNavigationMenu();
+			// clickOnCarbonManagementNavigationMenu();
 		}
 	}
-	
-	public static void printNewTestCaseMessage(String TestCaseName) {                                                                                                              
-		System.out.println("                                                                                                                ");
-		System.out.println("                                                                                                                ");
-		System.out.println("                                                                                                                ");
-		System.out.println("*****************************************          "+TestCaseName+"          ********************************** ");
-		System.out.println("                                                                                                                ");
-		System.out.println("                                                                                                                ");
-		System.out.println("                                                                                                                ");                                                                                                                                    
+
+	public static void printNewTestCaseMessage(String TestCaseName) {
+		System.out.println(
+				"                                                                                                                ");
+		System.out.println(
+				"                                                                                                                ");
+		System.out.println(
+				"                                                                                                                ");
+		System.out.println("*****************************************          " + TestCaseName
+				+ "          ********************************** ");
+		System.out.println(
+				"                                                                                                                ");
+		System.out.println(
+				"                                                                                                                ");
+		System.out.println(
+				"                                                                                                                ");
 	}
 
-	
 	public static Boolean DoubleOrNot(String value) {
 		try {
 			Double d = Double.parseDouble(value);
 			return true;
 		} catch (Exception e) {
 			return false;
-		}  
-}
+		}
+	}
+
 	@FindBy(xpath = "//div[@name='center']")
 	public WebElement AGGRID;
 	@FindBy(xpath = "//input[@placeholder='Search']")
 	public WebElement txtSearchOrgName;
-	
-	
-	 public void SelectOrganizationForTiffany() {
-    	 try {
-    		 sleep(1);
-    		 waitForElementForCalculators(AGGRID, "Ag Grid");
-    		 String strOrgName = "(//div[text()='"+data.get("OrgName")+"'])[2]";            
-			 System.out.println("ORG Hierarchy visibility --> "+ WaitForElementWithDynamicXpath(strOrgName));
-			 WebElement weOrgName = driver.findElement(By.xpath(strOrgName));
-			 weOrgName.click();
-    	 } catch (Exception e) {
-			  System.err.println("Failed to select Organization in Heirarchy");
+
+	public void SelectOrganizationForTiffany() {
+		try {
+			sleep(1);
+			waitForElementForCalculators(AGGRID, "Ag Grid");
+			String strOrgName = "(//div[text()='" + data.get("OrgName") + "'])[2]";
+			System.out.println("ORG Hierarchy visibility --> " + WaitForElementWithDynamicXpath(strOrgName));
+			WebElement weOrgName = driver.findElement(By.xpath(strOrgName));
+			weOrgName.click();
+		} catch (Exception e) {
+			System.err.println("Failed to select Organization in Heirarchy");
 		}
-     }
-	 
-	 
-	
-	 
-	 
-	 public void stepsToNavigateGHGCalculators() {
-		 try {
-			 SignInPage signInPage = new SignInPage(driver, data);
-			 homePage = signInPage.SignInToPulsEsGApp();
-			 menuBarPage = homePage.returnMenuPage();
-			 menuBarPage.clickOnHamburgerMenu();
-			 menuBarPage.clickOnGHGCalculatorsMenu();
-			 clickOnGHGEmissionsSetup();
-		 } catch (Exception e) {
-			 failed(driver, "Exception caught" + e.getMessage());
-		 }
-	 }
-	 
-	 public void Add$Edit$OverLapActivitiesFor_Calculators(String[] actDetails,String calcName,String Amount) {
-		 try {
-			 if(!Constants.arrayCardPresent.contains(data.get("CardName"))) {
-				 Constants.arrayCardPresent.add(data.get("CardName"));
-				 clickOnCarbonManagementNavigationMenu();
-				 String calcCardName = "//div[text()='"+data.get("CardName")+"']";
-				 clickOnElementWithDynamicXpath(calcCardName, data.get("CardName"));
-			 }
-			 String strcalcName = "//button[text()='"+data.get("subCalcName")+"']";
-			 clickOnElementWithDynamicXpath(strcalcName, data.get("subCalcName"));
-			 clickOnAddandEditActivitiesForCalculators();
-			 AddActivitiesForCalculators();
-			 validateActivityDetailsandEmissionDetails(actDetails, calcName, Amount);
+	}
+
+	public void stepsToNavigateGHGCalculators() {
+		try {
+			SignInPage signInPage = new SignInPage(driver, data);
+			homePage = signInPage.SignInToPulsEsGApp();
+			menuBarPage = homePage.returnMenuPage();
+			menuBarPage.clickOnHamburgerMenu();
+			menuBarPage.clickOnGHGCalculatorsMenu();
+			clickOnGHGEmissionsSetup();
 		} catch (Exception e) {
 			failed(driver, "Exception caught" + e.getMessage());
 		}
-	 }
-	 
-	 
-	 public void AddActivitiesForCalculators() {
-		 try {
+	}
+
+	public void Add$Edit$OverLapActivitiesFor_Calculators(String[] actDetails, String calcName, String Amount) {
+		try {
+			if (!Constants.arrayCardPresent.contains(data.get("CardName"))) {
+				Constants.arrayCardPresent.add(data.get("CardName"));
+				clickOnCarbonManagementNavigationMenu();
+				String calcCardName = "//div[text()='" + data.get("CardName") + "']";
+				clickOnElementWithDynamicXpath(calcCardName, data.get("CardName"));
+			}
+			String strcalcName = "//button[text()='" + data.get("subCalcName") + "']";
+			clickOnElementWithDynamicXpath(strcalcName, data.get("subCalcName"));
+			clickOnAddandEditActivitiesForCalculators();
+			AddActivitiesForCalculators();
+			validateActivityDetailsandEmissionDetails(actDetails, calcName, Amount);
+		} catch (Exception e) {
+			failed(driver, "Exception caught" + e.getMessage());
+		}
+	}
+
+	public void AddActivitiesForCalculators() {
+		try {
 			switch (data.get("CardName")) {
 			case "Direct Emissions":
 				directEmissionsCalculatorPage = new DirectEmissionsCalculatorPage(driver, data);
@@ -2692,17 +2837,17 @@ public class GHGCalculatorsPage extends CalculatorElements {
 				break;
 			case "Purchased Goods and Services":
 				PGS = new PurchasedGoodsAndServicesGHGCalculatorPage(driver, data);
-				if(data.get("subCalcName").equals("Average Data Method")) {
+				if (data.get("subCalcName").equals("Average Data Method")) {
 					PGS.EditActivityScope3EmissionsScope3_1_AverageBased();
-				}else {
+				} else {
 					PGS.EdittActivityScope3_1SpendBasedEmissions();
 				}
 				break;
 			case "Capital Goods":
 				CGS = new CapitalGoodsGHGCalculatorPage(driver, data);
-				if(data.get("subCalcName").equals("Average Data Method")) {
+				if (data.get("subCalcName").equals("Average Data Method")) {
 					CGS.EditActivityScopeCapitalGoods3_2EmissionsAverageBased();
-				}else {
+				} else {
 					CGS.EditActivityCapitalGoodsScope3_2SpendBasedEmissions();
 				}
 				break;
@@ -2732,195 +2877,201 @@ public class GHGCalculatorsPage extends CalculatorElements {
 				break;
 			case "Investments":
 				Investments = new InvestmentsGHGCalculatorsPage(driver, data);
-				if(data.get("Investment subName").equals("Equity Investments")){
-					if(data.get("subCalcName").equals("Investment Specific Method")) {
+				if (data.get("Investment subName").equals("Equity Investments")) {
+					if (data.get("subCalcName").equals("Investment Specific Method")) {
 						Investments.EditActivityScope3_15InvestmentsSpecificMethod();
-					}else if(data.get("subCalcName").equals("Average Data Method")) {
+					} else if (data.get("subCalcName").equals("Average Data Method")) {
 						Investments.EditActivityScope3_15InvestmentsAverageDataMethod();
 					}
-				}else {
-					 if(data.get("subCalcName").equals("Investment Specific Method")) {
+				} else {
+					if (data.get("subCalcName").equals("Investment Specific Method")) {
 						Investments.EditActivityScope3_15InvestmentsDept_ProjectFinancingSpecificMethod();
-					}else if(data.get("subCalcName").equals("Average Data Method")) {
+					} else if (data.get("subCalcName").equals("Average Data Method")) {
 						Investments.EditActivityScope3_15InvestmentsDebtProjectFinancingAverageDataMethod();
 					}
 				}
-			break;
+				break;
 			}
 			sleep(1000);
 //			VerifyEvidence();
 //			ValidateEvidenceDetails();
 //			expandActivityDetailsInRHP();
-			
-		} 
-		 catch (Exception e) {
-			failed(driver, "Exception caught" + e.getMessage());
-		}
-		 
-	 }
-	 
-	 public void clickOnAddandEditActivitiesForCalculators() {
-		 try {
-			 if(Boolean.parseBoolean(data.get("OrgVisibility"))) {
-			       SelectOrganizationForTiffany();
-			 }
-			 SelectPeriod2022();
-			 GHGCalculatorsPage.printNewTestCaseMessage(data.get("Activity"));
-			if(data.get("Activity").equals("Add") || data.get("Activity").equals("Overlap")) {
-				 if(data.get("Activity").equals("Overlap")) {
-					 calculateGHGEmissionBefore();
-				 }
-				 clickOnAddActivityButton();
-			 }else {
-				 clickOnActivityInActivitiesGridMultipleForAGGridEdit();
-				 clickOnEditButtonInActivityDetails();
-			 }
+
 		} catch (Exception e) {
 			failed(driver, "Exception caught" + e.getMessage());
 		}
-	 }
-	 
-	 public void validateToastMessageForActivityCalculators() {
-		 try {
-			if(data.get("Activity").equals("Add")) {
+
+	}
+
+	public void clickOnAddandEditActivitiesForCalculators() {
+		try {
+			if (Boolean.parseBoolean(data.get("OrgVisibility"))) {
+				SelectOrganizationForTiffany();
+			}
+			SelectPeriod2022();
+			GHGCalculatorsPage.printNewTestCaseMessage(data.get("Activity"));
+			if (data.get("Activity").equals("Add") || data.get("Activity").equals("Overlap")) {
+				if (data.get("Activity").equals("Overlap")) {
+					calculateGHGEmissionBefore();
+				}
+				clickOnAddActivityButton();
+			} else {
+				clickOnActivityInActivitiesGridMultipleForAGGridEdit();
+				clickOnEditButtonInActivityDetails();
+			}
+		} catch (Exception e) {
+			failed(driver, "Exception caught" + e.getMessage());
+		}
+	}
+
+	public void validateToastMessageForActivityCalculators() {
+		try {
+			if (data.get("Activity").equals("Add")) {
 				verifyAddActivityUpdatedToastMessage();
-			 }else {
+			} else {
 				verifyEditActivityToastMessage();
-			 }
+			}
 		} catch (Exception e) {
 			failed(driver, "Exception caught" + e.getMessage());
 		}
-	 }
-	 
-	 public void validateActivityDetailsandEmissionDetails(String[] actDetails,String calcName,String Amount) {
-		 try {
-			 validateToastMessageForActivityCalculators();
-			 if(!data.get("Activity").equals("Overlap")) {
-				 validateRHPActivityDetailsForAllCalculators(actDetails,calcName);
-				 switch (calcName) {
-				 case "SC": case "MC":
-					 directEmissionsCalculatorPage = new DirectEmissionsCalculatorPage(driver, data);
-					 directEmissionsCalculatorPage.validateActivityDetailsandEmissionDetailsStationaryCombustion(calcName, Amount);
-					 break;
-				 case "DLA": case "ULA":
-					 upstreamLeasedAssetsGHGCalculatorPage = navigateToUpStreamLeasedAssert();
-					 upstreamLeasedAssetsGHGCalculatorPage.validateTCO2EValueForUpstreamLeasedAsset(data.get("Activity Amount")
-							 ,Constants.unitNamesEnergy, Constants.converionOfUnitsToMMBTU);
-					 break;
-				 case "InvestmentsSpecificMethod": case "InvestmentsDeptProjectFinancingSpecificMethod":
-					 investmentsGHGCalculatorsPage = new InvestmentsGHGCalculatorsPage(driver, data);
-					 investmentsGHGCalculatorsPage.validateAllScopesTC02eValuesForInvestments();
-					 break;
-				 case "InvestmentsAveraggeDataMethod": 
-					 investmentsGHGCalculatorsPage = new InvestmentsGHGCalculatorsPage(driver, data);
-					 investmentsGHGCalculatorsPage.TCO2eValidationForAverageDataMethodsForInvestments(calcName);
-					 break;
-				 case "InvestmentsDebtProjectFinancingAverageDataMethod":
-					 break;
-				 default:
-					 calculateTCO2eValueUsing_EmissionFactorValue(Amount);
-					 break;
-				 }
-				 clickOnCloseInActivityDetails();
-				 clickOnGenerateButtonAlternate();
-				 if(data.get("CardName").equals("Purchased Goods and Services")|| data.get("CardName").equals("Investments")||data.get("subCalcName").equals("Fugitives")){
+	}
+
+	public void validateActivityDetailsandEmissionDetails(String[] actDetails, String calcName, String Amount) {
+		try {
+			validateToastMessageForActivityCalculators();
+			if (!data.get("Activity").equals("Overlap")) {
+				validateRHPActivityDetailsForAllCalculators(actDetails, calcName);
+				switch (calcName) {
+				case "SC":
+				case "MC":
+					directEmissionsCalculatorPage = new DirectEmissionsCalculatorPage(driver, data);
+					directEmissionsCalculatorPage
+							.validateActivityDetailsandEmissionDetailsStationaryCombustion(calcName, Amount);
+					break;
+				case "DLA":
+				case "ULA":
+					upstreamLeasedAssetsGHGCalculatorPage = navigateToUpStreamLeasedAssert();
+					upstreamLeasedAssetsGHGCalculatorPage.validateTCO2EValueForUpstreamLeasedAsset(
+							data.get("Activity Amount"), Constants.unitNamesEnergy, Constants.converionOfUnitsToMMBTU);
+					break;
+				case "InvestmentsSpecificMethod":
+				case "InvestmentsDeptProjectFinancingSpecificMethod":
+					investmentsGHGCalculatorsPage = new InvestmentsGHGCalculatorsPage(driver, data);
+					investmentsGHGCalculatorsPage.validateAllScopesTC02eValuesForInvestments();
+					break;
+				case "InvestmentsAveraggeDataMethod":
+					investmentsGHGCalculatorsPage = new InvestmentsGHGCalculatorsPage(driver, data);
+					investmentsGHGCalculatorsPage.TCO2eValidationForAverageDataMethodsForInvestments(calcName);
+					break;
+				case "InvestmentsDebtProjectFinancingAverageDataMethod":
+					break;
+				default:
+					calculateTCO2eValueUsing_EmissionFactorValue(Amount);
+					break;
+				}
+				clickOnCloseInActivityDetails();
+				clickOnGenerateButtonAlternate();
+				if (data.get("CardName").equals("Purchased Goods and Services")
+						|| data.get("CardName").equals("Investments") || data.get("subCalcName").equals("Fugitives")) {
 					System.out.println();
-				 }else {
-					 clickOnActivityInActivitiesGridMultipleForAGGridEdit();
-					 validateAuditLogForAllCalc(ValCO2eRHP);
-					 clickOnCloseInActivityDetails();
-				 }
-				 }
-			 else {
+				} else {
+					clickOnActivityInActivitiesGridMultipleForAGGridEdit();
+					validateAuditLogForAllCalc(ValCO2eRHP);
+					clickOnCloseInActivityDetails();
+				}
+			} else {
 				extractTco2Value_1_P();
 				clickOnCloseInActivityDetails();
 				collectGHGEmissionAfter();
 				clickOnGenerateButton();
-			 }
+			}
 		} catch (Exception e) {
 			failed(driver, "Exception caught" + e.getMessage());
 		}
-	 }
-	 
-	 public void validateRHPActivityDetailsForAllCalculators(String[] activityDetails,String calcName){
-         try {
-             sleep(1);
-             String strActivityDetailes = null;
-             String expectedActivity = null;
-             for(int i=0;i<activityDetails.length;i++){
-                 String activityFields;
-                 if(calcName.contains("Investments")) {
-                      activityFields="//span[text()=\""+activityDetails[i]+"\"]/parent::div/following-sibling::div";
-                 }else if(data.get("CardName").contains("Capital") && Boolean.parseBoolean(data.get("Activity CEF")) 
-                      ||data.get("CardName").contains("Use of Sold Products") && Boolean.parseBoolean(data.get("Activity CEF"))) {
-                      activityFields="//span[normalize-space()='"+activityDetails[i]+"']/parent::*/following-sibling::*";
-                 }else {
-                      activityFields="//span[normalize-space()='"+activityDetails[i]+"']/parent::*/following-sibling::*/*";
-                 }
-                 try {
-                     WebElement weActivityDetails = driver.findElement(By.xpath(activityFields));
-                      strActivityDetailes = weActivityDetails.getText().replaceAll(",", "");
-                      expectedActivity = data.get(activityDetails[i]).trim().replaceAll(",", "");
-                     if(DoubleOrNot(strActivityDetailes) == true) {
-                         strActivityDetailes = strActivityDetailes.split("\\.")[0].toString();
-                     }
-                     if(strActivityDetailes.trim().equals(expectedActivity.trim())){
-                         passed("Successfully validated, the "+activityDetails[i]+" as  --> "+weActivityDetails.getText());
-                     }else {
-                         if(DoubleOrNot(strActivityDetailes) == true) {
-                             Double doubleDiff= Double.parseDouble(strActivityDetailes.trim()) - Double.parseDouble(expectedActivity.trim());
-                             if(doubleDiff<1 && doubleDiff>-1) {    
-                                 passed("Succesfully validated activityDetail is "+activityDetails[i]+", Expected is " + strActivityDetailes 
-                                         + " And Actual is " + expectedActivity.trim());
-                             }else {
-                                 failed(driver,"Failed validated, activityDetail is "+activityDetails[i]
-                                         +", Expected is " + strActivityDetailes 
-                                         + " But Actual is " + expectedActivity.trim());
-                             }
-                         }else {
-                                 failed(driver, "Failed to validate the activityDetail "+activityDetails[i]
-                                         +" Expected as "+expectedActivity.trim()+" "
-                                         + "and the actual as "+strActivityDetailes+"");
-                         }
-                     }
-                 } catch (Exception e) {
-                    e.printStackTrace();
-                 }
-             }
-         } catch (Exception e) {
-             failed(driver, "Exception caught" + e.getMessage());
-         }
-     }
-	 
-	 @FindBy(xpath = "//div[contains(text(),'Fuels')]//parent::div//*[@fill='none']")
-		private WebElement customchevronicon;
-		
-		public void clickOnEmissionFactorsForDirectEmission() {
-			try {
-				sleep(1);
-				Actions sda = new Actions(driver);
-				String strtabFacilityIcon = "//ul//li[contains(@aria-label,'Emission Factors')]";
-				WaitForElementWithDynamicXpath(strtabFacilityIcon);
-				WebElement tabFacilityIcon = driver.findElement(By.xpath(strtabFacilityIcon));
-				sda.moveToElement(tabFacilityIcon).click().build().perform();
-				waitForElementForCalculators(fullAGGridNameOFCEF,"AG Grid");
-				sda.moveToElement(customchevronicon).click().perform();
-				WebElement energytype = driver
-						.findElement(By.xpath("//ul[@role='listbox']//li[text()='" + data.get("cusemissiontype") + "']"));
-				clickOn(energytype, data.get("cusemissiontype"));
-			} catch (Exception e) {
-				failed(driver, "Exception caught" + e.getMessage());
-			}
-			
-		}
-	 
-	 
-	 
-	 
+	}
 
-	 @Override
-		protected void VerifyNavigationToValidPage() {
-			try {
+	public void validateRHPActivityDetailsForAllCalculators(String[] activityDetails, String calcName) {
+		try {
+			sleep(1);
+			String strActivityDetailes = null;
+			String expectedActivity = null;
+			for (int i = 0; i < activityDetails.length; i++) {
+				String activityFields;
+				if (calcName.contains("Investments")) {
+					activityFields = "//span[text()=\"" + activityDetails[i] + "\"]/parent::div/following-sibling::div";
+				} else if (data.get("CardName").contains("Capital") && Boolean.parseBoolean(data.get("Activity CEF"))
+						|| data.get("CardName").contains("Use of Sold Products")
+								&& Boolean.parseBoolean(data.get("Activity CEF"))) {
+					activityFields = "//span[normalize-space()='" + activityDetails[i]
+							+ "']/parent::*/following-sibling::*";
+				} else {
+					activityFields = "//span[normalize-space()='" + activityDetails[i]
+							+ "']/parent::*/following-sibling::*/*";
+				}
+				try {
+					WebElement weActivityDetails = driver.findElement(By.xpath(activityFields));
+					strActivityDetailes = weActivityDetails.getText().replaceAll(",", "");
+					expectedActivity = data.get(activityDetails[i]).trim().replaceAll(",", "");
+					if (DoubleOrNot(strActivityDetailes) == true) {
+						strActivityDetailes = strActivityDetailes.split("\\.")[0].toString();
+					}
+					if (strActivityDetailes.trim().equals(expectedActivity.trim())) {
+						passed("Successfully validated, the " + activityDetails[i] + " as  --> "
+								+ weActivityDetails.getText());
+					} else {
+						if (DoubleOrNot(strActivityDetailes) == true) {
+							Double doubleDiff = Double.parseDouble(strActivityDetailes.trim())
+									- Double.parseDouble(expectedActivity.trim());
+							if (doubleDiff < 1 && doubleDiff > -1) {
+								passed("Succesfully validated activityDetail is " + activityDetails[i]
+										+ ", Expected is " + strActivityDetailes + " And Actual is "
+										+ expectedActivity.trim());
+							} else {
+								failed(driver,
+										"Failed validated, activityDetail is " + activityDetails[i] + ", Expected is "
+												+ strActivityDetailes + " But Actual is " + expectedActivity.trim());
+							}
+						} else {
+							failed(driver,
+									"Failed to validate the activityDetail " + activityDetails[i] + " Expected as "
+											+ expectedActivity.trim() + " " + "and the actual as " + strActivityDetailes
+											+ "");
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		} catch (Exception e) {
+			failed(driver, "Exception caught" + e.getMessage());
+		}
+	}
+
+	@FindBy(xpath = "//div[contains(text(),'Fuels')]//parent::div//*[@fill='none']")
+	private WebElement customchevronicon;
+
+	public void clickOnEmissionFactorsForDirectEmission() {
+		try {
+			sleep(1);
+			Actions sda = new Actions(driver);
+			String strtabFacilityIcon = "//ul//li[contains(@aria-label,'Emission Factors')]";
+			WaitForElementWithDynamicXpath(strtabFacilityIcon);
+			WebElement tabFacilityIcon = driver.findElement(By.xpath(strtabFacilityIcon));
+			sda.moveToElement(tabFacilityIcon).click().build().perform();
+			waitForElementForCalculators(fullAGGridNameOFCEF, "AG Grid");
+			sda.moveToElement(customchevronicon).click().perform();
+			WebElement energytype = driver
+					.findElement(By.xpath("//ul[@role='listbox']//li[text()='" + data.get("cusemissiontype") + "']"));
+			clickOn(energytype, data.get("cusemissiontype"));
+		} catch (Exception e) {
+			failed(driver, "Exception caught" + e.getMessage());
+		}
+
+	}
+
+	@Override
+	protected void VerifyNavigationToValidPage() {
+		try {
 //				waitForElement(lblGHGCalculator);
 //				if (isElementPresent(lblGHGCalculator)) {
 //					passed("User Successfully Navigated To GHG_Calculator Page");
@@ -2928,17 +3079,21 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //					failed(driver, "Failed To Navigate To GHG_Calculator Page");
 //				}
 //				takeScreenshot(driver);
-			} catch (Exception e) {
-				failed(driver, "Exception caught " + e.getMessage());
-			}
+		} catch (Exception e) {
+			failed(driver, "Exception caught " + e.getMessage());
 		}
-	
-	/* ---------------------------------------  --------------------------------------------------s*/
-	
-	
-	/* -----------------------------------------------  Calculators --------------------------------------------------------*/
-	
-	
+	}
+
+	/*
+	 * ---------------------------------------
+	 * --------------------------------------------------s
+	 */
+
+	/*
+	 * ----------------------------------------------- Calculators
+	 * --------------------------------------------------------
+	 */
+
 //	@FindBy(xpath = "//h6[contains(text(),'GHG Calculators')]")
 //	public WebElement lblGHGCalculator;
 //	@FindBy(xpath = "//div[contains(text(),'SCOPE 2')]")
@@ -2969,10 +3124,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //	public WebElement dpdPeriod;
 //	@FindBy(xpath = "//*[@data-testid='CloseOutlinedIcon']")
 //	public WebElement btnClose;
-	
-	
-	
-	
+
 //	public void validateCalculatorScope2InPulsESG() {
 //		try {
 //			clickOn(btnIndirectEmisssion, "Indirect scope 2");
@@ -3193,10 +3345,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //	public WebElement btnActivities;
 //	@FindBy(xpath = "//button[text()='Close']")
 //	public WebElement btnCloselatest;
-
-	
-
-	
 
 //	public void AddActivityInDirectEmissions() {
 //		try {
@@ -3710,8 +3858,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //		}
 //	}
 
-	
-
 //	@FindBy(xpath = "//input[@id='facility_name']")
 //	public WebElement txtFacility_Name;
 //	@FindBy(xpath = "//input[@id='type_of_equipment']")
@@ -3998,8 +4144,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //	public WebElement n2ovalue;
 //	@FindBy(xpath = "//span[text()='Unit of Custom EF (Numerator)']//parent::div//following-sibling::div")
 //	public WebElement custEFNum;
-	
-	
 
 //	public void Validate_Add_New_Custom_Emission_Factor() {
 //		sleep(8000);
@@ -4712,7 +4856,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 	// ................Scope3
 	// ...........................................................
 
-	
 //
 //	@FindBy(xpath = "//input[@id='FacilityName']")
 //	public WebElement txtFacilityNameScope3_1;
@@ -5272,11 +5415,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //	public WebElement weAmountSpent;
 //	@FindBy(xpath = "//span[text()='Currency / Unit']//parent::div//following-sibling::div")
 //	public WebElement weCurrencyOrUnit;
-
-	
-	
-
-	
 
 //	public void addActivityDetailsForWasteGeneratedInOperationsInActivityDetailsPannel() {
 //		try {
@@ -6188,8 +6326,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //		}
 //	}
 
-	
-
 //	public void validateActivityDetailsInViewActivityForEmployeeCommutingCalculator_Multiple(int i) {
 //		try {
 //			takeScreenshot(driver);
@@ -6238,8 +6374,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //			failed(driver, "Exception caught " + e.getMessage());
 //		}
 //	}
-
-	
 
 //	@FindBy(xpath = "//input[@id='Facility Name']")
 //	public WebElement txtFacilityNameScope3_3;
@@ -7150,8 +7284,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //	}
 //--Naveen
 
-	
-
 //	@FindBy(xpath = "//input[@id='Facility Name']")
 //	public WebElement txtFacilityNameScope3_1qa;
 //	@FindBy(xpath = "//*[text()='Activity Details']")
@@ -7228,8 +7360,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //			failed(driver, "Exception caught " + e.getMessage());
 //		}
 //	}
-
-	
 
 //	public void ValidateActivityDetailsInViewActivityScope3_1AverageBased(int i) {
 //		try {
@@ -7344,7 +7474,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //		}
 //	}
 
-	
 //	@FindBy(xpath = "//input[@id='facilityName']")
 //	public WebElement txtFacilityNameScope3_2;
 //	@FindBy(xpath = "//span[contains(text(),'Capital Goods Category')]//parent::div/parent::div//input//parent::div")
@@ -7470,8 +7599,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //		}
 //	}
 
-	
-
 //	@FindBy(xpath = "//button[contains(text(),'Spend Based Method')]")
 //	public WebElement btnScope3_2SpendBased;
 //	@FindBy(xpath = "//span[contains(text(),'Capital Goods Category')]//parent::div/parent::div//input//parent::div")
@@ -7574,8 +7701,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //		}
 //	}
 
-	
-
 //	@FindBy(xpath = "//input[@id='Facility Name']")
 //	public WebElement txtFacilityNameScope3_12;
 //	@FindBy(xpath = "//*[@id='description']")
@@ -7605,8 +7730,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //				.findElement(By.xpath("//div[text()='" + facilityName.get(i) + "']//parent::div[@role='row']"));
 //		clickOn(weActivity, "Activity of Facility" + facilityName.get(i));
 //	}
-
-	
 
 //	public void AddActivityScope3_12Emissions(int i) {
 //		try {
@@ -7717,7 +7840,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //		}
 //	}
 
-	
 //	public void clickOnActivityInActivitiesGridHotelStay3_6(int i) {
 //		sleep(1000);
 //		List<String> facilityName = MultiDataExcelReader.getTestData("HotelStay", "Facility Name");
@@ -7854,8 +7976,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //		}
 //	}
 // .................Upstream Leased Assets.....
-
-	
 
 //	@FindBy(xpath = "//span[contains(text(),'Energy Category')]//parent::div/parent::div//div//button[@aria-label='Open']")
 //	public WebElement drpEnergyCategoryLeasedassests;
@@ -8002,8 +8122,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //		}
 //	}
 
-	
-
 //	public void AddActivityScope3_13DownstreamLeasedAssets(int i) {
 //		try {
 //			List<String> facilityName = MultiDataExcelReader.getTestData("DownStreamLeasedAsset", "Facility Name");
@@ -8143,7 +8261,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //	@FindBy(xpath = "//div[text()='Processing of Sold Products']")
 //	public WebElement weScope3_10ProcessingSoldProduct;
 //
-	
+
 //
 //	public void AddActivityScope3_10PrcessingofSoldProdutcs(int i) {
 //		try {
@@ -8273,8 +8391,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //		}
 //	}
 
-	
-
 //	@FindBy(xpath = "//input[@id='unit_sold']")
 //	public WebElement txtNo_ofUnitsSold;
 //	@FindBy(xpath = "//span[contains(text(),'Facility')]//parent::div/parent::div//div//button[@aria-label='Open']")
@@ -8383,8 +8499,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //		}
 //	}
 
-	
-
 //	@FindBy(xpath = "//input[@id='investee_company']")
 //	public WebElement txtInvesteeCompanyScope3_15;
 //	@FindBy(xpath = "//span[contains(text(),'Investee Company/Project Sector')]//parent::div/parent::div//div//button[@aria-label='Open']")
@@ -8401,8 +8515,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //	public WebElement txtTotaltCO2eEmissions3_15;
 //	@FindBy(xpath = "//input[@id='ghg']")
 //	public WebElement txtSourcs3_15;
-
-	
 
 //	public void AddActivityScope3_15InvestmentsSpecificMethod(int i) {
 //		try {
@@ -8555,9 +8667,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //			failed(driver, "Exception caught " + e.getMessage());
 //		}
 //	}
-
-	
-	
 
 //	@FindBy(xpath = "//span[contains(text(),'Investee Company/Project Sector')]//parent::div/parent::div//div//button[@aria-label='Open']")
 //	public WebElement drpInvesteeCompanyDebtFinance;
@@ -8713,8 +8822,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //		}
 //	}
 
-	
-
 //	@FindBy(xpath = "//input[@id='value_of_debt']")
 //	public WebElement txtValueofDebtInvest;
 //	@FindBy(xpath = "//input[@id='total_project_cost']")
@@ -8793,8 +8900,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //			failed(driver, "Exception caught " + e.getMessage());
 //		}
 //	}
-
-	
 
 //	public void AddNewActivityScope3_15InvestmentsDept_ProjectFinancingSpecificMethod(int i) {
 //		try {
@@ -9128,7 +9233,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //		}
 //	}
 
-
 //	@FindBy(xpath = "//input[@placeholder='Description']")
 //	public WebElement txtDescrption;
 //	@FindBy(xpath = "//input[@id='Type Of Home Office']")
@@ -9221,8 +9325,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //		}
 //	}
 
-	
-
 //	public void addActivityDetailsForScoep2(int i) {
 //		List<String> facilityName = MultiDataExcelReader.getTestData("IndirectEmissions", "Facility Name");
 //		List<String> energy_Category = MultiDataExcelReader.getTestData("IndirectEmissions", "Energy Category");
@@ -9257,11 +9359,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //			failed(driver, "Failed to display toast message");
 //		}
 //	}
-	
-	
-	
 
-	
 //	public IndirectEmissionsCalculatorPage clickOnEmissionFactors() {
 //		try {
 //			sleep(4000);
@@ -9281,7 +9379,6 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //																	// IndirectEmissionsCalculatorPage
 //		}
 
-	
 //	public void verify_i_ToolTipsIncalcPages() {
 //		try {
 //			sleep(1000);
@@ -9336,8 +9433,9 @@ public class GHGCalculatorsPage extends CalculatorElements {
 //			e.printStackTrace();
 //		}
 //	}
-	@FindBy(xpath="//p[text()='Activity Details']/parent::div/following-sibling::div")
+	@FindBy(xpath = "//p[text()='Activity Details']/parent::div/following-sibling::div")
 	public WebElement expandActivityDetails;
+
 	public void expandActivityDetailsInRHP() {
 		try {
 			clickOn(expandActivityDetails, "expandActivityDetails");
@@ -9345,7 +9443,40 @@ public class GHGCalculatorsPage extends CalculatorElements {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+	}
+
+	public void clickOnGenerateButtonAfterActivity() {
+		try {
+			Actions act = new Actions(driver);
+			WebElement btnGenerateRefresh = driver.findElement(
+					By.xpath("//span[contains(text(),'i')]//parent::div//div//following::span//*[local-name()='svg']"));
+			act.moveToElement(btnGenerateRefresh).doubleClick().perform();
+			sleep(3000);
+			WebElement totalco2Value = driver
+					.findElement(By.xpath("//span[text()='" + data.get("CalcName") + "']/../div/div/span"));
+			String afteregenrtvalue = totalco2Value.getText().replaceAll(",", "");
+			String[] CO2valueafter = afteregenrtvalue.split("-");
+			String aftergeneratevalue = CO2valueafter[1];
+			sleep(1000);
+			System.out.println("generated emission are" + ":-" + aftergeneratevalue);
+			/*
+			 * if (isNumeric(CO2valueafter[1])) {
+			 * passed("successfully validated generate button functionality" +
+			 * CO2valueafter[1]); } else { failed(driver,
+			 * "failed to validate generate button functionality" + CO2valueafter[1]); }
+			 */
+			if (GlobalVariables.initialTotaltCo2e.toString().equals(aftergeneratevalue.toString())) {
+				System.out.println("Generate button not working");
+				failed(driver, "failed to validate generate button functionality" + aftergeneratevalue.toString()
+						+ " previous value " + GlobalVariables.initialTotaltCo2e.toString());
+			} else {
+				passed("successfully validated generate button functionality" + aftergeneratevalue.toString()
+						+ " previous value " + GlobalVariables.initialTotaltCo2e.toString());
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

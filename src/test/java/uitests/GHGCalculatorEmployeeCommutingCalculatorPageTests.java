@@ -68,21 +68,30 @@ public class GHGCalculatorEmployeeCommutingCalculatorPageTests extends Common {
 				gHGCalculatorsPage.clickOnGHGEmissionsSetup();
 				employeeCommutingCalculatorPage = gHGCalculatorsPage.clickOnEmployeeCommutingCalculator();
 				gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
+				gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
 			}
-			gHGCalculatorsPage.calculateGHGEmissionBefore();
-			if(data.get("Edit").equals("YES")) {
-				gHGCalculatorsPage.clickOnActivityInActivitiesGridMultipleTiffany();
+			if (data.get("Edit").equals("YES")) {
+				gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
+				gHGCalculatorsPage.clickOnAddedActivity();
 				gHGCalculatorsPage.clickOnEditButtonInActivityDetails_1();
+				employeeCommutingCalculatorPage.addActivityDetailsForEmployeeCommutingCalculatorInActivityDetailsPannel();
 			} else {
-				gHGCalculatorsPage.clickOnAddActivity();
-				gHGCalculatorsPage.verifyAddLabelRHP();
+				if (data.get("gwp year").equals("AR6")) {
+					gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+					gHGCalculatorsPage.clickOnEmployeeCommutingCalculator();
+					gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
+					gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
+					gHGCalculatorsPage.clickOnAddActivity();
+					gHGCalculatorsPage.verifyAddLabelRHP();
+					employeeCommutingCalculatorPage.addActivityDetailsForEmployeeCommutingCalculatorInActivityDetailsPannel();
+				}
+					 else {
+					gHGCalculatorsPage.clickOnAddActivity();
+					gHGCalculatorsPage.verifyAddLabelRHP();
+					employeeCommutingCalculatorPage.addActivityDetailsForEmployeeCommutingCalculatorInActivityDetailsPannel();
+
+				}
 			}
-//			gHGCalculatorsPage.SelectPeriod();
-//			gHGCalculatorsPage.clickOnAddActivityButtonScope1();
-			employeeCommutingCalculatorPage.addActivityDetailsForEmployeeCommutingCalculatorInActivityDetailsPannel();
-			gHGCalculatorsPage.verifyAddActivityUpdatedToastMessage();
-			gHGCalculatorsPage.clickOnCloseInActivityDetails();
-			gHGCalculatorsPage.selectPeriodToAll();
 			gHGCalculatorsPage.clickOnAddedActivity();
 			employeeCommutingCalculatorPage.validateTOTALCO2EforEmployeeCommuting();
 			employeeCommutingCalculatorPage.validateActivityDetailsInViewActivityForEmployeeCommutingCalculator();
@@ -90,7 +99,7 @@ public class GHGCalculatorEmployeeCommutingCalculatorPageTests extends Common {
 			gHGCalculatorsPage.ValidateEvidenceDetails();
 			gHGCalculatorsPage.validateAuditLogForAllCalc();
 			gHGCalculatorsPage.clickOnCloseInActivityDetails();
-			gHGCalculatorsPage.clickOnGenerateButtonAlternate1();
+			gHGCalculatorsPage.clickOnGenerateButtonAfterActivity();
 			datasetEnd();
 		}
 		MenuBarPage.logOut();

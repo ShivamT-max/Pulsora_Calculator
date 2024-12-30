@@ -42,7 +42,6 @@ public class GHGCalculator_WasteGeneratedInOperationsCalculatorPageTests extends
 		}
 	}
 
-
 	@Test
 	public void TC012_ValidateAddActivitiesForWastegeneratedInOperations() {
 		String strName = new Exception().getStackTrace()[0].getMethodName();
@@ -64,32 +63,43 @@ public class GHGCalculator_WasteGeneratedInOperationsCalculatorPageTests extends
 				WasteGeneratedInOperationsCalculatorPage = gHGCalculatorsPage
 						.clickOnWasteGeneratedInOperationsCalculator();
 				gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
+				gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
 			}
-			gHGCalculatorsPage.calculateGHGEmissionBefore();
-			if(data.get("Edit").equals("YES")) {
-				gHGCalculatorsPage.clickOnActivityInActivitiesGridMultipleTiffany();
+			if (data.get("Edit").equals("YES")) {
+				gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
+				gHGCalculatorsPage.clickOnAddedActivity();
 				gHGCalculatorsPage.clickOnEditButtonInActivityDetails_1();
-			}else {
-				gHGCalculatorsPage.clickOnAddActivity();
-				gHGCalculatorsPage.verifyAddLabelRHP();
+				WasteGeneratedInOperationsCalculatorPage
+						.addActivityDetailsForWasteGeneratedInOperationsInActivityDetailsPannel();
+			} else {
+				if (data.get("gwp year").equals("AR6")) {
+					gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+					gHGCalculatorsPage.clickOnWasteGeneratedInOperationsCalculator();
+					gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
+					gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
+					gHGCalculatorsPage.clickOnAddActivity();
+					gHGCalculatorsPage.verifyAddLabelRHP();
+					WasteGeneratedInOperationsCalculatorPage
+							.addActivityDetailsForWasteGeneratedInOperationsInActivityDetailsPannel();
+				} else {
+					gHGCalculatorsPage.clickOnAddActivity();
+					gHGCalculatorsPage.verifyAddLabelRHP();
+					WasteGeneratedInOperationsCalculatorPage
+							.addActivityDetailsForWasteGeneratedInOperationsInActivityDetailsPannel();
+				}
 			}
-			WasteGeneratedInOperationsCalculatorPage
-			.addActivityDetailsForWasteGeneratedInOperationsInActivityDetailsPannel();			
-			gHGCalculatorsPage.selectPeriodToAll();
 			gHGCalculatorsPage.clickOnAddedActivity();
 			WasteGeneratedInOperationsCalculatorPage.validateTOTALCO2EforWastegenerated();
 			WasteGeneratedInOperationsCalculatorPage
 					.validateAddActivityDetailsInViewActivityForWasteGeneratedOprtionsCalculator();
-	//		gHGCalculatorsPage.validateGlobalWarmingPotentialvalues();
-			gHGCalculatorsPage.extractTco2Value();
-			gHGCalculatorsPage.collectGHGEmissionAfter();
 			gHGCalculatorsPage.VerifyEvidence();
 			gHGCalculatorsPage.ValidateEvidenceDetails();
 			gHGCalculatorsPage.validateAuditLogForAllCalc();
 			gHGCalculatorsPage.clickOnCloseInActivityDetails();
-			gHGCalculatorsPage.clickOnGenerateButtonAlternate1();
+			gHGCalculatorsPage.clickOnGenerateButtonAfterActivity();
 			datasetEnd();
 		}
+		MenuBarPage.logOut();
 		TestBase.tearDown();
 	}
 

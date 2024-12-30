@@ -3,12 +3,12 @@
 <suite name="Failed suite [Suite]">
   <test thread-count="5" name="Test(failed)">
     <classes>
-      <class name="uitests.GHGCalculator_InvestmentsCalculatorPageTests">
+      <class name="uitests.GHGCalculator_WasteGeneratedInOperationsCalculatorPageTests">
         <methods>
           <include name="testStart"/>
-          <include name="TC027_ValidateAddActivityfor3_15InvestmentsAveraggeDataMethod"/>
+          <include name="TC012_ValidateAddActivitiesForWastegeneratedInOperations"/>
         </methods>
-      </class> <!-- uitests.GHGCalculator_InvestmentsCalculatorPageTests -->
+      </class> <!-- uitests.GHGCalculator_WasteGeneratedInOperationsCalculatorPageTests -->
     </classes>
   </test> <!-- Test(failed) -->
 </suite> <!-- Failed suite [Suite] -->

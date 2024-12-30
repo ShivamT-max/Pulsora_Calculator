@@ -25,7 +25,7 @@
       <class name="uitests.GHGCalculatorCapitalGoodsAveragedataPageTests">
         <methods>
           <exclude name="TC007_ValidateAddActivityforCapitalGoodsandSerAveragedataInScope3_2Calculator"/>
-          <include name="TC008_ValidateAddActivityforCapitalGoodsandSerInScope3_2SpendBasedCalculator"/>
+          <exclude name="TC008_ValidateAddActivityforCapitalGoodsandSerInScope3_2SpendBasedCalculator"/>
         </methods>
       </class>
       <class name="uitests.GHGCalculator_FuelAndEnergyRelatedActivitiesCalculatorPageTests">
@@ -40,7 +40,7 @@
       </class>
       <class name="uitests.GHGCalculator_WasteGeneratedInOperationsCalculatorPageTests">
         <methods>
-          <exclude name="TC012_ValidateAddActivitiesForWastegeneratedInOperations"/>
+          <include name="TC012_ValidateAddActivitiesForWastegeneratedInOperations"/>
         </methods>
       </class>
       <class name="uitests.GHGCalculator_BusinessTravelCalculatorPageTests">

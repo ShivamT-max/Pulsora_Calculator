@@ -96,21 +96,14 @@ public class FuelandEnergyRelatedActivitiesCalculatorPage extends CalculatorElem
 	private WebElement dptag;
 
 	public void EditActivityScope3_3Emissions() {
+		Actions act = new Actions(driver);
 		try {
-			Actions act = new Actions(driver);
 			verifyIfElementPresent(lblAddActivityFuelEnrgy, "lblAddActivityFuelEnrgy", "lblAddActivityFuelEnrgy");
 			Thread.sleep(2000);
-			// Thread.sleep(5000);
 			clickOn(txtFacilityNameScope3_3, "txtFacilityNameScope3_3");
-			sleep(2000);
 			WebElement we = driver.findElement(By.xpath("//li[text()='" + data.get("Facility Name") + "']"));
 			clickOn(we, data.get("Facility Name"));
-			sleep(2000);
-			Actions mouseActions = new Actions(driver);
-			// mouseActions.doubleClick(txtDescrScope3_3).doubleClick().perform();
-			mouseActions.doubleClick(txtDescrScope3_3Qa).doubleClick().perform();
-			// enterText(txtDescrScope3_3, "Description Scope3", data.get("description"));
-			// enterText(txtDescrScope3_3Qa, "Description Scope3", data.get("Description"));
+			sleep(200);
 			clickOn(txtStartDate, "Start Date");
 			enterText(txtStartDate, "Start Date", data.get("Start Date"));
 			clickOn(txtEndDate, "end date");
@@ -123,46 +116,77 @@ public class FuelandEnergyRelatedActivitiesCalculatorPage extends CalculatorElem
 				weUnit = driver.findElement(By.xpath("//li[text()='" + data.get("Units") + "']"));
 				clickOn(weUnit, data.get("Units"));
 				sleep(2000);
-				mouseActions.doubleClick(txtQuantityConsumedFuelEngy).perform();
+				act.doubleClick(txtQuantityConsumedFuelEngy).perform();
 				enterText(txtQuantityConsumedFuelEngy, "Quantity of fuel Consumed", data.get("Quantity Consumed"));
-				sleep(5000);
-				clickOn(btnSave, "Save Button");
+				if (data.get("Env").equals("eu.prod") || data.get("Env").equals("eu.uat")
+						|| (data.get("Env").equals("qa") && data.get("UserName").equals("tiffanyAut_Ent"))) {
+					System.out.println("No tag present");
+				} else {
+					if (!data.get("Edit").equals("YES")) {
+						clickOn(dptag, "Tags");
+						WebElement selecttag = driver
+								.findElement(By.xpath("(//ul[@aria-labelledby='tag_id-label']//li)[1]"));
+						((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", selecttag);
+						act.moveToElement(selecttag).click().perform(); // clickOn(selecttag, "Tags");
+						act.sendKeys(Keys.ESCAPE).perform();
+					}
+				}
+				waitForElement(btnSave);
+				act.moveToElement(btnSave).doubleClick().perform();
+				verifyAddActivityUpdatedToastMessage();
+				try {
+					if (btnClose.isDisplayed()) {
+						clickOn(btnClose, "");
+					}
+				} catch (Exception e) {
+					System.out.println("Activity details RHP Closed");
+				}
 				System.out.println("-------Validate details---------");
-			} else {
+			}
+			else {
 				clickOn(drpFuelType, "Fuel Type DropDown");
-				// WebElement weFuelTypeEnter =
-				// driver.findElement(By.xpath("//input[@id='fuel_type_name']"));
-				// enterText(weFuelTypeEnter, "Fuel Type", data.get("Fuel Type"));
 				WebElement weFuelType = driver.findElement(By.xpath("//li[text()='" + data.get("Fuel Type") + "']"));
 				clickOn(weFuelType, data.get("Fuel Type"));
 				sleep(2000);
 				clickOn(drpFuelName, "Fuel Name DropDown");
 				WebElement weFuelName = driver.findElement(By.xpath("//li[text()='" + data.get("Fuel Name") + "']"));
-				// clickOn(weFuelName, data.get("Fuel Name"));
 				jsClick(weFuelName, data.get("Fuel Name"));
 				System.out.println(data.get("Fuel Name"));
 				clickOn(txtScope3_3FuelEnrgyUnit, "Units");
 				weUnit = driver.findElement(By.xpath("//li[text()='" + data.get("Units") + "']"));
 				clickOn(weUnit, data.get("Units"));
 				sleep(2000);
-				mouseActions.doubleClick(txtQuantityConsumedFuelEngy).perform();
+				act.doubleClick(txtQuantityConsumedFuelEngy).perform();
 				enterText(txtQuantityConsumedFuelEngy, "Quantity of fuel Consumed", data.get("Quantity Consumed"));
 				sleep(2000);
-				if (!data.get("Edit").equals("YES")) {
-					sleep(1000);
-					clickOn(dptag, "Tags");
-					WebElement selecttag = driver.findElement(
-							By.xpath("//ul[@aria-labelledby='tag_id-label']//li[text()='SpecifictoTiffanyHQ23']"));
-					((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", selecttag);
-					act.moveToElement(selecttag).click().perform();
-					act.sendKeys(Keys.ESCAPE).perform();}
-			clickOn(btnSave, "Save Button");
-			verifyAddActivityUpdatedToastMessage();
-			System.out.println("-------Validate details---------");
-			// }
-		} 
-		}
-			catch (Exception e) {
+				if (data.get("Env").equals("eu.prod") || data.get("Env").equals("eu.uat")
+						|| (data.get("Env").equals("qa") && data.get("UserName").equals("tiffanyAut_Ent"))) {
+					System.out.println("No tag present");
+				} else {
+					if (!data.get("Edit").equals("YES")) {
+						try {
+							if (dptag.isDisplayed()) {
+								clickOn(dptag, "Tags");
+								WebElement selecttag = driver
+										.findElement(By.xpath("(//ul[@aria-labelledby='tag_id-label']//li)[1]"));
+								((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();",
+										selecttag);
+								act.moveToElement(selecttag).click().perform(); //
+								act.sendKeys(Keys.ESCAPE).perform();
+							} else {
+							}
+
+						} catch (Exception e) {
+							failed(driver, "Exception caught " + e.getMessage());
+						}
+					}
+				}
+					waitForElement(btnSave);
+					act.moveToElement(btnSave).doubleClick().perform();
+					verifyAddActivityUpdatedToastMessage();
+					System.out.println("-------Validate details---------");
+				}
+		} catch (Exception e) {
 			failed(driver, "Exception caught" + e.getMessage());
 		}
 	}
@@ -174,7 +198,7 @@ public class FuelandEnergyRelatedActivitiesCalculatorPage extends CalculatorElem
 		try {
 			sleep(100);
 			By toast = By.xpath("//*[contains(text(),'Activity added successfully')]");
-			By toastEdit = By.xpath("//*contains(text(),'Activity updated successfully')]");
+			By toastEdit = By.xpath("//*[contains(text(),'Activity updated successfully')]");
 			if (data.get("Edit").equals("YES")) {
 				if (isElementPresent(toastEdit)) {
 					passed("Successfully displayed toast message - Activity updated successfully");
@@ -429,7 +453,7 @@ public class FuelandEnergyRelatedActivitiesCalculatorPage extends CalculatorElem
 				} else {
 					failed(driver,
 							"Failed To validate " + activityDetailFieldNames[j] + " In Activity Details Expected As "
-									+ data.get(activityDetailFieldNames[j]) + "But Actual is"
+									+ data.get(activityDetailFieldNames[j]) + " But Actual is "
 									+ weActivityField.getText());
 				}
 			}
@@ -597,19 +621,23 @@ public class FuelandEnergyRelatedActivitiesCalculatorPage extends CalculatorElem
 		}
 	}
 
+	@FindBy(xpath = "//*[text()='Scope 3.3 -  Fuel and Energy Related Activities']")
+	private WebElement lblGHGCalculatorFUERACT;
+	
 	@Override
 	protected void VerifyNavigationToValidPage() {
 		try {
-			waitForElement(lblGHGCalculator);
-			if (isElementPresent(lblGHGCalculator)) {
-				passed("User Successfully Navigated To GHG_Calculator Page");
+			waitForElement(lblGHGCalculatorFUERACT);
+			if (isElementPresent(lblGHGCalculatorFUERACT)) {
+				passed("User Successfully Navigated To GHG_Calculator Page "+data.get("CalcName"));
 			} else {
-				failed(driver, "Failed To Navigate To GHG_Calculator Page");
+				failed(driver, "Failed To Navigate To GHG_Calculator Page "+data.get("CalcName"));
 			}
 			takeScreenshot(driver);
 		} catch (Exception e) {
 			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
+
 
 }

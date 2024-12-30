@@ -97,7 +97,7 @@ public abstract class CalculatorElements extends TestBase {
 	// -------------------------------Start StatComb--------------------------
 	@FindBy(xpath = "//li[contains(text(),'GHG Calculators')]")
 	public WebElement lblGHGCalculator;
-	@FindBy(xpath = "//div[contains(text(),'SCOPE 2')]")
+	@FindBy(xpath = "//*[contains(text(),'SCOPE 2')]")
 	public WebElement btnIndirectEmisssion;
 	@FindBy(xpath = "//span[contains(text(),'Activities')]//parent::div//article")
 	public WebElement btnbtnActivities;
@@ -344,7 +344,7 @@ public abstract class CalculatorElements extends TestBase {
 	@FindBy(xpath = "//span[text()='Invoice No.']//parent::div//following-sibling::div//input")
 	public WebElement invoceNoupSt;
 	@FindBy(xpath = "//input[@id='service_provider']")
-	public WebElement txtServicePrvodr;
+	public WebElement txtServiceProvider;
 	@FindBy(xpath = "//input[@id='service_type']")
 	public WebElement txtServiceType;
 	@FindBy(xpath = "(//input[@id='mode_of_transport']//following-sibling::div/button)[2]")
@@ -574,7 +574,7 @@ public abstract class CalculatorElements extends TestBase {
 	public WebElement btnDistanceBasedMethod;
 	@FindBy(xpath = "//button[text()='Spend Based Method']")
 	public WebElement btnSpendBasedMethod;
-	@FindBy(xpath = "//div[text()='Business Travel']")
+	@FindBy(xpath = "//*[text()='Business Travel']")
 	public WebElement weBusinessTravelCalculator;
 	@FindBy(xpath = "//input[@id='Expense No']")
 	public WebElement txtInvoiceNum;
@@ -628,7 +628,7 @@ public abstract class CalculatorElements extends TestBase {
 	// -----------EmployeeCommuting-----------------------------------Start---------------------------
 	@FindBy(xpath = "//*[contains(text(),'Employee Commuting')]")
 	public WebElement lblEmployeeCommuting;
-	@FindBy(xpath = "//div[text()='Employee Commuting']")
+	@FindBy(xpath = "//*[text()='Employee Commuting']")
 	public WebElement weEmployeeCommutingCalculator;
 	@FindBy(xpath = "//span[text()='Average Daily Commute Distance ']//parent::div//following-sibling::div//input")
 	public WebElement txtAvgDailyCommuteDistance;

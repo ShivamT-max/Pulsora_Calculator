@@ -62,33 +62,39 @@ public class GHGCalculator_FuelAndEnergyRelatedActivitiesCalculatorPageTests ext
 				FuelandEnergyRelatedActivitiesCalculatorPage = gHGCalculatorsPage
 						.clickOnScope3_3_Fuel_and_Energy_Related_Activities();
 				gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
+				gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
 			}
-			gHGCalculatorsPage.calculateGHGEmissionBefore();
-			if(data.get("Edit").equals("YES")) {
-				gHGCalculatorsPage.clickOnActivityInActivitiesGridMultipleTiffany();
+			if (data.get("Edit").equals("YES")) {
+				gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
+				gHGCalculatorsPage.clickOnAddedActivity();
 				gHGCalculatorsPage.clickOnEditButtonInActivityDetails_1();
+				FuelandEnergyRelatedActivitiesCalculatorPage.EditActivityScope3_3Emissions();
 			} else {
-				gHGCalculatorsPage.clickOnAddActivity();
-				gHGCalculatorsPage.verifyAddLabelRHP();
+				if (data.get("gwp year").equals("AR6")) {
+					gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+					gHGCalculatorsPage.clickOnScope3_3_Fuel_and_Energy_Related_Activities();				
+					gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
+					gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
+					gHGCalculatorsPage.clickOnAddActivity();
+					gHGCalculatorsPage.verifyAddLabelRHP();
+					FuelandEnergyRelatedActivitiesCalculatorPage.EditActivityScope3_3Emissions();
+				} else {
+					gHGCalculatorsPage.clickOnAddActivity();
+					gHGCalculatorsPage.verifyAddLabelRHP();
+					FuelandEnergyRelatedActivitiesCalculatorPage.EditActivityScope3_3Emissions();
+				}
 			}
-			FuelandEnergyRelatedActivitiesCalculatorPage.EditActivityScope3_3Emissions();
-			//gHGCalculatorsPage.verifyAddActivityUpdatedToastMessage();
-			gHGCalculatorsPage.selectPeriodToAll();
 			gHGCalculatorsPage.clickOnAddedActivity();
 			FuelandEnergyRelatedActivitiesCalculatorPage.validateTotalCO2EforFuel();
 			FuelandEnergyRelatedActivitiesCalculatorPage.ValidateActivityDetailsInViewActivityScope3_3();
-	//		gHGCalculatorsPage.validateGlobalWarmingPotentialvalues();
-			gHGCalculatorsPage.extractTco2Value();
 			gHGCalculatorsPage.VerifyEvidence();
 			gHGCalculatorsPage.ValidateEvidenceDetails();
 			gHGCalculatorsPage.validateAuditLogForAllCalc();
 			gHGCalculatorsPage.clickOnCloseInActivityDetails();
-			gHGCalculatorsPage.clickOnGenerateButtonAlternate1();
-//			gHGCalculatorsPage.clickOnCloseInActivityDetailsInScope2();
+			gHGCalculatorsPage.clickOnGenerateButtonAfterActivity();
 			datasetEnd();
 		}
-//		MenuBarPage.logOut();
+		MenuBarPage.logOut();
 		TestBase.tearDown();
 	}
-
 }
