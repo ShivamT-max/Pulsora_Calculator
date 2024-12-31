@@ -25,7 +25,7 @@
       </class>
       <class name="uitests.GHGCalculator_HotelStayCalculatorPageTests">
         <methods>
-          <include name="TC015_ValidateAddActivityforHotelStay3_6GHGCalculator"/>
+          <exclude name="TC015_ValidateAddActivityforHotelStay3_6GHGCalculator"/>
         </methods>
       </class>
       <class name="uitests.GHGCalculator_UpstreamLeasedAssetsCalculatorPageTests">
@@ -56,7 +56,7 @@
       <class name="uitests.GHGCalculator_InvestmentsCalculatorPageTests">
         <methods>
           <exclude name="TC026_ValidateAddActivityfor3_15InvestmentsSpecificMethod"/>
-          <exclude name="TC027_ValidateAddActivityfor3_15InvestmentsAveraggeDataMethod"/>
+          <include name="TC027_ValidateAddActivityfor3_15InvestmentsAveraggeDataMethod"/>
           <exclude name="TC028_ValidateAddActivityfor3_15InvestmentsDeptProjectFinancingSpecificMethod"/>
           <exclude name="TC029_ValidateAddActivityfor3_15InvestmentsDebtProjectFinancingAverageDataMethod"/>
         </methods>

@@ -49,12 +49,13 @@ public class InvestmentsGHGCalculatorsPage extends GHGCalculatorsPage {
 			act.doubleClick(txtScope3tCO2eEmissions3_15).perform();
 			enterText(txtScope3tCO2eEmissions3_15, "Scope 3 - (tCO2e) Emissions of investee company 3_15",
 					data.get("Scope 3 - (tCO2e) Emissions of investee company"));
+			
 //			act.doubleClick(txtTotaltCO2eEmissions3_15).perform();
 //			enterText(txtTotaltCO2eEmissions3_15, "Total (tCO2e) Emissions of investee company 3_15",
 //					data.get("Total GHG Emissions - (tCO2e) of investee company"));
 			act.doubleClick(totalEmissionCalc).build().perform();
 			act.doubleClick(txtSourcs3_15).perform();
-			sleep(1000);
+			sleep(2000);
 			enterText(txtSourcs3_15, "Sourcs 3_15", data.get("Source of Emissions Data"));
 			clickOn(btnSaveHotelStay, "Save Button Investments");
 		} catch (Exception e) {
@@ -196,6 +197,7 @@ public class InvestmentsGHGCalculatorsPage extends GHGCalculatorsPage {
 			verifyIfElementPresent(lblActivityDetails, "lblAddActivity", "lblAddActivity");
 			Actions act = new Actions(driver);
 			act.doubleClick(txtInvesteeCompanyScope3_15).perform();
+			clearUntillTextFieldIsGettingCleared(txtInvesteeCompanyScope3_15);
 			enterText(txtInvesteeCompanyScope3_15, "Investee Copmany text", data.get("Investee Company"));
 			clickOn(drpInvesteeCompany, data.get("Investee Company Sector"));
 			String weinvesteeCompanyProject = "//li[text()='" + data.get("Investee Company Sector") + "']";
@@ -215,14 +217,17 @@ public class InvestmentsGHGCalculatorsPage extends GHGCalculatorsPage {
 			act.doubleClick(txtRevenueOfInvesteeAverage).perform();
 			enterText(txtRevenueOfInvesteeAverage, "txt RevenueOf Investee Average data Method",
 					data.get("Investee Company's Revenue"));
+			sleep(2000);
 			act.doubleClick(txtReportingCompanyShareInvesteeAverage).perform();
 			// Reporting company's share of equity (%)
 			enterText(txtReportingCompanyShareInvesteeAverage, "txt Reporting CompanyShare Average Data method",
 					data.get("Reporting company's share of equity (%)"));
+			
 			act.doubleClick(txtInvesteeCompanyShareInvesteeAverage).perform();
 			// Investee company's revenue (%) from selected sector
 			enterText(txtInvesteeCompanyShareInvesteeAverage, "txt Reporting CompanyShare Average Data method",
 					data.get("Investee company's revenue (%) from selected sector"));
+			sleep(1000);
 			clickOn(btnSaveHotelStay, "Save Button Investments");
 //    		jsClick(btnSaveHotelStay, "Save Button Investments");
 		} catch (Exception e) {
