@@ -59,9 +59,17 @@ public class FranchisesCalculatorPage extends CalculatorElements {
 			WebElement weUnitFrenchise = driver.findElement(By.xpath("//li[text()='" + data.get("Units") + "']"));
 			clickOn(weUnitFrenchise, data.get("Units"));
 			sleep(3000);
-			clickOn(btnSave, "Save Button");
-			sleep(1670);
+			waitForElement(btnSave);
+			mouseActions.moveToElement(btnSave).doubleClick().perform();
 			verifyAddActivityUpdatedToastMessage();
+			try {
+				if (btnClose.isDisplayed()) {
+					clickOn(btnClose, "");
+				}
+			} catch (Exception e) {
+				System.out.println("Activity details RHP Closed");
+			}
+			System.out.println("-------Validate Emission Factor and tCO2e details---------");
 		} catch (Exception e) {
 			failed(driver, "Exception caught" + e.getMessage());
 		}
@@ -116,12 +124,12 @@ public class FranchisesCalculatorPage extends CalculatorElements {
 				WebElement weActivityField = driver.findElement(By.xpath(
 						"//span[text()='" + activityDetailFieldNames[j] + "']//parent::p//following-sibling::p"));
 				if (weActivityField.getText().trim().equals(data.get(activityDetailFieldNames[j]).trim())) {
-					passed("Successfully Validated " + activityDetailFieldNames[j] + " In Activity Details As"
+					passed("Successfully Validated " + activityDetailFieldNames[j] + " In Activity Details As "
 							+ weActivityField.getText());
 				} else {
 					failed(driver,
 							"Failed To validate " + activityDetailFieldNames[j] + " In Activity Details Expected As "
-									+ data.get(activityDetailFieldNames[j]) + "But Actual is"
+									+ data.get(activityDetailFieldNames[j]) + " But Actual is "
 									+ weActivityField.getText());
 				}
 			}
@@ -652,7 +660,6 @@ public class FranchisesCalculatorPage extends CalculatorElements {
 			String CalCo2e5 = GHGCalculatorsPage.approximateDecimalValueWithBigDecimal(res5);
 			WebElement valuetCO2e5 = driver
 					.findElement(By.xpath("//span[contains(text(),'tCO2e')]//parent::p//following-sibling::p"));
-			GlobalVariables.exceptedtco2e = valuetCO2e5.getText().trim();
 			if (CalCo2e5.trim().equals(valuetCO2e5.getText().trim())) {
 				passed("Successfully validated tCO2e value for : " + " Franchisee " + valuetCO2e5.getText());
 			} else {

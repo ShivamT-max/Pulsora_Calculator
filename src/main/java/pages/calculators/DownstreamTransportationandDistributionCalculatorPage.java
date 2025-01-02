@@ -27,20 +27,25 @@ public class DownstreamTransportationandDistributionCalculatorPage extends Calcu
 	private WebElement drptags;
 	@FindBy(xpath = "//input[@id='tag_id']//parent::div//*[@data-testid='ArrowDropDownIcon']")
 	private WebElement dptag;
+	@FindBy(xpath = "(//input[@placeholder='Sales Region']//parent::div//following::button)[2]")
+	private WebElement drpsalesregion;
 
 	public void EditActivityScope3_9Emissions() {
 		try {
 			Actions act = new Actions(driver);
 			verifyIfElementPresent(lblAddActivityFuelEnrgy, "lblAddActivityFuelEnrgy", "lblAddActivityFuelEnrgy");
-			Thread.sleep(4000);
+			Thread.sleep(2000);
 			// clickOn(txtFacilityNameScope3_4, "txtFacilityNameScope3_4");
 			clickOn(txtFacilityNameScope3_4Qa, "txtFacilityNameScope3_4");
-			sleep(2000);
+			sleep(20);
 			WebElement we = driver.findElement(By.xpath("//li[text()='" + data.get("Facility Name") + "']"));
 			clickOn(we, data.get("Facility Name"));
 			sleep(2000);
 			// mouseActions.doubleClick(txtDescrScope3_4).perform();
 			// enterText(txtDescrScope3_4, "Description Scope3.4", data.get("Description"));
+			clickOn(drpsalesregion, "clicked on sales region");
+			WebElement sales = driver.findElement(By.xpath("//li[contains(text(),'Sr 1')]"));
+			clickOn(sales,"sales region");
 			clickOn(invoceNoupSt, "Invoice No.");
 			mouseActions.doubleClick(invoceNoupSt).perform();
 			enterText(invoceNoupSt, "Invoice No.", data.get("Invoice No."));
@@ -51,8 +56,8 @@ public class DownstreamTransportationandDistributionCalculatorPage extends Calcu
 			clickOn(txtEndDate, "end date");
 			enterText(txtEndDate, "End Date", data.get("End Date"));
 			// ----
-			mouseActions.doubleClick(txtServicePrvodr).perform();
-			enterText(txtServicePrvodr, "Service Provider", data.get("Service Provider"));
+			mouseActions.doubleClick(txtServiceProvider).perform();
+			enterText(txtServiceProvider, "Service Provider", data.get("Service Provider"));
 			mouseActions.doubleClick(txtServiceType).perform();
 			enterText(txtServiceType, "Service Type", data.get("Service Type"));
 			clickOn(drpModeOfFrght, "Mode of freight DropDown");
@@ -81,21 +86,17 @@ public class DownstreamTransportationandDistributionCalculatorPage extends Calcu
 			WebElement weDistanceUnit = driver
 					.findElement(By.xpath("//li[text()='" + data.get("Distance Unit") + "']"));
 			clickOn(weDistanceUnit, data.get("Distance Unit"));
+			waitForElement(btnSave);
+			act.moveToElement(btnSave).doubleClick().perform();
+			verifyAddActivityUpdatedToastMessage();
 			try {
-			if (!data.get("Edit").equals("YES")) {
-				clickOn(dptag, "Tags");
-				WebElement selecttag = driver.findElement(By.xpath("(//ul[@aria-labelledby='tag_id-label']//li)[1]"));
-				((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", selecttag);
-				act.moveToElement(selecttag).click().perform(); 
+				if (btnClose.isDisplayed()) {
+					clickOn(btnClose, "");
+				}
+			} catch (Exception e) {
+				System.out.println("Activity details RHP Closed");
 			}
-			}
-			catch (Exception e) {
-				failed(driver, "Exception caught" + e.getMessage());
-			}
-			clickOn(btnSave, "Save Button downstream transportation ");
-			sleep(1000);
-			clickOn(btnClose, "close");
-			System.out.println("-------Validate details---------");
+			System.out.println("-------Validate Emission Factor and tCO2e details---------");
 		} catch (Exception e) {
 			failed(driver, "Exception caught" + e.getMessage());
 		}
@@ -116,12 +117,12 @@ public class DownstreamTransportationandDistributionCalculatorPage extends Calcu
 				WebElement weActivityField = driver.findElement(By.xpath(
 						"//span[text()='" + activityDetailFieldNames[j] + "']//parent::p//following-sibling::p"));
 				if (weActivityField.getText().trim().equals(data.get(activityDetailFieldNames[j]).trim())) {
-					passed("Successfully Validated " + activityDetailFieldNames[j] + " In Activity Details As"
+					passed("Successfully Validated " + activityDetailFieldNames[j] + " In Activity Details As "
 							+ weActivityField.getText());
 				} else {
 					failed(driver,
 							"Failed To validate " + activityDetailFieldNames[j] + " In Activity Details Expected As "
-									+ data.get(activityDetailFieldNames[j]) + "But Actual is"
+									+ data.get(activityDetailFieldNames[j]) + " But Actual is "
 									+ weActivityField.getText());
 				}
 			}
@@ -268,8 +269,8 @@ public class DownstreamTransportationandDistributionCalculatorPage extends Calcu
 			// ----
 			validateCEF();
 
-			mouseActions.doubleClick(txtServicePrvodr).perform();
-			enterText(txtServicePrvodr, "Service Provider", data.get("Service Provider"));
+			mouseActions.doubleClick(txtServiceProvider).perform();
+			enterText(txtServiceProvider, "Service Provider", data.get("Service Provider"));
 			mouseActions.doubleClick(txtServiceType).perform();
 			enterText(txtServiceType, "Service Type", data.get("Service Type"));
 //		    clickOn(drpModeOfFrght, "Mode of freight DropDown");
@@ -423,15 +424,17 @@ public class DownstreamTransportationandDistributionCalculatorPage extends Calcu
 					+ emission_Factor.getText());
 		}
 	}
-
+	@FindBy(xpath = "//*[text()='Scope 3.9 - Downstream Transportation and Distribution']")
+	private WebElement lblGHGCalculatorDWST;
+	
 	@Override
 	protected void VerifyNavigationToValidPage() {
 		try {
-			waitForElement(lblGHGCalculator);
-			if (isElementPresent(lblGHGCalculator)) {
-				passed("User Successfully Navigated To GHG_Calculator Page");
+			waitForElement(lblGHGCalculatorDWST);
+			if (isElementPresent(lblGHGCalculatorDWST)) {
+				passed("User Successfully Navigated To GHG_Calculator Page "+data.get("CalcName"));
 			} else {
-				failed(driver, "Failed To Navigate To GHG_Calculator Page");
+				failed(driver, "Failed To Navigate To GHG_Calculator Page "+data.get("CalcName"));
 			}
 			takeScreenshot(driver);
 		} catch (Exception e) {
@@ -439,6 +442,39 @@ public class DownstreamTransportationandDistributionCalculatorPage extends Calcu
 		}
 	}
 
+
+	public void verifyAddActivityUpdatedToastMessage() {
+		try {
+			sleep(100);
+			By toast = By.xpath("//*[contains(text(),'Activity added successfully')]");
+			By toastEdit = By.xpath("//div[contains(text(),'Activity updated successfully')]");
+			if (data.get("Edit").equals("YES")) {
+				if (isElementPresent(toastEdit)) {
+					passed("Successfully displayed toast message - Activity updated successfully");
+					sleep(2000);
+				} else {
+					failed(driver, "Failed to display updated toast message");
+				}
+			} else {
+				if (isElementPresent(toast)) {
+					passed("Successfully displayed toast message - Activity added successfully");
+					sleep(2000);
+				} else {
+					failed(driver, "Failed to display added toast message");
+				}
+			}
+
+			/*
+			 * if (isElementPresent(toastMessagePopUp)) { jsClick(toastMessagePopUp,
+			 * "AddedSucessfully"); } else { failed(driver,
+			 * "Failed to display toast message"); }
+			 */
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+	}
+	
 	public void valiadteTOTALCO2EforDownstream() {
 		try {
 			verifyIfElementPresent(lblActivityDetails, "lblActivityDetails",
@@ -458,7 +494,7 @@ public class DownstreamTransportationandDistributionCalculatorPage extends Calcu
 						+ valuetCO2e3.getText());
 			} else {
 				failed(driver, "Failed to valiadte tCO2e value for : " + " Downstream Transportation and Distribution "
-						+ valuetCO2e3.getText() + "but actual should be " + CalCo2e3);
+						+ valuetCO2e3.getText() + " but actual should be " + CalCo2e3);
 			}
 		} catch (Exception e) {
 			failed(driver, "Exception caught " + e.getMessage());

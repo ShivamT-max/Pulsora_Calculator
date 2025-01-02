@@ -26,6 +26,8 @@ public class WasteGeneratedInOperationsCalculatorPage extends CalculatorElements
 	private WebElement drptags;
 	@FindBy(xpath = "//input[@id='tag_id']//parent::div//*[@data-testid='ArrowDropDownIcon']")
 	private WebElement dptag;
+	@FindBy(xpath = "//h5[contains(text(),'Add Activity')]")
+	private WebElement drptagremove;
 
 	public void addActivityDetailsForWasteGeneratedInOperationsInActivityDetailsPannel() {
 		try {
@@ -60,21 +62,32 @@ public class WasteGeneratedInOperationsCalculatorPage extends CalculatorElements
 			sleep(2000);
 			enterText(txtMassOfWasteProduced, "MassOfWasteProduced", data.get("Mass of Waste Produced"));
 			try {
-			if (!data.get("Edit").equals("YES")) {
-				clickOn(dptag, "Tags");
-				WebElement selecttag = driver.findElement(By.xpath("(//ul[@aria-labelledby='tag_id-label']//li)[1]"));
-				((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", selecttag);
-				act.moveToElement(selecttag).click().perform(); // clickOn(selecttag, "Tags");
+				if (data.get("Env").equals("eu.prod") || data.get("Env").equals("eu.uat")
+						|| (data.get("Env").equals("qa") && data.get("UserName").equals("tiffanyAut_Ent"))) {
+					System.out.println("No tag present");
+				} else {
+					if (!data.get("Edit").equals("YES")) {
+						clickOn(dptag, "Tags");
+						WebElement selecttag = driver
+								.findElement(By.xpath("(//ul[@aria-labelledby='tag_id-label']//li)[1]"));
+						((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", selecttag);
+						act.moveToElement(selecttag).click().perform(); // clickOn(selecttag, "Tags");
+						clickOn(drptagremove, "");
+					}
+				}
+			} catch (Exception e) {
+				System.out.println("no tag present");
 			}
-			}
-			catch (Exception e) {
-				failed(driver, "Exception caught " + e.getMessage());
-			}
-			sleep(2);
-			clickOn(btnSave, "Save Button");
-			sleep(1000);
+			sleep(100);
+			act.moveToElement(btnSave).doubleClick().perform();
 			verifyAddActivityUpdatedToastMessage();
-			sleep(2000);
+			try {
+				if (btnClose.isDisplayed()) {
+					clickOn(btnClose, "");
+				}
+			} catch (Exception e) {
+				System.out.println("Activity details RHP Closed");
+			}
 		} catch (Exception e) {
 			failed(driver, "Exception caught " + e.getMessage());
 		}
@@ -274,12 +287,12 @@ public class WasteGeneratedInOperationsCalculatorPage extends CalculatorElements
 				WebElement weActivityField = driver.findElement(By.xpath(
 						"//span[text()='" + activityDetailFieldNames[j] + "']//parent::p//following-sibling::p"));
 				if (weActivityField.getText().trim().equals(data.get(activityDetailFieldNames[j]))) {
-					passed("Successfully Validated " + activityDetailFieldNames[j] + " In Activity Details As"
+					passed("Successfully Validated " + activityDetailFieldNames[j] + " In Activity Details As "
 							+ weActivityField.getText());
 				} else {
 					failed(driver,
 							"Failed To validate " + activityDetailFieldNames[j] + " In Activity Details Expected As "
-									+ data.get(activityDetailFieldNames[j]) + "But Actual is"
+									+ data.get(activityDetailFieldNames[j]) + " But Actual is "
 									+ weActivityField.getText());
 				}
 			}
@@ -464,14 +477,17 @@ public class WasteGeneratedInOperationsCalculatorPage extends CalculatorElements
 
 	}
 
+	@FindBy(xpath = "//*[text()='Scope 3.5 - Waste Generated in Operations']")
+	private WebElement lblGHGCalculatorWASGENE;
+	
 	@Override
 	protected void VerifyNavigationToValidPage() {
 		try {
-			waitForElement(lblWasteGeneratedInOps);
-			if (isElementPresent(lblWasteGeneratedInOps)) {
-				passed("User Successfully Navigated To WasteGeneratedInOps Page");
+			waitForElement(lblGHGCalculatorWASGENE);
+			if (isElementPresent(lblGHGCalculatorWASGENE)) {
+				passed("User Successfully Navigated To GHG_Calculator Page "+data.get("CalcName"));
 			} else {
-				failed(driver, "Failed To Navigate To WasteGeneratedInOps Page");
+				failed(driver, "Failed To Navigate To GHG_Calculator Page "+data.get("CalcName"));
 			}
 			takeScreenshot(driver);
 		} catch (Exception e) {
@@ -479,10 +495,11 @@ public class WasteGeneratedInOperationsCalculatorPage extends CalculatorElements
 		}
 	}
 
+
 	public void validateTOTALCO2EforWastegenerated() {
 		try {
-			String res2="";
-			String	calTco2e7="";
+			String res2 = "";
+			String calTco2e7 = "";
 			verifyIfElementPresent(lblActivityDetails, "lblActivityDetails", "Waste Generated in Operations");
 			WebElement emissionfactor = driver.findElement(
 					By.xpath("(//span[contains(text(),'Emission Factor')]//parent::p//following-sibling::p)[2]"));
@@ -491,7 +508,7 @@ public class WasteGeneratedInOperationsCalculatorPage extends CalculatorElements
 				passed("Successfully validated EmissionFactor as " + data.get("Emission Factor"));
 			} else {
 				failed(driver, "Failed to validate EmissionFactor as " + data.get("Emission Factor") + " but Actual is "
-						+ splitEF4[0].trim());
+						+ splitEF4[0].trim()+" "+splitEF4[1]+" "+splitEF4[2]);
 			}
 			WebElement ee = driver.findElement(By
 					.xpath("//p[contains(text(),'Conversion')]//parent::div//parent::div//following-sibling::div/div"));
@@ -509,8 +526,7 @@ public class WasteGeneratedInOperationsCalculatorPage extends CalculatorElements
 			} else if (splitEF4[1].trim().equals(Constants.conToTonnfrg)) {
 				Double result7 = (Double.parseDouble(splitEF4[0]) * Double.parseDouble(s) * d) / 1000000;
 				calTco2e7 = result7.toString();
-			}
-			else if(splitEF4[1].trim().equals(Constants.conToTonnfrTonn)) {
+			} else if (splitEF4[1].trim().equals(Constants.conToTonnfrTonn)) {
 				Double result7 = Double.parseDouble(splitEF4[0]) * Double.parseDouble(s) * d;
 				calTco2e7 = result7.toString();
 			}

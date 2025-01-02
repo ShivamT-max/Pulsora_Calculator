@@ -40,7 +40,7 @@ public class GHGCalculator_DownstreamTransportationDistributionCalculatorPageTes
 			datasets = data.getDataSets(name);
 		}
 	}
-	
+
 	@Test
 	public void TC019_ValidateAddActivityforDownstreamTransportationandDistribution_InScope3_9Calculator() {
 		String strName = new Exception().getStackTrace()[0].getMethodName();
@@ -58,36 +58,45 @@ public class GHGCalculator_DownstreamTransportationDistributionCalculatorPageTes
 				MenuBarPage = HomePage.returnMenuPage();
 				MenuBarPage.clickOnHamburgerMenu();
 				gHGCalculatorsPage = MenuBarPage.clickOnGHGCalculatorsMenu();
-	//			gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+				gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+				gHGCalculatorsPage.clickOnCarbonManagementNavigationMenu();
 				DownstreamTransportationandDistributionCalculatorPage = gHGCalculatorsPage
 						.clickOnScope3_9_Downstream_Transportation_and_Distribution();
 				gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
+				gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
 			}
-			gHGCalculatorsPage.calculateGHGEmissionBefore();
-			if(data.get("Edit").equals("YES")) {
-				gHGCalculatorsPage.clickOnActivityInActivitiesGridMultipleTiffany();
+			if (data.get("Edit").equals("YES")) {
+				gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
+				gHGCalculatorsPage.clickOnAddedActivity();
 				gHGCalculatorsPage.clickOnEditButtonInActivityDetails_1();
-			}else {
-				gHGCalculatorsPage.clickOnAddActivity();
-				gHGCalculatorsPage.verifyAddLabelRHP();
+				DownstreamTransportationandDistributionCalculatorPage.EditActivityScope3_9Emissions();
+			} else {
+				if (data.get("gwp year").equals("AR6")) {
+					gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+					gHGCalculatorsPage.clickOnCarbonManagementNavigationMenu();
+					gHGCalculatorsPage.clickOnScope3_9_Downstream_Transportation_and_Distribution();
+					gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
+					gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
+					gHGCalculatorsPage.clickOnAddActivity();
+					gHGCalculatorsPage.verifyAddLabelRHP();
+					DownstreamTransportationandDistributionCalculatorPage.EditActivityScope3_9Emissions();
+				} else {
+					gHGCalculatorsPage.clickOnAddActivity();
+					gHGCalculatorsPage.verifyAddLabelRHP();
+					DownstreamTransportationandDistributionCalculatorPage.EditActivityScope3_9Emissions();
+				}
 			}
-		//	gHGCalculatorsPage.clickOnAddActivity();
-			DownstreamTransportationandDistributionCalculatorPage.EditActivityScope3_9Emissions();
-			//gHGCalculatorsPage.verifyAddActivityUpdatedToastMessage();
-			gHGCalculatorsPage.selectPeriodToAll();
 			gHGCalculatorsPage.clickOnAddedActivity();
 			DownstreamTransportationandDistributionCalculatorPage.valiadteTOTALCO2EforDownstream();
 			DownstreamTransportationandDistributionCalculatorPage.ValidateActivityDetailsInViewActivityScope3_9();
-			gHGCalculatorsPage.extractTco2Value();
 			gHGCalculatorsPage.VerifyEvidence();
 			gHGCalculatorsPage.ValidateEvidenceDetails();
 			gHGCalculatorsPage.validateAuditLogForAllCalc();
-			gHGCalculatorsPage.clickOnCloseInActivityDetails();			
-			gHGCalculatorsPage.clickOnGenerateButtonAlternate1();
+			gHGCalculatorsPage.clickOnCloseInActivityDetails();
+			gHGCalculatorsPage.clickOnGenerateButtonAfterActivity();
 			datasetEnd();
 		}
-//		 MenuBarPage.logOut();
+		MenuBarPage.logOut();
 		TestBase.tearDown();
 	}
-
 }

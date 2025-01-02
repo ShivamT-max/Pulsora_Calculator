@@ -54,6 +54,7 @@ public class GHGCalculator_DirectEmissionCalculatorPageTests extends Common {
 			GHGCalculatorsPage
 					.printNewTestCaseMessage("Stationary Combustion Scope1 Calculator (ADD && EDIT && Overlap) ");
 			String strName = new Exception().getStackTrace()[0].getMethodName();
+			System.out.println(strName);
 			data = new Data(Constants.CalculatorStationaryCombustion);
 			datasets = data.getDataSets();
 			data.setColIndex();

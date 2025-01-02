@@ -68,21 +68,27 @@ public class IndirectEmissionsCalculatorPage extends CalculatorElements {
 			clickOn(drpUnitsIndirect, "Unit");
 			we = driver.findElement(By.xpath("//li[text()='" + data.get("Units") + "']"));
 			clickOn(we, data.get("Units"));
-			if (!data.get("Edit").equals("YES")) {
-				sleep(1000);
-				clickOn(dptag, "Tags");
-				WebElement selecttag = driver.findElement(By.xpath("//ul[@aria-labelledby='tag_id-label']//li[text()='SpecifictoTiffanyHQ23']"));
-				((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", selecttag);
-				act.moveToElement(selecttag).click().perform();
-				act.sendKeys(Keys.ESCAPE).perform();
-				//selecttag.sendKeys(Keys.ESCAPE);
-				//clickOn(selecttag, "Tags");
-			}			  
-			sleep(1000);
-			clickOn(btnSave, "Save Button");
+			/*
+			 * if (!data.get("Edit").equals("YES")) { try { if (dptag.isDisplayed()) {
+			 * clickOn(dptag, "Tags"); WebElement selecttag = driver
+			 * .findElement(By.xpath("(//ul[@aria-labelledby='tag_id-label']//li)[1]"));
+			 * ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();",
+			 * selecttag); act.moveToElement(selecttag).click().perform(); // } else { } }
+			 * catch (Exception e) { failed(driver, "Exception caught " + e.getMessage()); }
+			 * }
+			 */
+			sleep(2000);
+			waitForElement(btnSave);
+			act.moveToElement(btnSave).doubleClick().perform();
 			verifyAddActivityUpdatedToastMessage();
-			// sleep(2000);
-		} catch (Exception e) {
+			try {
+				if (btnClose.isDisplayed()) {
+					clickOn(btnClose, "");
+				}
+			} catch (Exception e) {
+				System.out.println("Activity details RHP Closed");
+			}
+		}catch (Exception e) {
 			failed(driver, "Exception caught " + e.getMessage());
 		}
 	}
@@ -533,12 +539,12 @@ public class IndirectEmissionsCalculatorPage extends CalculatorElements {
 				WebElement weActivityField = driver.findElement(By.xpath(
 						"//span[text()='" + activityDetailFieldNames[j] + "']//parent::p//following-sibling::p//div"));
 				if (weActivityField.getText().trim().contains(data.get(activityDetailFieldNames[j]).trim())) {
-					passed("Successfully Validated " + activityDetailFieldNames[j] + " In Activity Details As"
+					passed("Successfully Validated " + activityDetailFieldNames[j] + " In Activity Details As "
 							+ weActivityField.getText());
 				} else {
 					failed(driver,
 							"Failed To validate " + activityDetailFieldNames[j] + " In Activity Details Expected As "
-									+ data.get(activityDetailFieldNames[j]) + "But Actual is"
+									+ data.get(activityDetailFieldNames[j]) + " But Actual is "
 									+ weActivityField.getText());
 				}
 			}
@@ -1108,14 +1114,17 @@ public class IndirectEmissionsCalculatorPage extends CalculatorElements {
 		ValidateActivityDetailsInViewActivityScope2();
 	}
 
+	@FindBy(xpath = "//*[text()='Scope 2 - Indirect Emissions']")
+	private WebElement lblGHGCalculatorINDEMM;
+
 	@Override
 	protected void VerifyNavigationToValidPage() {
 		try {
-			waitForElement(lblGHGCalculator);
-			if (isElementPresent(lblGHGCalculator)) {
-				passed("User Successfully Navigated To GHG_Calculator Page");
+			waitForElement(lblGHGCalculatorINDEMM);
+			if (isElementPresent(lblGHGCalculatorINDEMM)) {
+				passed("User Successfully Navigated To GHG_Calculator Page " + data.get("CalcName"));
 			} else {
-				failed(driver, "Failed To Navigate To GHG_Calculator Page");
+				failed(driver, "Failed To Navigate To GHG_Calculator Page " + data.get("CalcName"));
 			}
 			takeScreenshot(driver);
 		} catch (Exception e) {
@@ -1280,24 +1289,51 @@ public class IndirectEmissionsCalculatorPage extends CalculatorElements {
 			String calTco2e7 = "";
 			verifyIfElementPresent(lblActivityDetails, "lblActivityDetails", "Indirect Emissions");
 			if (Constants.selectedGWP.contains("2007 IPCC Fourth Assessment (AR4, 100-Year GWP)")) {
-				WebElement arco2e = driver
-						.findElement(By.xpath("(//span[contains(text(),'CO2')]//parent::p//following-sibling::p)[7]"));
-				String[] splitEF1 = arco2e.getText().split(" ");
-				Double multi1 = Double.parseDouble(splitEF1[0]) * Constants.GWParCO2;
-				WebElement arch4 = driver
-						.findElement(By.xpath("(//span[contains(text(),'CH4')]//parent::p//following-sibling::p)[3]"));
-				String[] splitEF2 = arch4.getText().split(" ");
-				Double multi2 = Double.parseDouble(splitEF2[0]) * Constants.GWPar4CH4;
-				WebElement arn2o = driver
-						.findElement(By.xpath("(//span[contains(text(),'N2O')]//parent::p//following-sibling::p)[3]"));
-				String[] splitEF3 = arn2o.getText().split(" ");
-				Double multi3 = Double.parseDouble(splitEF3[0]) * Constants.GWPar4N2O;
+				double convertedEmissionFactorCO2 = 0;
+				double convertedEmissionFactorCH4 = 0;
+				double convertedEmissionFactorN2O = 0;
+				WebElement arco2e = driver.findElement(By.xpath(
+						"//*[text()='Emission Factors - Location Based']//parent::div//parent::div//following-sibling::div/div//*[contains(text(),'CO2')]//parent::p//following-sibling::p"));
+				String[] splitEF1 = arco2e.getText().replaceAll(",", "").split(" ");
+				String[] numUnitOfEmissionFactorCO2 = splitEF1[1].split("/");
+				if (numUnitOfEmissionFactorCO2[0].equals("kg")) {
+					convertedEmissionFactorCO2 = Double.parseDouble(splitEF1[0]);
+				} else if (numUnitOfEmissionFactorCO2[0].equals("g")) {
+					convertedEmissionFactorCO2 = Double.parseDouble(splitEF1[0]) * Constants.confromgramtoKg;
+				} else {
+					convertedEmissionFactorCO2 = Double.parseDouble(splitEF1[0]);
+				}
+				Double multi1 = convertedEmissionFactorCO2 * Constants.GWParCO2;
+				WebElement arch4 = driver.findElement(By.xpath(
+						"//*[contains(text(),'Emission Factors - Location Based')]//parent::div//parent::div//following-sibling::div//div//following-sibling::div//*[contains(text(),'CH4')]//parent::p//following-sibling::p"));
+				String[] splitEF2 = arch4.getText().replaceAll(",", "").split(" ");
+				String[] numUnitOfEmissionFactorCH4 = splitEF2[1].split("/");
+				if (numUnitOfEmissionFactorCH4[0].equals("kg")) {
+					convertedEmissionFactorCH4 = Double.parseDouble(splitEF2[0]);
+				} else if (numUnitOfEmissionFactorCH4[0].equals("g")) {
+					convertedEmissionFactorCH4 = Double.parseDouble(splitEF2[0]) * Constants.confromgramtoKg;
+				} else {
+					convertedEmissionFactorCH4 = Double.parseDouble(splitEF2[0]);
+				}
+				Double multi2 = convertedEmissionFactorCH4 * Constants.GWPar4CH4;
+				WebElement arn2o4 = driver.findElement(By.xpath(
+						"(//*[contains(text(),'Emission Factors - Location Based')]//parent::div//parent::div//following-sibling::div)[2]//div//*[contains(text(),'N2O')]//parent::p//following-sibling::p"));
+				String[] splitEF3 = arn2o4.getText().replaceAll(",", "").split(" ");
+				String[] numUnitOfEmissionFactorN2O = splitEF3[1].split("/");
+				if (numUnitOfEmissionFactorN2O[0].equals("kg")) {
+					convertedEmissionFactorN2O = Double.parseDouble(splitEF3[0]);
+				} else if (numUnitOfEmissionFactorCH4[0].equals("g")) {
+					convertedEmissionFactorN2O = Double.parseDouble(splitEF3[0]) * Constants.confromgramtoKg;
+				} else {
+					convertedEmissionFactorN2O = Double.parseDouble(splitEF3[0]);
+				}
+				Double multi3 = convertedEmissionFactorN2O * Constants.GWPar4N2O;
 				Double res7 = multi1 + multi2 + multi3;
 				String str1 = res7.toString();
 				String CalEF7 = GHGCalculatorsPage.approximateDecimalValueWithBigDecimal(str1);
 				WebElement emissionfactor = driver.findElement(
 						By.xpath("(//span[contains(text(),'Emission Factor')]//parent::p//following-sibling::p)[2]"));
-				String[] splitEF4 = emissionfactor.getText().split(" ");
+				String[] splitEF4 = emissionfactor.getText().replaceAll(",", "").split(" ");
 				if (splitEF4[0].trim().equals(CalEF7)) {
 					passed("Successfully validated EmissionFactor for loaction based as " + str1);
 				} else {
@@ -1306,26 +1342,28 @@ public class IndirectEmissionsCalculatorPage extends CalculatorElements {
 				}
 				WebElement ee = driver.findElement(
 						By.xpath("//span[contains(text(),'Conversion')]//parent::p//following-sibling::p"));
-				String hh = ee.getText();
+				String hh = ee.getText().replaceAll(",", "");
 				String[] yy = hh.split("=");
-				String[] t = yy[1].split(" ");
-				Double d = Double.parseDouble(t[1]);
+				String[] t = yy[1].trim().replaceAll(",", "").split(" ");
+				Double d = Double.parseDouble(t[0]);
+				String amt = data.get("Amount of Energy").trim().replaceAll(",", "");
 				if (splitEF4[1].trim().equals(Constants.conToTonnfrlb)) {
-					Double result7 = (Double.parseDouble(CalEF7) * Double.parseDouble(data.get("Amount of Energy")) * d)
-							/ 2204.623;
+					Double result7 = (Double.parseDouble(CalEF7) * Double.parseDouble(amt) * d) / 2204.623;
 					calTco2e7 = result7.toString();
 				} else if (splitEF4[1].trim().equals(Constants.conToTonnfrKg)) {
-					Double result7 = (Double.parseDouble(CalEF7) * Double.parseDouble(data.get("Amount of Energy")) * d)
-							/ 1000;
+					Double result7 = (Double.parseDouble(CalEF7) * Double.parseDouble(amt) * d) / 1000;
 					calTco2e7 = result7.toString();
 				} else if (splitEF4[1].trim().equals(Constants.conToTonnfrg)) {
-					Double result7 = (Double.parseDouble(CalEF7) * Double.parseDouble(data.get("Amount of Energy")) * d)
-							/ 1000000;
+					Double result7 = (Double.parseDouble(CalEF7) * Double.parseDouble(amt) * d) / 1000000;
+					calTco2e7 = result7.toString();
+				} else if (splitEF4[1].trim().equals(Constants.conToTonnfrTonn)) {
+					Double result7 = Double.parseDouble(CalEF7) * Double.parseDouble(amt) * d;
 					calTco2e7 = result7.toString();
 				}
 				System.out.println("Calculated tCO2e value should be  :" + calTco2e7);
 				WebElement valuetCO2e7 = driver
 						.findElement(By.xpath("//span[contains(text(),'tCO2e')]//parent::p//following-sibling::p"));
+				GlobalVariables.exceptedtco2e = valuetCO2e7.getText().replaceAll(",", "").trim();
 				if (calTco2e7.trim().equals(valuetCO2e7.getText().trim())) {
 					passed("Successfully validated tCO2e Location Based value for Scope 2 - Indirect Emissions Actual "
 							+ valuetCO2e7.getText() + " Expected tco2e " + calTco2e7);
@@ -1334,22 +1372,25 @@ public class IndirectEmissionsCalculatorPage extends CalculatorElements {
 							"Failed to validate tCO2e Location Based  value for Scope 2 - Indirect Emissions Actual "
 									+ valuetCO2e7.getText() + " Expected tco2e " + calTco2e7);
 				}
-				sleep(3);
-				WebElement tco2edaily = driver.findElement(By.xpath(
-						"//p[contains(text(),'Emission Details - Location Based')]//parent::div/parent::div//following-sibling::div//span[text()='tCO2e (Daily)']//parent::p//following-sibling::p"));
-				if (tco2edaily.getText().trim().equals(data.get("tCO2e(Daily)"))) {
+				String daystart = data.get("Start Date");
+				String dayEnd = data.get("End Date");
+				Double differenceDays = calculateDaysDiff(daystart, dayEnd);
+				Double tco2eLocation = Double.parseDouble(calTco2e7) / differenceDays;
+				WebElement tco2edailyLocation = driver.findElement(By.xpath(
+						"(//p[contains(text(),'Emission Details - Location Based')]//parent::div/parent::div//following-sibling::div//span[text()='tCO2e (Daily)']//parent::p//following-sibling::p/div)[1]"));
+				if (tco2edailyLocation.getText().replaceAll(",", "").trim().equals(tco2eLocation.toString())) {
 					passed("Successfully validated tCO2e(Daily) for location based as " + data.get("tCO2e(Daily)"));
 				} else {
-					failed(driver, "Failed to validate tCO2e(Daily) value for Location Based Actual as "
-							+ data.get("tCO2e(Daily)") + " Expected tCO2e(Daily) " + tco2edaily.getText());
+					failed(driver, "Failed to validate tCO2e(Daily) value for location based as actual==>"
+							+ tco2edailyLocation.getText() + "and Expected tCO2e(Daily)==>" + tco2eLocation);
 				}
 				WebElement tco2edaily1 = driver.findElement(By.xpath(
 						"//p[contains(text(),'Emission Details - Market Based')]//parent::div/parent::div//following-sibling::div//span[text()='tCO2e (Daily)']//parent::p//following-sibling::p"));
-				if (tco2edaily1.getText().trim().equals(data.get("tCO2e(Daily)(M)"))) {
+				if (tco2edaily1.getText().replaceAll(",", "").trim().equals(data.get("tCO2e(Daily)(M)"))) {
 					passed("Successfully validated tCO2e(Daily) for Market Based as " + data.get("tCO2e(Daily)(M)"));
 				} else {
 					failed(driver, "Failed to validate tCO2e(Daily) value for Market Based Actual as "
-							+ data.get("tCO2e(Daily)(M)") + " Expected tCO2e(Daily) " + tco2edaily.getText());
+							+ data.get("tCO2e(Daily)(M)") + " Expected tCO2e(Daily) " + tco2edaily1.getText());
 				}
 			} else if (Constants.selectedGWP.contains("2014 IPCC Fifth Assessment (AR5, 100-Year GWP)")) {
 				WebElement arco2e = driver
@@ -1382,25 +1423,52 @@ public class IndirectEmissionsCalculatorPage extends CalculatorElements {
 							+ valuetCO2e8.getText());
 				}
 			} else if (Constants.selectedGWP.contains("2023 IPCC Sixth Assessment (AR6, 100-Year GWP)")) {
-				WebElement arco2e = driver
-						.findElement(By.xpath("(//span[contains(text(),'CO2')]//parent::p//following-sibling::p)[7]"));
-				String[] splitEF1 = arco2e.getText().split(" ");
-				Double multi1 = Double.parseDouble(splitEF1[0]) * Constants.GWParCO2;
-				WebElement arch6 = driver
-						.findElement(By.xpath("(//span[contains(text(),'CH4')]//parent::p//following-sibling::p)[3]"));
-				String[] splitEF2 = arch6.getText().split(" ");
-				Double multi2 = Double.parseDouble(splitEF2[0]) * Constants.GWPar6CH4;
-				WebElement arn2o6 = driver
-						.findElement(By.xpath("(//span[contains(text(),'N2O')]//parent::p//following-sibling::p)[3]"));
-				String[] splitEF3 = arn2o6.getText().split(" ");
-				Double multi3 = Double.parseDouble(splitEF3[0]) * Constants.GWPar6N2O;
+				double convertedEmissionFactorCO2 = 0;
+				double convertedEmissionFactorCH4 = 0;
+				double convertedEmissionFactorN2O = 0;
+				WebElement arco2e = driver.findElement(By.xpath(
+						"//*[text()='Emission Factors - Location Based']//parent::div//parent::div//following-sibling::div/div//*[contains(text(),'CO2')]//parent::p//following-sibling::p"));
+				String[] splitEF1 = arco2e.getText().replaceAll(",", "").split(" ");
+				String[] numUnitOfEmissionFactorCO2 = splitEF1[1].split("/");
+				if (numUnitOfEmissionFactorCO2[0].equals("kg")) {
+					convertedEmissionFactorCO2 = Double.parseDouble(splitEF1[0]);
+				} else if (numUnitOfEmissionFactorCO2[0].equals("g")) {
+					convertedEmissionFactorCO2 = Double.parseDouble(splitEF1[0]) * Constants.confromgramtoKg;
+				} else {
+					convertedEmissionFactorCO2 = Double.parseDouble(splitEF1[0]);
+				}
+				Double multi1 = convertedEmissionFactorCO2 * Constants.GWParCO2;
+				WebElement arch4 = driver.findElement(By.xpath(
+						"//*[contains(text(),'Emission Factors - Location Based')]//parent::div//parent::div//following-sibling::div//div//following-sibling::div//*[contains(text(),'CH4')]//parent::p//following-sibling::p"));
+				String[] splitEF2 = arch4.getText().replaceAll(",", "").split(" ");
+				String[] numUnitOfEmissionFactorCH4 = splitEF2[1].split("/");
+				if (numUnitOfEmissionFactorCH4[0].equals("kg")) {
+					convertedEmissionFactorCH4 = Double.parseDouble(splitEF2[0]);
+				} else if (numUnitOfEmissionFactorCH4[0].equals("g")) {
+					convertedEmissionFactorCH4 = Double.parseDouble(splitEF2[0]) * Constants.confromgramtoKg;
+				} else {
+					convertedEmissionFactorCH4 = Double.parseDouble(splitEF2[0]);
+				}
+				Double multi2 = convertedEmissionFactorCH4 * Constants.GWPar6CH4;
+				WebElement arn2o4 = driver.findElement(By.xpath(
+						"(//*[contains(text(),'Emission Factors - Location Based')]//parent::div//parent::div//following-sibling::div)[2]//div//*[contains(text(),'N2O')]//parent::p//following-sibling::p"));
+				String[] splitEF3 = arn2o4.getText().replaceAll(",", "").split(" ");
+				String[] numUnitOfEmissionFactorN2O = splitEF3[1].split("/");
+				if (numUnitOfEmissionFactorN2O[0].equals("kg")) {
+					convertedEmissionFactorN2O = Double.parseDouble(splitEF3[0]);
+				} else if (numUnitOfEmissionFactorN2O[0].equals("g")) {
+					convertedEmissionFactorN2O = Double.parseDouble(splitEF3[0]) * Constants.confromgramtoKg;
+				} else {
+					convertedEmissionFactorN2O = Double.parseDouble(splitEF3[0]);
+				}
+				Double multi3 = convertedEmissionFactorN2O * Constants.GWPar6N2O;
 				Double res8 = multi1 + multi2 + multi3;
 				String str2 = res8.toString();
 				String CalEF8 = GHGCalculatorsPage.approximateDecimalValueWithBigDecimal(str2);
 				String[] splitEF8 = CalEF8.split(" ");
 				WebElement emissionfactor = driver.findElement(
 						By.xpath("(//span[contains(text(),'Emission Factor')]//parent::p//following-sibling::p)[2]"));
-				String[] splitEF4 = emissionfactor.getText().split(" ");
+				String[] splitEF4 = emissionfactor.getText().replaceAll(",", "").split(" ");
 				if (splitEF4[0].trim().equals(CalEF8)) {
 					passed("Successfully validated EmissionFactor for loaction based as " + CalEF8);
 				} else {
@@ -1409,46 +1477,69 @@ public class IndirectEmissionsCalculatorPage extends CalculatorElements {
 				}
 				WebElement ee = driver.findElement(
 						By.xpath("//span[contains(text(),'Conversion')]//parent::p//following-sibling::p"));
-				String hh = ee.getText();
+				String hh = ee.getText().replaceAll(",", "");
 				String[] yy = hh.split("=");
 				String[] t = yy[1].split(" ");
 				Double d = Double.parseDouble(t[1]);
-				Double result8 = (Double.parseDouble(splitEF8[0]) * Double.parseDouble(data.get("Amount of Energy"))
-						* d) / 1000;
-				String calTco2e8 = result8.toString();
-				System.out.println("Calculated tCO2e value should be  :" + calTco2e8);
+				String amt = data.get("Amount of Energy").trim().replaceAll(",", "");
+				if (splitEF4[1].trim().equals(Constants.conToTonnfrlb)) {
+					Double result7 = (Double.parseDouble(CalEF8) * Double.parseDouble(amt) * d) / 2204.623;
+					calTco2e7 = result7.toString();
+				} else if (splitEF4[1].trim().equals(Constants.conToTonnfrKg)) {
+					Double result7 = (Double.parseDouble(CalEF8) * Double.parseDouble(amt) * d) / 1000;
+					calTco2e7 = result7.toString();
+				} else if (splitEF4[1].trim().equals(Constants.conToTonnfrg)) {
+					Double result7 = (Double.parseDouble(CalEF8) * Double.parseDouble(amt) * d) / 1000000;
+					calTco2e7 = result7.toString();
+				} else if (splitEF4[1].trim().equals(Constants.conToTonnfrTonn)) {
+					Double result7 = Double.parseDouble(CalEF8) * Double.parseDouble(amt) * d;
+					calTco2e7 = result7.toString();
+				}
+				System.out.println("Calculated tCO2e value should be  :" + calTco2e7);
 				WebElement valuetCO2e8 = driver
 						.findElement(By.xpath("//span[contains(text(),'tCO2e')]//parent::p//following-sibling::p"));
-				if (calTco2e8.trim().equals(valuetCO2e8.getText().trim())) {
+				GlobalVariables.exceptedtco2e = valuetCO2e8.getText().replaceAll(",", "").trim();
+				if (calTco2e7.trim().equals(valuetCO2e8.getText().trim())) {
 					passed("Successfully validated tCO2e Location Based value for Scope 2 - Indirect Emissions "
 							+ valuetCO2e8.getText());
 				} else {
 					failed(driver, "Failed to valiadte tCO2e Location Based value for Scope 2 - Indirect Emissions "
-							+ valuetCO2e8.getText());
+							+ valuetCO2e8.getText() + " but actual is " + calTco2e7);
 				}
-				sleep(3);
-				//---tco2e daily----
-				String daystart = data.get("Start Date");
-				String dayEnd = data.get("End Date");
-				Double differenceDays = calculateDaysDiff(daystart, dayEnd);
-				Double tco2eLocation = result8/differenceDays;
-				
-				WebElement tco2edailyLocation = driver.findElement(By.xpath(
-						"(//p[contains(text(),'Emission Details - Location Based')]//parent::div/parent::div//following-sibling::div//span[text()='tCO2e (Daily)']//parent::p//following-sibling::p/div)[1]"));
-				if (tco2edailyLocation.getText().trim().equals(tco2eLocation.toString())) {
-					passed("Successfully validated tCO2e(Daily) for location based as " + data.get("tCO2e(Daily)"));
-				} else {
-					failed(driver, "Failed to validate tCO2e(Daily) value for location based as actual==>"
-							+ tco2edailyLocation.getText() + "and Expected tCO2e(Daily)==>" + tco2eLocation);
-				}
-				WebElement tco2edailyMarket = driver.findElement(By.xpath(
-						"(//p[contains(text(),'Emission Details - Location Based')]//parent::div/parent::div//following-sibling::div//span[text()='tCO2e (Daily)']//parent::p//following-sibling::p/div)[2]"));
-				if (tco2edailyMarket.getText().trim().equals(data.get("tCO2e(Daily)(M)"))) {
-					passed("Successfully validated tCO2e(Daily) for Market Based as actual==>" + tco2edailyMarket+" and expected is==>"+tco2eLocation);
-				} else {
-					failed(driver, "Failed to validate tCO2e(Daily) value for Market Based Actual as "
-							+ tco2edailyMarket.getText() + " Expected tCO2e(Daily) " + tco2eLocation);
-				}
+			}
+			/*
+			 * System.out.println("Calculated tCO2e value should be  :" + calTco2e8);
+			 * WebElement valuetCO2e8 = driver .findElement(By.xpath(
+			 * "//span[contains(text(),'tCO2e')]//parent::p//following-sibling::p")); if
+			 * (calTco2e8.trim().equals(valuetCO2e8.getText().trim())) {
+			 * passed("Successfully validated tCO2e Location Based value for Scope 2 - Indirect Emissions "
+			 * + valuetCO2e8.getText()); } else { failed(driver,
+			 * "Failed to valiadte tCO2e Location Based value for Scope 2 - Indirect Emissions "
+			 * + valuetCO2e8.getText()); }
+			 */
+			sleep(3);
+			// ---tco2e daily----
+			String daystart = data.get("Start Date");
+			String dayEnd = data.get("End Date");
+			Double differenceDays = calculateDaysDiff(daystart, dayEnd);
+			Double tco2eLocation = Double.parseDouble(calTco2e7) / differenceDays;
+
+			WebElement tco2edailyLocation = driver.findElement(By.xpath(
+					"(//p[contains(text(),'Emission Details - Location Based')]//parent::div/parent::div//following-sibling::div//span[text()='tCO2e (Daily)']//parent::p//following-sibling::p/div)[1]"));
+			if (tco2edailyLocation.getText().replaceAll(",", "").trim().equals(tco2eLocation.toString())) {
+				passed("Successfully validated tCO2e(Daily) for location based as " + data.get("tCO2e(Daily)"));
+			} else {
+				failed(driver, "Failed to validate tCO2e(Daily) value for location based as actual==>"
+						+ tco2edailyLocation.getText() + "and Expected tCO2e(Daily)==>" + tco2eLocation);
+			}
+			WebElement tco2edailyMarket = driver.findElement(By.xpath(
+					"(//p[contains(text(),'Emission Details - Location Based')]//parent::div/parent::div//following-sibling::div//span[text()='tCO2e (Daily)']//parent::p//following-sibling::p/div)[2]"));
+			if (tco2edailyMarket.getText().replaceAll(",", "").trim().equals(data.get("tCO2e(Daily)(M)"))) {
+				passed("Successfully validated tCO2e(Daily) for Market Based as actual==>" + data.get("tCO2e(Daily)(M)")
+						+ " and expected is==>" + tco2edailyMarket.getText());
+			} else {
+				failed(driver, "Failed to validate tCO2e(Daily) value for Market Based Actual as "
+						+ data.get("tCO2e(Daily)(M)") + " Expected tCO2e(Daily) " + tco2edailyMarket.getText());
 			}
 		} catch (Exception e) {
 			failed(driver, "Exception caught" + e.getMessage());
@@ -1461,10 +1552,10 @@ public class IndirectEmissionsCalculatorPage extends CalculatorElements {
 			Double sp = 0.0;
 			WebElement emissionfactor = driver.findElement(
 					By.xpath("(//span[contains(text(),'Emission Factor')]//parent::p//following-sibling::p)[2]"));
-			String[] splitEF4 = emissionfactor.getText().split(" ");
+			String[] splitEF4 = emissionfactor.getText().replaceAll(",", "").split(" ");
 			WebElement ee = driver
 					.findElement(By.xpath("//span[contains(text(),'Conversion')]//parent::p//following-sibling::p"));
-			String hh = ee.getText();
+			String hh = ee.getText().replaceAll(",", "");
 			String[] yy = hh.split("=");
 			String[] t = yy[1].split(" ");
 			Double d = Double.parseDouble(t[1]);
@@ -1477,13 +1568,13 @@ public class IndirectEmissionsCalculatorPage extends CalculatorElements {
 						WebElement tval = driver.findElement(By.xpath(
 								"//p[text()='Emission Details - Location Based']//parent::div//parent::div//following-sibling::div/div//span[text()='"
 										+ tva[j] + "']//parent::p/following-sibling::p"));
-						Double dv = Double.parseDouble(tval.getText().trim());
+						Double dv = Double.parseDouble(tval.getText().replaceAll(",", "").trim());
 						String[] Emiloc = { "CO2", "CH4", "N2O" };
 						for (i = l; i <= Emiloc.length; i++) {
 							WebElement val = driver.findElement(By.xpath(
 									"//p[text()='Emission Factors - Location Based']//parent::div//parent::div//following-sibling::div/div//span[text()='"
 											+ Emiloc[i] + "']//parent::p/following-sibling::p"));
-							String[] splitval = val.getText().split(" ");
+							String[] splitval = val.getText().replaceAll(",", "").split(" ");
 							if (splitEF4[1].trim().equals(Constants.conToTonnfrlb)) {
 								sp = (Double.parseDouble(splitval[0]) * Double.parseDouble(data.get("Amount of Energy"))
 										* d) / 2204.623;
@@ -1495,9 +1586,9 @@ public class IndirectEmissionsCalculatorPage extends CalculatorElements {
 										* d) / 1000000;
 							}
 							String Loaction = GHGCalculatorsPage.approximateDecimalValueWithBigDecimal(sp.toString());
-							if (tval.getText().equals(Loaction)) {
+							if (tval.getText().replaceAll(",", "").trim().equals(Loaction)) {
 								passed("Successfully validated emission details location based for " + Emiloc[i]
-										+ " as actual is==>" + dv +" and expected is==>"+Loaction);
+										+ " as actual is==>" + dv + " and expected is==>" + Loaction);
 							} else {
 								failed(driver, "Failed to validate emission details location based for " + Emiloc[i]
 										+ " as actual is==>" + dv + " but expected is==>" + Loaction);
@@ -1511,14 +1602,14 @@ public class IndirectEmissionsCalculatorPage extends CalculatorElements {
 						WebElement tval = driver.findElement(By.xpath(
 								"//p[text()='Emission Details - Market Based']//parent::div//parent::div//following-sibling::div/div//span[text()='"
 										+ tva[j] + "']//parent::p/following-sibling::p"));
-						Double dv = Double.parseDouble(tval.getText().trim());
+						Double dv = Double.parseDouble(tval.getText().replaceAll(",", "").trim());
 						String[] Emiloc = { "CO2", "CH4", "N2O" };
 						for (k = m; k < Emiloc.length; k++) {
 
 							WebElement val = driver.findElement(By.xpath(
 									"//p[text()='Emission Factors - Market Based']//parent::div//parent::div//following-sibling::div/div//span[text()='"
 											+ Emiloc[k] + "']//parent::p/following-sibling::p"));
-							String[] splitval = val.getText().split(" ");
+							String[] splitval = val.getText().replaceAll(",", "").split(" ");
 							if (splitEF4[1].trim().equals(Constants.conToTonnfrlb)) {
 								sp = (Double.parseDouble(splitval[0]) * Double.parseDouble(data.get("Amount of Energy"))
 										* d) / 2204.623;
@@ -1531,9 +1622,9 @@ public class IndirectEmissionsCalculatorPage extends CalculatorElements {
 							}
 							String Market = GHGCalculatorsPage.approximateDecimalValueWithBigDecimal(sp.toString());
 							String emissionValues = dv.toString();
-							if (tval.getText().equals(Market)) {
-								passed("Successfully validated emission details market based for " + Emiloc[k] + " as actual is==>"+dv+
-									"and expected is==>"+ Market);
+							if (tval.getText().replaceAll(",", "").trim().equals(Market)) {
+								passed("Successfully validated emission details market based for " + Emiloc[k]
+										+ " as actual is==>" + dv + "and expected is==>" + Market);
 							} else {
 								failed(driver, "Failed to validate emission details market based for " + Emiloc[k]
 										+ " as actual is==>" + dv + "but expected is==>" + Market);
@@ -1751,8 +1842,8 @@ public class IndirectEmissionsCalculatorPage extends CalculatorElements {
 					WebElement val = driver.findElement(By.xpath(
 							"//p[text()='Emission Factors - Market Based']//parent::div/parent::div//following-sibling::div//div//span[text()='"
 									+ s[i] + "']//parent::p//following-sibling::p"));
-					String sp[] = val.getText().trim().split(" ");
-					String w[] = { Constants.GWParCO2+"", Constants.GWPar4CH4+"", Constants.GWPar4N2O+"" };
+					String sp[] = val.getText().replaceAll(",", "").trim().split(" ");
+					String w[] = { Constants.GWParCO2 + "", Constants.GWPar4CH4 + "", Constants.GWPar4N2O + "" };
 					for (j = l; j <= w.length; j++) {
 						Double d = Double.parseDouble(sp[0]) * Double.parseDouble(w[j]);
 						sum = sum + d;
@@ -1765,8 +1856,8 @@ public class IndirectEmissionsCalculatorPage extends CalculatorElements {
 					WebElement val = driver.findElement(By.xpath(
 							"//p[text()='Emission Factors - Market Based']//parent::div/parent::div//following-sibling::div//div//span[text()='"
 									+ s[i] + "']//parent::p//following-sibling::p"));
-					String sp[] = val.getText().trim().split(" ");
-					String w[] = { Constants.GWParCO2+"", Constants.GWPar6CH4+"", Constants.GWPar6N2O+"" };
+					String sp[] = val.getText().replaceAll(",", "").trim().split(" ");
+					String w[] = { Constants.GWParCO2 + "", Constants.GWPar6CH4 + "", Constants.GWPar6N2O + "" };
 					for (j = l; j <= w.length; j++) {
 						Double d = Double.parseDouble(sp[0]) * Double.parseDouble(w[j]);
 						sum = sum + d;
@@ -1777,7 +1868,7 @@ public class IndirectEmissionsCalculatorPage extends CalculatorElements {
 			}
 			WebElement efm = driver.findElement(By.xpath(
 					"//p[contains(text(),'Emission Details - Market Based')]//parent::div/parent::div//following-sibling::div//span[text()='Emission Factor']//parent::p//following-sibling::p"));
-			String u[] = efm.getText().trim().split(" ");
+			String u[] = efm.getText().replaceAll(",", "").trim().split(" ");
 			String ap = Double.toString(sum);
 			String Calco2em = GHGCalculatorsPage.approximateDecimalValueWithBigDecimal(ap);
 			if (u[0].equals(Calco2em)) {
@@ -1789,7 +1880,7 @@ public class IndirectEmissionsCalculatorPage extends CalculatorElements {
 
 			WebElement ee = driver
 					.findElement(By.xpath("//span[contains(text(),'Conversion')]//parent::p//following-sibling::p"));
-			String hh = ee.getText();
+			String hh = ee.getText().replaceAll(",", "");
 			String[] yy = hh.split("=");
 			String[] t = yy[1].split(" ");
 			Double d = Double.parseDouble(t[1]);
@@ -1806,7 +1897,7 @@ public class IndirectEmissionsCalculatorPage extends CalculatorElements {
 			System.out.println("Calculated tCO2e value should be  :" + fitco2em);
 			WebElement valuetCO2e8 = driver.findElement(By.xpath(
 					"//p[contains(text(),'Emission Details - Market Based')]//parent::div/parent::div//following-sibling::div//span[text()='tCO2e']//parent::p//following-sibling::p"));
-			if (fitco2em.trim().equals(valuetCO2e8.getText().trim())) {
+			if (fitco2em.replaceAll(",", "").trim().equals(valuetCO2e8.getText().replaceAll(",", "").trim())) {
 				passed("Successfully validated tCO2e value for Market Based Emissions as  " + valuetCO2e8.getText()
 						+ " Expected " + fitco2em);
 			} else {
@@ -1815,7 +1906,7 @@ public class IndirectEmissionsCalculatorPage extends CalculatorElements {
 			}
 			WebElement sourcem = driver.findElement(By.xpath(
 					"//p[contains(text(),'Emission Factors - Market Based')]//parent::div/parent::div//following-sibling::div//span[text()='Source']//parent::p//following-sibling::p"));
-			if (sourcem.getText().trim().equals(data.get("Source(Market)"))) {
+			if (sourcem.getText().replaceAll(",", "").trim().equals(data.get("Source(Market)"))) {
 				passed("Successfully validated Source for market based emissions as " + data.get("Source(Market)"));
 			} else {
 				failed(driver, "Failed to validate Source for market based emissions as " + data.get("Source(Market)")
@@ -1825,7 +1916,8 @@ public class IndirectEmissionsCalculatorPage extends CalculatorElements {
 			for (int p = 0; p < activityDetailFieldNames.length; p++) {
 				WebElement weActivityField = driver.findElement(By.xpath("(//span[text()='"
 						+ activityDetailFieldNames[p] + "']//parent::p//following-sibling::p//div)[2]"));
-				if (weActivityField.getText().trim().contains(data.get(activityDetailFieldNames[p] + "(M)").trim())) {
+				if (weActivityField.getText().replaceAll(",", "").trim()
+						.contains(data.get(activityDetailFieldNames[p] + "(M)").trim())) {
 					passed("Successfully Validated " + activityDetailFieldNames[p] + "(M)" + " In Activity Details As"
 							+ weActivityField.getText());
 				} else {

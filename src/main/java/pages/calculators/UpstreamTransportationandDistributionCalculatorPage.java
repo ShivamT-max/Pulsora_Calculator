@@ -46,8 +46,8 @@ public class UpstreamTransportationandDistributionCalculatorPage extends Calcula
 			clickOn(txtEndDate, "end date");
 			enterText(txtEndDate, "End Date", data.get("End Date"));
 			// ----
-			mouseActions.doubleClick(txtServicePrvodr).perform();
-			enterText(txtServicePrvodr, "Service Provider", data.get("Service Provider"));
+			mouseActions.doubleClick(txtServiceProvider).perform();
+			enterText(txtServiceProvider, "Service Provider", data.get("Service Provider"));
 			mouseActions.doubleClick(txtServiceType).perform();
 			enterText(txtServiceType, "Service Type", data.get("Service Type"));
 
@@ -81,10 +81,17 @@ public class UpstreamTransportationandDistributionCalculatorPage extends Calcula
 			WebElement weDistanceUnit = driver
 					.findElement(By.xpath("//li[text()='" + data.get("Distance Unit") + "']"));
 			clickOn(weDistanceUnit, data.get("Distance Unit"));
-			sleep(5000);
-			clickOn(btnSave, "Save Button upstream transportation ");
+			waitForElement(btnSave);
+			mouseActions.moveToElement(btnSave).click().perform();
 			verifyAddActivityUpdatedToastMessage();
-			System.out.println("-------Validate details---------");
+			try {
+				if (btnClose.isDisplayed()) {
+					clickOn(btnClose, "");
+				}
+			} catch (Exception e) {
+				System.out.println("Activity details RHP Closed");
+			}
+			System.out.println("-------Validate Emission Factor and tCO2e details---------");
 		} catch (Exception e) {
 			failed(driver, "Exception caught" + e.getMessage());
 		}
@@ -279,8 +286,8 @@ public class UpstreamTransportationandDistributionCalculatorPage extends Calcula
 //			String drpCEF = "//li[text()='" + nameOfCEF + "']";
 //			clickOnElementWithDynamicXpath(drpCEF, nameOfCEF);
 
-			mouseActions.doubleClick(txtServicePrvodr).perform();
-			enterText(txtServicePrvodr, "Service Provider", data.get("Service Provider"));
+			mouseActions.doubleClick(txtServiceProvider).perform();
+			enterText(txtServiceProvider, "Service Provider", data.get("Service Provider"));
 			mouseActions.doubleClick(txtServiceType).perform();
 			enterText(txtServiceType, "Service Type", data.get("Service Type"));
 //		    clickOn(drpModeOfFrght, "Mode of freight DropDown");
@@ -318,7 +325,7 @@ public class UpstreamTransportationandDistributionCalculatorPage extends Calcula
 			String[] activityDetailFieldNames = { "Facility Name", "Invoice No.", "Invoice Date",
 					"Start Date", "End Date", "Custom Emission Factor", "Service Provider", "Service Type",
 					"Mode of Freight", "Vehicle", "Type", "Fuel / Size", "Activity Amount", "Weight", "Weight Unit",
-					"Distance", "Distance Unit", "Source"};
+					"Distance", "Distance Unit","Emission Factor", "Source"};
 			Thread.sleep(5000);
 			verifyIfElementPresent(lblActivityDetails, "lblViewActivityFulEngy",
 					"upstream transportation details page");
@@ -326,12 +333,12 @@ public class UpstreamTransportationandDistributionCalculatorPage extends Calcula
 				WebElement weActivityField = driver.findElement(By.xpath(
 						"//span[text()='" + activityDetailFieldNames[j] + "']//parent::p//following-sibling::p"));
 				if (weActivityField.getText().trim().equals(data.get(activityDetailFieldNames[j]).trim())) {
-					passed("Successfully Validated " + activityDetailFieldNames[j] + " In Activity Details As"
+					passed("Successfully Validated " + activityDetailFieldNames[j] + " In Activity Details As "
 							+ weActivityField.getText());
 				} else {
 					failed(driver,
 							"Failed To validate " + activityDetailFieldNames[j] + " In Activity Details Expected As "
-									+ data.get(activityDetailFieldNames[j]) + "But Actual is"
+									+ data.get(activityDetailFieldNames[j]) + " But Actual is "
 									+ weActivityField.getText());
 				}
 			}
@@ -471,15 +478,17 @@ public class UpstreamTransportationandDistributionCalculatorPage extends Calcula
 					+ EFValueRHP[0]);
 		}
 	}
-
+	@FindBy(xpath = "//*[text()='Scope 3.4 - Upstream Transportation and Distribution']")
+	private WebElement lblGHGCalculatorUSPT;
+	
 	@Override
 	protected void VerifyNavigationToValidPage() {
 		try {
-			waitForElement(lblGHGCalculator);
-			if (isElementPresent(lblGHGCalculator)) {
-				passed("User Successfully Navigated To GHG_Calculator Page");
+			waitForElement(lblGHGCalculatorUSPT);
+			if (isElementPresent(lblGHGCalculatorUSPT)) {
+				passed("User Successfully Navigated To GHG_Calculator Page "+data.get("CalcName"));
 			} else {
-				failed(driver, "Failed To Navigate To GHG_Calculator Page");
+				failed(driver, "Failed To Navigate To GHG_Calculator Page "+data.get("CalcName"));
 			}
 			takeScreenshot(driver);
 		} catch (Exception e) {
@@ -495,32 +504,35 @@ public class UpstreamTransportationandDistributionCalculatorPage extends Calcula
 					By.xpath("(//span[contains(text(),'Emission Factor')]//parent::p//following-sibling::p)[2]"));
 			String[] splitEF4 = emissionfactor.getText().split(" ");
 			if (emissionfactor.getText().equals(data.get("Emission Factor"))) {
-				passed("Successfully validated EmissionFactor as expected is==>" + data.get("Emission Factor")+" and actual is==>"+emissionfactor.getText());
+				passed("Successfully validated EmissionFactor as expected is==>" + data.get("Emission Factor")
+						+ " and actual is==>" + emissionfactor.getText());
 			} else {
-				failed(driver, "Failed to validate EmissionFactor as expected is==>" + data.get("Emission Factor") + " but Actual is==>"
-						+ emissionfactor.getText());
+				failed(driver, "Failed to validate EmissionFactor as expected is==>" + data.get("Emission Factor")
+						+ " but Actual is==>" + emissionfactor.getText());
 			}
+
 			WebElement ee = driver
 					.findElement(By.xpath("//span[contains(text(),'Conversion')]//parent::p//following-sibling::p"));
 			String hh = ee.getText().replaceAll(",", "");
 			String[] yy = hh.split("=");
-			String[] t=yy[1].split(" ");
+			String[] t = yy[1].split(" ");
 			Double d = Double.parseDouble(t[1]);
 			WebElement emissionFactor1 = driver.findElement(
 					By.xpath("(//span[contains(text(),'Emission Factor')]//parent::p//following-sibling::p)[2]"));
 			String[] splitEF1 = emissionFactor1.getText().split(" ");
-			Double result1 = (Double.parseDouble(splitEF1[0]) * Double.parseDouble(data.get("Activity Amount"))*d )/ 1000;
+			Double result1 = (Double.parseDouble(splitEF1[0]) * Double.parseDouble(data.get("Activity Amount")) * d)
+					/ 1000;
 			String res1 = result1.toString();
 			String CalCo2e1 = GHGCalculatorsPage.approximateDecimalValueWithBigDecimal(res1);
 			WebElement valuetCO2e1 = driver
 					.findElement(By.xpath("//span[contains(text(),'tCO2e')]//parent::p//following-sibling::p"));
-			GlobalVariables.exceptedtco2e=valuetCO2e1.getText().trim();
+			GlobalVariables.exceptedtco2e = valuetCO2e1.getText().trim();
 			if (CalCo2e1.trim().equals(valuetCO2e1.getText().trim())) {
 				passed("Successfully validated tCO2e value for : " + " Upstream Transportation and Distribution "
 						+ valuetCO2e1.getText());
 			} else {
-				failed(driver, "Failed to valiadte tCO2e value for : " + " Upstream Transportation and Distribution "
-						+ valuetCO2e1.getText()+" But Actual as "+CalCo2e1);
+				failed(driver, "Failed to validate tCO2e value for : " + " Upstream Transportation and Distribution "
+						+ valuetCO2e1.getText() + " But Actual as " + CalCo2e1);
 			}
 		} catch (Exception e) {
 			failed(driver, "Exception caught " + e.getMessage());

@@ -3,12 +3,12 @@
 <suite name="Failed suite [Suite]">
   <test thread-count="5" name="Test(failed)">
     <classes>
-      <class name="uitests.GHGCalculator_HotelStayCalculatorPageTests">
+      <class name="uitests.GHGCalculators_ProcessingofSoldProductCalculatorPageTests">
         <methods>
-          <include name="TC015_ValidateAddActivityforHotelStay3_6GHGCalculator"/>
           <include name="testStart"/>
+          <include name="TC021_ValidateAddActivityfor3_10PrcessingofSoldProdutcs"/>
         </methods>
-      </class> <!-- uitests.GHGCalculator_HotelStayCalculatorPageTests -->
+      </class> <!-- uitests.GHGCalculators_ProcessingofSoldProductCalculatorPageTests -->
     </classes>
   </test> <!-- Test(failed) -->
 </suite> <!-- Failed suite [Suite] -->

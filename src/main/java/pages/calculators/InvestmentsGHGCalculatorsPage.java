@@ -39,14 +39,18 @@ public class InvestmentsGHGCalculatorsPage extends GHGCalculatorsPage {
 			clickOn(txtEndDate, "end date");
 			enterText(txtEndDate, "End Date", data.get("End Date"));
 			act.doubleClick(txtreporting_company_share3_15).perform();
+			clearUntillTextFieldIsGettingCleared(txtreporting_company_share3_15);
 			enterText(txtreporting_company_share3_15, "txtreporting_company_share3_15", data.get("Reporting company's share of equity (%)"));
 			act.doubleClick(txtScope1tCO2eEmissions3_15).perform();
+			clearUntillTextFieldIsGettingCleared(txtScope1tCO2eEmissions3_15);
 			enterText(txtScope1tCO2eEmissions3_15, "Scope 1 - (tCO2e) Emissions of investee company 3_15",
 					data.get("Scope 1 - (tCO2e) Emissions of investee company"));
 			act.doubleClick(txtScope2tCO2eEmissions3_15).perform();
+			clearUntillTextFieldIsGettingCleared(txtScope2tCO2eEmissions3_15);
 			enterText(txtScope2tCO2eEmissions3_15, "Scope 2 - (tCO2e) Emissions of investee company 3_15",
 					data.get("Scope 2 - (tCO2e) Emissions of investee company"));
 			act.doubleClick(txtScope3tCO2eEmissions3_15).perform();
+			clearUntillTextFieldIsGettingCleared(txtScope3tCO2eEmissions3_15);
 			enterText(txtScope3tCO2eEmissions3_15, "Scope 3 - (tCO2e) Emissions of investee company 3_15",
 					data.get("Scope 3 - (tCO2e) Emissions of investee company"));
 			
@@ -55,7 +59,8 @@ public class InvestmentsGHGCalculatorsPage extends GHGCalculatorsPage {
 //					data.get("Total GHG Emissions - (tCO2e) of investee company"));
 			act.doubleClick(totalEmissionCalc).build().perform();
 			act.doubleClick(txtSourcs3_15).perform();
-			sleep(2000);
+			sleep(3000);
+			clearUntillTextFieldIsGettingCleared(txtSourcs3_15);
 			enterText(txtSourcs3_15, "Sourcs 3_15", data.get("Source of Emissions Data"));
 			clickOn(btnSaveHotelStay, "Save Button Investments");
 		} catch (Exception e) {

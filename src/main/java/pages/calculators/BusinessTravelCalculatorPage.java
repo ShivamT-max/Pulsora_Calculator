@@ -26,6 +26,8 @@ public class BusinessTravelCalculatorPage extends CalculatorElements {
 	private WebElement drptags;
 	@FindBy(xpath = "//input[@id='tag_id']//parent::div//*[@data-testid='ArrowDropDownIcon']")
 	private WebElement dptag;
+	@FindBy(xpath = "//h5[contains(text(),'Add Activity')]")
+	private WebElement drptagremove;
 
 	public void addActivityDetailsForBusinessTravelDistanceBasedCalculatorInActivityDetailsPannel() {
 		try {
@@ -53,28 +55,43 @@ public class BusinessTravelCalculatorPage extends CalculatorElements {
 			clickOn(drpModeOfBusinessTravel, "Mode Of Business Travel");
 			we = driver.findElement(By.xpath("//li[text()='" + data.get("Mode of Business Travel") + "']"));
 			clickOn(we, data.get("Mode of Business Travel"));
-			sleep(2000);
+			sleep(1000);
 			clickOn(drpVehicleType, "VehicalType");
 			we = driver.findElement(By.xpath("//li[text()='" + data.get("Vehicle Type") + "']"));
 			clickOn(we, data.get("Vehicle Type"));
-			sleep(2000);
+			sleep(1000);
+			clickOn(txtDistanceTrvlByEmp, "DistanceTravelByEmp");
+			enterText(txtDistanceTrvlByEmp, "DistanceTravelByEmp", data.get("Distance Travelled by Each Employee"));
 			clickOn(drpBusinessTravlUnits, "Business TravelUnits");
 			we = driver.findElement(By.xpath("//li[text()='" + data.get("Units") + "']"));
 			clickOn(we, data.get("Units"));
-			sleep(2000);
-			clickOn(txtDistanceTrvlByEmp, "DistanceTravelByEmp");
-			enterText(txtDistanceTrvlByEmp, "DistanceTravelByEmp", data.get("Distance Travelled by Each Employee"));
-
-			if (!data.get("Edit").equals("YES")) {
-				clickOn(dptag, "Tags");
-				WebElement selecttag = driver.findElement(By.xpath("(//ul[@aria-labelledby='tag_id-label']//li)[1]"));
-				((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", selecttag);
-				act.moveToElement(selecttag).click().perform(); // clickOn(selecttag, "Tags");
+			try {
+				if (data.get("Env").equals("eu.prod") || data.get("Env").equals("eu.uat")
+						|| (data.get("Env").equals("qa") && data.get("UserName").equals("tiffanyAut_Ent"))) {
+					System.out.println("No tag present");
+				} else {
+					if (!data.get("Edit").equals("YES")) {
+						clickOn(dptag, "Tags");
+						WebElement selecttag = driver
+								.findElement(By.xpath("(//ul[@aria-labelledby='tag_id-label']//li)[1]"));
+						((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", selecttag);
+						act.moveToElement(selecttag).click().perform(); // clickOn(selecttag, "Tags");
+						clickOn(drptagremove, "");
+					}
+				}
+			} catch (Exception e) {
+				System.out.println("no tag present");
 			}
-
-			clickOn(btnSave, "Save Button");
-			sleep(1000);
+			sleep(100);
+			act.moveToElement(btnSave).doubleClick().perform();
 			verifyAddActivityUpdatedToastMessage();
+			try {
+				if (btnClose.isDisplayed()) {
+					clickOn(btnClose, "");
+				}
+			} catch (Exception e) {
+				System.out.println("Activity details RHP Closed");
+			}
 		} catch (Exception e) {
 			failed(driver, "Exception caught " + e.getMessage());
 		}
@@ -120,33 +137,33 @@ public class BusinessTravelCalculatorPage extends CalculatorElements {
 			// takeScreenshot(driver);
 			String[] activityDetailFieldNames = { "Facility Name", "Invoice No.", "Invoice Date", "Start Date",
 					"End Date", "Custom Emission Factor", "Distance Travelled by Each Employee",
-					"Mode of Business Travel", "Vehicle Type", "Activity Amount", "Units", "CO2", "CH4", "N2O",
-					"Biogenic CO2", "Source" };
+					"Mode of Business Travel", "Vehicle Type", "Activity Amount", "Units", "Emission Factor", "CO2",
+					"CH4", "N2O", "Biogenic CO2", "Source" };
 			verifyIfElementPresent(lblViewActivity, "lblViewActivity", "lblViewActivity");
 			for (int j = 0; j < activityDetailFieldNames.length; j++) {
 				if (activityDetailFieldNames[j].equals("Biogenic CO2")) {
 					WebElement weActivityField = driver.findElement(By.xpath("(//span[text()='"
 							+ activityDetailFieldNames[j] + "']//parent::p//following-sibling::p)[2]"));
 					if (weActivityField.getText().trim().equals(data.get(activityDetailFieldNames[j]))) {
-						passed("Successfully Validated " + activityDetailFieldNames[j] + " In Activity Details As"
+						passed("Successfully Validated " + activityDetailFieldNames[j] + " In Activity Details As "
 								+ weActivityField.getText());
 					} else {
 						failed(driver,
 								"Failed To validate " + activityDetailFieldNames[j]
 										+ " In Activity Details Expected As " + data.get(activityDetailFieldNames[j])
-										+ "But Actual is" + weActivityField.getText());
+										+ " But Actual is " + weActivityField.getText());
 					}
 				} else {
 					WebElement weActivityField = driver.findElement(By.xpath(
 							"//span[text()='" + activityDetailFieldNames[j] + "']//parent::p//following-sibling::p"));
 					if (weActivityField.getText().trim().equals(data.get(activityDetailFieldNames[j]))) {
-						passed("Successfully Validated " + activityDetailFieldNames[j] + " In Activity Details As"
+						passed("Successfully Validated " + activityDetailFieldNames[j] + " In Activity Details As "
 								+ weActivityField.getText());
 					} else {
 						failed(driver,
 								"Failed To validate " + activityDetailFieldNames[j]
 										+ " In Activity Details Expected As " + data.get(activityDetailFieldNames[j])
-										+ "But Actual is" + weActivityField.getText());
+										+ " But Actual is " + weActivityField.getText());
 					}
 				}
 
@@ -193,6 +210,7 @@ public class BusinessTravelCalculatorPage extends CalculatorElements {
 	public void addActivityDetailsForBusinessTravelSpendBasedCalculatorInActivityDetailsPannel() {
 		try {
 			sleep(3000);
+			Actions act = new Actions(driver);
 			waitForElement(drpFacilityName);
 			clickOn(drpFacilityName, "txtFacilityName");
 //			enterText(drpFacilityName, "Facility Name", data.get("Facility Name"));
@@ -223,15 +241,38 @@ public class BusinessTravelCalculatorPage extends CalculatorElements {
 			clickOn(drpCurrency, "Currency");
 			we = driver.findElement(By.xpath("//li[text()='" + data.get("Currency / Unit") + "']"));
 			clickOn(we, data.get("Currency / Unit"));
-			sleep(2000);
-			clickOn(btnSave, "Save Button");
-			sleep(4000);
-			if (btnClose.isDisplayed()) {
-				clickOn(btnClose, "");
+			try {
+				if (data.get("Env").equals("eu.prod") || data.get("Env").equals("eu.uat")
+						|| (data.get("Env").equals("qa") && data.get("UserName").equals("tiffanyAut_Ent"))) {
+					System.out.println("No tag present");
+				} else {
+					if (!data.get("Edit").equals("YES")) {
+						clickOn(dptag, "Tags");
+						WebElement selecttag = driver
+								.findElement(By.xpath("(//ul[@aria-labelledby='tag_id-label']//li)[1]"));
+						((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", selecttag);
+						act.moveToElement(selecttag).click().perform(); // clickOn(selecttag, "Tags");
+						clickOn(drptagremove, "");
+					}
+				}
+			} catch (Exception e) {
+				System.out.println("no tag present");
+			}
+			sleep(100);
+			waitForElement(btnSave);
+			act.moveToElement(btnSave).doubleClick().build().perform();
+			verifyAddActivityUpdatedToastMessage();
+			try {
+				if (btnClose.isDisplayed()) {
+					clickOn(btnClose, "");
+				}
+			} catch (Exception e) {
+				System.out.println("Activity details RHP Closed");
 			}
 		} catch (Exception e) {
 			failed(driver, "Exception caught " + e.getMessage());
 		}
+		System.out.println("--------Validate Emission Factor & tCO2e details--------------");
 	}
 
 	public void EditActivityScope3_6EmissionsCEfSpendBase() {
@@ -291,20 +332,20 @@ public class BusinessTravelCalculatorPage extends CalculatorElements {
 	public void validateAddActivityDetailsInViewActivityForSpendBasedBusinessTravelCalculator() {
 		try {
 			takeScreenshot(driver);
-			String[] activityDetailFieldNames = { "Facility Name", "Expense No.", "Expense Date", "Start Date",
-					"End Date", "Custom Emission Factor", "Mode of Business Travel", "Travel Category", "Amount Spent",
-					"Currency / Unit", "Emission Factor", "Source" };
+			String[] activityDetailFieldNames = { "Facility Name", "Start Date", "End Date", "Custom Emission Factor",
+					"Mode of Business Travel", "Travel Category", "Amount Spent", "Currency / Unit", "Emission Factor",
+					"Source" };
 			verifyIfElementPresent(lblViewActivity, "lblViewActivity", "lblViewActivity");
 			for (int j = 0; j < activityDetailFieldNames.length; j++) {
 				WebElement weActivityField = driver.findElement(By.xpath(
 						"//span[text()='" + activityDetailFieldNames[j] + "']//parent::p//following-sibling::p"));
 				if (weActivityField.getText().trim().equals(data.get(activityDetailFieldNames[j]))) {
-					passed("Successfully Validated " + activityDetailFieldNames[j] + " In Activity Details As"
+					passed("Successfully Validated " + activityDetailFieldNames[j] + " In Activity Details As "
 							+ weActivityField.getText());
 				} else {
 					failed(driver,
 							"Failed To validate " + activityDetailFieldNames[j] + " In Activity Details Expected As "
-									+ data.get(activityDetailFieldNames[j]) + "But Actual is"
+									+ data.get(activityDetailFieldNames[j]) + " But Actual is "
 									+ weActivityField.getText());
 				}
 			}
@@ -927,14 +968,17 @@ public class BusinessTravelCalculatorPage extends CalculatorElements {
 		}
 	}
 
+	@FindBy(xpath = "//*[text()='Scope 3.6 - Business Travel']")
+	private WebElement lblGHGCalculatorBT;
+
 	@Override
 	protected void VerifyNavigationToValidPage() {
 		try {
-			waitForElement(lblBusinessTravel);
-			if (isElementPresent(lblBusinessTravel)) {
-				passed("User Successfully Navigated To Business Travel Calc Page");
+			waitForElement(lblGHGCalculatorBT);
+			if (isElementPresent(lblGHGCalculatorBT)) {
+				passed("User Successfully Navigated To GHG_Calculator Page " + data.get("CalcName"));
 			} else {
-				failed(driver, "Failed To Navigate To  Business Travel Calc Page");
+				failed(driver, "Failed To Navigate To GHG_Calculator Page " + data.get("CalcName"));
 			}
 			takeScreenshot(driver);
 		} catch (Exception e) {
@@ -992,6 +1036,8 @@ public class BusinessTravelCalculatorPage extends CalculatorElements {
 					convertedEmissionFactorCO2 = Double.parseDouble(splitEF1[0]);
 				} else if (numUnitOfEmissionFactorCO2[0].equals("g")) {
 					convertedEmissionFactorCO2 = Double.parseDouble(splitEF1[0]) * Constants.confromgramtoKg;
+				} else {
+					convertedEmissionFactorCO2 = Double.parseDouble(splitEF1[0]);
 				}
 				Double multi1 = convertedEmissionFactorCO2 * Constants.GWParCO2;
 				WebElement arch4 = driver.findElement(By.xpath(
@@ -1002,6 +1048,8 @@ public class BusinessTravelCalculatorPage extends CalculatorElements {
 					convertedEmissionFactorCH4 = Double.parseDouble(splitEF2[0]);
 				} else if (numUnitOfEmissionFactorCH4[0].equals("g")) {
 					convertedEmissionFactorCH4 = Double.parseDouble(splitEF2[0]) * Constants.confromgramtoKg;
+				} else {
+					convertedEmissionFactorCH4 = Double.parseDouble(splitEF2[0]);
 				}
 				Double multi2 = convertedEmissionFactorCH4 * Constants.GWPar4CH4;
 				WebElement arn2o4 = driver.findElement(By.xpath(
@@ -1012,6 +1060,8 @@ public class BusinessTravelCalculatorPage extends CalculatorElements {
 					convertedEmissionFactorN2O = Double.parseDouble(splitEF3[0]);
 				} else if (numUnitOfEmissionFactorCH4[0].equals("g")) {
 					convertedEmissionFactorN2O = Double.parseDouble(splitEF3[0]) * Constants.confromgramtoKg;
+				} else {
+					convertedEmissionFactorN2O = Double.parseDouble(splitEF3[0]);
 				}
 				Double multi3 = convertedEmissionFactorN2O * Constants.GWPar4N2O;
 				Double res7 = multi1 + multi2 + multi3;
@@ -1029,7 +1079,6 @@ public class BusinessTravelCalculatorPage extends CalculatorElements {
 				WebElement activityamt = driver.findElement(
 						By.xpath("(//span[contains(text(),'Amount')]//parent::p//following-sibling::p)[1]"));
 				String am = activityamt.getText().replaceAll(",", "");
-
 				WebElement ee = driver.findElement(
 						By.xpath("//span[contains(text(),'Conversion')]//parent::p//following-sibling::p"));
 				String hh = ee.getText().replaceAll(",", "");
@@ -1045,7 +1094,7 @@ public class BusinessTravelCalculatorPage extends CalculatorElements {
 				} else if (splitEF4[1].trim().equals(Constants.conToTonnfrg)) {
 					Double result7 = (Double.parseDouble(CalEF7) * Double.parseDouble(am) * d) / 1000000;
 					calTco2e7 = result7.toString();
-				}else if(splitEF4[1].trim().equals(Constants.conToTonnfrTonn)) {
+				} else if (splitEF4[1].trim().equals(Constants.conToTonnfrTonn)) {
 					Double result7 = Double.parseDouble(CalEF7) * Double.parseDouble(am) * d;
 					calTco2e7 = result7.toString();
 				}
@@ -1053,10 +1102,10 @@ public class BusinessTravelCalculatorPage extends CalculatorElements {
 						.findElement(By.xpath("//span[contains(text(),'tCO2e')]//parent::p//following-sibling::p"));
 				GlobalVariables.exceptedtco2e = valuetCO2e7.getText().trim();
 				if (calTco2e7.trim().equals(valuetCO2e7.getText().trim())) {
-					passed("Successfully validated tCO2e value for : " + " Scope 2 - Indirect Emissions Actual "
+					passed("Successfully validated tCO2e value for : " + " Business Travel Actual "
 							+ valuetCO2e7.getText() + " Expected tco2e " + calTco2e7);
 				} else {
-					failed(driver, "Failed to valiadte tCO2e value for : " + " Scope 2 - Indirect Emissions Actual"
+					failed(driver, "Failed to valiadte tCO2e value for : " + " Business Travel Actual"
 							+ valuetCO2e7.getText() + " Expected tco2e " + calTco2e7);
 				}
 			} else if (Constants.selectedGWP.contains("2014 IPCC Fifth Assessment (AR5, 100-Year GWP)")) {
@@ -1130,11 +1179,11 @@ public class BusinessTravelCalculatorPage extends CalculatorElements {
 						By.xpath("(//span[contains(text(),'Emission Factor')]//parent::p//following-sibling::p)[2]"));
 				String[] emissionFactorValue = emissionFactor.getText().split(" ");
 				if (CalEF8.equals(emissionFactorValue[0])) {
-					passed("Successfully validated Emission Factor as Expected is==>" + CalEF8 + " and actula is==>"
+					passed("Successfully validated Emission Factor as Expected is==>" + CalEF8 + " and actula is ==>"
 							+ emissionFactorValue[0]);
 				} else {
-					failed(driver, "failed to validate Emission factor as Expected is==>" + CalEF8 + " and actual is==>"
-							+ emissionFactorValue[0]);
+					failed(driver, "failed to validate Emission factor as Expected is==>" + CalEF8
+							+ " and actual is ==>" + emissionFactorValue[0]);
 				}
 				verifyIfElementPresent(lblActivityDetails, "lblActivityDetails", " Business Travel-Distance Based ");
 				WebElement activityamt = driver.findElement(
@@ -1176,11 +1225,11 @@ public class BusinessTravelCalculatorPage extends CalculatorElements {
 				String tco2 = Double.toString(calculatedtCO2);
 				if (GHGCalculatorsPage.approximateDecimalValueWithBigDecimal(tco2.trim())
 						.equals(GHGCalculatorsPage.approximateDecimalValueWithBigDecimal(emssnDetailtCO2value))) {
-					passed("Successfully validated tCO2 as actual is==>" + emssnDetailtCO2value + " and expected is==>"
+					passed("Successfully validated tCO2 as actual is==>" + emssnDetailtCO2value + " and expected is ==>"
 							+ GHGCalculatorsPage.approximateDecimalValueWithBigDecimal(tco2.trim()));
 				} else {
 					failed(driver,
-							"Failed to validate tCO2 as actual is==>" + emssnDetailtCO2value + " and expected is==>"
+							"Failed to validate tCO2 as actual is==>" + emssnDetailtCO2value + " and expected is ==>"
 									+ GHGCalculatorsPage.approximateDecimalValueWithBigDecimal(tco2.trim()));
 				}
 

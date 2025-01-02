@@ -61,31 +61,42 @@ public class GHGCalculator_HomeOfficeTelecomCalculatorPageTests extends Common {
 				MenuBarPage.clickOnHamburgerMenu();
 				gHGCalculatorsPage = MenuBarPage.clickOnGHGCalculatorsMenu();
 				gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+				gHGCalculatorsPage.clickOnCarbonManagementNavigationMenu();
 				HomeOfficeTelecommutingCalculatorPage = gHGCalculatorsPage.clickOnScope3_7_Home_Office_Telecommuting();
-				//gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
-				}
-			gHGCalculatorsPage.calculateGHGEmissionBefore();
+				gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
+			}
 			if (data.get("Edit").equals("YES")) {
+				gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
 				gHGCalculatorsPage.clickOnAddedActivity();
 				gHGCalculatorsPage.clickOnEditButtonInActivityDetails_1();
+				HomeOfficeTelecommutingCalculatorPage.EditActivityScope3_7Emissions();
 			} else {
-				gHGCalculatorsPage.clickOnAddActivity();
-				gHGCalculatorsPage.verifyAddLabelRHP();
+				if(data.get("gwp year").equals("AR6")) {
+					gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+					gHGCalculatorsPage.clickOnCarbonManagementNavigationMenu();
+					gHGCalculatorsPage.clickOnScope3_7_Home_Office_Telecommuting();
+					gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
+					gHGCalculatorsPage.clickOnAddActivity();
+					gHGCalculatorsPage.verifyAddLabelRHP();
+					HomeOfficeTelecommutingCalculatorPage.EditActivityScope3_7Emissions();
+				}
+				else {		
+					gHGCalculatorsPage.clickOnAddActivity();
+					gHGCalculatorsPage.verifyAddLabelRHP();
+					HomeOfficeTelecommutingCalculatorPage.EditActivityScope3_7Emissions();
+				}
 			}
-			HomeOfficeTelecommutingCalculatorPage.EditActivityScope3_7Emissions();
-			//gHGCalculatorsPage.verifyAddActivityUpdatedToastMessage();
-			gHGCalculatorsPage.selectPeriodToAll();
-			gHGCalculatorsPage.clickOnAddedActivity();
-			HomeOfficeTelecommutingCalculatorPage.validateTOTALCO2EforHomeOffice();
-			HomeOfficeTelecommutingCalculatorPage.ValidateActivityDetailsInViewActivityScope3_7();
-			gHGCalculatorsPage.VerifyEvidence();
-			gHGCalculatorsPage.ValidateEvidenceDetails();
-			gHGCalculatorsPage.validateAuditLogForAllCalc();
-			gHGCalculatorsPage.clickOnCloseInActivityDetails();
-			gHGCalculatorsPage.clickOnGenerateButtonAlternate1();
-			datasetEnd();
-		}
-//		 MenuBarPage.logOut();
+					gHGCalculatorsPage.clickOnAddedActivity();
+					HomeOfficeTelecommutingCalculatorPage.validateTOTALCO2EforHomeOffice();
+					HomeOfficeTelecommutingCalculatorPage.ValidateActivityDetailsInViewActivityScope3_7();
+					gHGCalculatorsPage.VerifyEvidence();
+					gHGCalculatorsPage.ValidateEvidenceDetails();
+					gHGCalculatorsPage.validateAuditLogForAllCalc();
+					gHGCalculatorsPage.clickOnCloseInActivityDetails();
+					gHGCalculatorsPage.clickOnGenerateButtonAfterActivity();
+					datasetEnd();
+				}
+		MenuBarPage.logOut();
 		TestBase.tearDown();
 	}
 

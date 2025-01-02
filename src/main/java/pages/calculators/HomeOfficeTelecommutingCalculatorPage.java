@@ -29,7 +29,7 @@ public class HomeOfficeTelecommutingCalculatorPage extends CalculatorElements {
 			Thread.sleep(3000);
 			clickOn(txtFacilityNameScope3_4, "txtFacilityNameScope3_4");
 			sleep(2000);
-			WebElement we = driver.findElement(By.xpath("//li[text()='"+data.get("Facility / Location")+"']"));
+			WebElement we = driver.findElement(By.xpath("//li[text()='" + data.get("Facility / Location") + "']"));
 			clickOn(we, data.get("Facility / Location"));
 			sleep(2000);
 			mouseActions.doubleClick(txtDscrptnHmeOffce).perform();
@@ -64,12 +64,17 @@ public class HomeOfficeTelecommutingCalculatorPage extends CalculatorElements {
 			clickOn(drpUnitsHmeOffce, "drp units");
 			WebElement webUnits = driver.findElement(By.xpath("//li[text()='" + data.get("Units") + "']"));
 			clickOn(webUnits, data.get("Units"));
-			clickOn(btnSave, "Saved");
-			sleep(2000);
+			waitForElement(btnSave);
+			mouseActions.moveToElement(btnSave).doubleClick().perform();
 			verifyAddActivityUpdatedToastMessage();
-//			if(btnClose.isDisplayed()) {
-//			clickOn(btnClose, "");	
-//			}
+			try {
+				if (btnClose.isDisplayed()) {
+					clickOn(btnClose, "");
+				}
+			} catch (Exception e) {
+				System.out.println("Activity details RHP Closed");
+			}
+			System.out.println("-------Validate Emission Factor and tCO2e details---------");
 		} catch (Exception e) {
 			failed(driver, "Exception csaught," + e.getMessage());
 		}
@@ -119,12 +124,12 @@ public class HomeOfficeTelecommutingCalculatorPage extends CalculatorElements {
 				WebElement weActivityField = driver.findElement(By.xpath(
 						"//span[text()='" + activityDetailFieldNames[j] + "']//parent::p//following-sibling::p"));
 				if (weActivityField.getText().trim().equals(data.get(activityDetailFieldNames[j]).trim())) {
-					passed("Successfully Validated " + activityDetailFieldNames[j] + " In Activity Details As"
+					passed("Successfully Validated " + activityDetailFieldNames[j] + " In Activity Details As "
 							+ weActivityField.getText());
 				} else {
 					failed(driver,
 							"Failed To validate " + activityDetailFieldNames[j] + " In Activity Details Expected As "
-									+ data.get(activityDetailFieldNames[j]) + "But Actual is"
+									+ data.get(activityDetailFieldNames[j]) + " But Actual is "
 									+ weActivityField.getText());
 				}
 			}
@@ -134,7 +139,7 @@ public class HomeOfficeTelecommutingCalculatorPage extends CalculatorElements {
 	}
 
 	// ----cef
-	String customEmissionAfctorHome;
+	public static String customEmissionAfctorHome;
 	String srcCEf;
 
 	public void addCEFForHomeOfficeTelecommuting() {
@@ -448,21 +453,7 @@ public class HomeOfficeTelecommutingCalculatorPage extends CalculatorElements {
 		}
 	}
 
-	@Override
-	protected void VerifyNavigationToValidPage() {
-		try {
-			waitForElement(lblGHGCalculator);
-			if (isElementPresent(lblGHGCalculator)) {
-				passed("User Successfully Navigated To GHG_Calculator Page");
-			} else {
-				failed(driver, "Failed To Navigate To GHG_Calculator Page");
-			}
-			takeScreenshot(driver);
-		} catch (Exception e) {
-			failed(driver, "Exception caught " + e.getMessage());
-		}
-	}
-	
+
 	public void validateTOTALCO2EforHomeOffice() {
 		try {
 			verifyIfElementPresent(lblActivityDetails, "lblActivityDetails", "Home Office/Telecommuting");
@@ -470,28 +461,47 @@ public class HomeOfficeTelecommutingCalculatorPage extends CalculatorElements {
 					.findElement(By.xpath("//span[text()='Unit Conversion']//parent::p//following-sibling::p"));
 			String hh = ee.getText().replaceAll(",", "");
 			String[] yy = hh.split("=");
-			String[] t=yy[1].split(" ");
+			String[] t = yy[1].split(" ");
 			Double d = Double.parseDouble(t[1]);
 			WebElement emissionFactor4 = driver.findElement(
 					By.xpath("(//span[contains(text(),'Emission Factor')]//parent::p//following-sibling::p)[2]"));
 			String[] splitEF4 = emissionFactor4.getText().replaceAll(",", "").split(" ");
-			Double result4 =( Double.parseDouble(splitEF4[0]) * Double.parseDouble(data.get("Energy Consumed (kWh)"))*d)
-					/ 1000;
+			Double result4 = (Double.parseDouble(splitEF4[0]) * Double.parseDouble(data.get("Energy Consumed (kWh)"))
+					* d) / 1000;
 			String res4 = result4.toString();
 			String CalCo2e4 = GHGCalculatorsPage.approximateDecimalValueWithBigDecimal(res4);
 			WebElement valtco2e = driver
 					.findElement(By.xpath("//span[contains(text(),'tCO2e')]//parent::p//following-sibling::p"));
-			GlobalVariables.exceptedtco2e=valtco2e.getText().trim();
+			GlobalVariables.exceptedtco2e = valtco2e.getText().trim();
 			if (CalCo2e4.trim().equals(GlobalVariables.exceptedtco2e)) {
 				passed("Successfully validated tCO2e value for : " + " Home Office/Telecommuting "
 						+ GlobalVariables.exceptedtco2e);
 			} else {
 				failed(driver, "Failed to valiadte tCO2e value for : " + " Home Office/Telecommuting "
-						+ GlobalVariables.exceptedtco2e+" But Actual should be "+CalCo2e4);
+						+ GlobalVariables.exceptedtco2e + " But Actual should be " + CalCo2e4);
 			}
 		} catch (Exception e) {
 			failed(driver, "Exception caught " + e.getMessage());
 
 		}
 	}
+	
+	@FindBy(xpath = "//*[text()='Scope 3.7 - Home Office/Telecommuting']")
+	private WebElement lblGHGCalculatorHOMOFF;
+	
+	@Override
+	protected void VerifyNavigationToValidPage() {
+		try {
+			waitForElement(lblGHGCalculatorHOMOFF);
+			if (isElementPresent(lblGHGCalculatorHOMOFF)) {
+				passed("User Successfully Navigated To GHG_Calculator Page "+data.get("CalcName"));
+			} else {
+				failed(driver, "Failed To Navigate To GHG_Calculator Page "+data.get("CalcName"));
+			}
+			takeScreenshot(driver);
+		} catch (Exception e) {
+			failed(driver, "Exception caught " + e.getMessage());
+		}
+	}
+
 }

@@ -68,32 +68,51 @@ public class GHGCalculator_InDirectEmissionCalculatorPageTests extends Common {
 				MenuBarPage.clickOnHamburgerMenu();
 				gHGCalculatorsPage = MenuBarPage.clickOnGHGCalculatorsMenu();
 				gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+				gHGCalculatorsPage.clickOnCarbonManagementNavigationMenu();
 				IndirectEmissionsCalculatorPage = gHGCalculatorsPage.clickOnIndirectemissionCalculator();
 				gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
+				gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
 			}
-			gHGCalculatorsPage.SelectPeriod2022();
-			gHGCalculatorsPage.calculateGHGEmissionBeforeIndirect();
-			if(data.get("Edit").equals("YES")) {
-				gHGCalculatorsPage.clickOnActivityInActivitiesGridMultipleTiffany();
+			if (data.get("Edit").equals("YES")) {
+				gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
+				gHGCalculatorsPage.clickOnAddedActivity();
 				gHGCalculatorsPage.clickOnEditButtonInActivityDetails_1();
+				  IndirectEmissionsCalculatorPage.EditActivityInDirectEmissions();
+
 			} else {
-				gHGCalculatorsPage.clickOnAddActivityButtonPurch();
-				gHGCalculatorsPage.verifyAddLabelRHP();
+				if (data.get("gwp year").equals("AR6")) {
+					gHGCalculatorsPage.clickOnGHGEmissionsSetup();
+					gHGCalculatorsPage.clickOnCarbonManagementNavigationMenu();
+					 gHGCalculatorsPage.clickOnIndirectemissionCalculator();
+					gHGCalculatorsPage.selectFacilityFromOrgViewScreen(data.get("Facility Name"));
+					gHGCalculatorsPage.calculateGHGEmissionBeforeActivity();
+					gHGCalculatorsPage.clickOnAddActivity();
+					gHGCalculatorsPage.verifyAddLabelRHP();
+					  IndirectEmissionsCalculatorPage.EditActivityInDirectEmissions();
+
+				}
+					 else {
+					gHGCalculatorsPage.clickOnAddActivity();
+					gHGCalculatorsPage.verifyAddLabelRHP();
+					  IndirectEmissionsCalculatorPage.EditActivityInDirectEmissions();
+
+				}
 			}
-			IndirectEmissionsCalculatorPage.EditActivityInDirectEmissions();
-			//gHGCalculatorsPage.verifyAddActivityUpdatedToastMessage();
-			gHGCalculatorsPage.selectPeriodToAll();
 			gHGCalculatorsPage.clickOnAddedActivity();
-			IndirectEmissionsCalculatorPage.validateTOTALCO2EforIndirectemission();
-			IndirectEmissionsCalculatorPage.ValidateEmissionDetailsforLocationBased();
-			IndirectEmissionsCalculatorPage.ValidateEmissionDetailsforMarketBased();
-			IndirectEmissionsCalculatorPage.ValidateActivityDetailsInViewActivityAddScope2();
+			 IndirectEmissionsCalculatorPage.validateTOTALCO2EforIndirectemission();
+			  IndirectEmissionsCalculatorPage.ValidateEmissionDetailsforLocationBased();
+			  IndirectEmissionsCalculatorPage.ValidateEmissionDetailsforMarketBased();
+			  gHGCalculatorsPage.validateGlobalWarmingPotentialvalues();
+			  IndirectEmissionsCalculatorPage.
+			  ValidateActivityDetailsInViewActivityAddScope2();
 			gHGCalculatorsPage.VerifyEvidence();
 			gHGCalculatorsPage.ValidateEvidenceDetails();
-			gHGCalculatorsPage.clickOnCloseInActivityDetailsInScope2();
+			gHGCalculatorsPage.validateAuditLogForAllCalc();
+			gHGCalculatorsPage.clickOnCloseInActivityDetails();
+			gHGCalculatorsPage.clickOnGenerateButtonAfterActivity();
 			datasetEnd();
 		}
-//		MenuBarPage.logOut();
+		MenuBarPage.logOut();
 		TestBase.tearDown();
 	}
 
