@@ -249,8 +249,10 @@ public class GHGCalculatorsPage extends CalculatorElements {
 			// jsClick(btnBrowseFiles, "Browse Files");
 			// clickOnElement(btnBrowseFiles, "Browse Files");
 			String path = System.getProperty("user.dir");
+			System.out.println(path);
 			sharedEvidenceFileName = "evidence.txt";
 			String filePath = path + "\\src\\test\\resources\\Calculator\\" + sharedEvidenceFileName + "";
+			System.out.println(filePath);
 //			File f;
 //			f = new File(filePath);
 //			if (!f.exists()) {
@@ -259,8 +261,16 @@ public class GHGCalculatorsPage extends CalculatorElements {
 			ProcessBuilder pb = new ProcessBuilder(path + "\\src\\test\\resources\\DataRequestFiles\\fileUpload.exe",
 					filePath);
 			pb.start();
+			sleep(11000);
+//			if(!btnUpload.isEnabled()) {
+//				Robot robo=new Robot();
+//
+//				robo.keyPress(KeyEvent.VK_ENTER);
+//				robo.keyRelease(KeyEvent.VK_ENTER);
+//				pb.start();
+//			}
 			System.out.println("Verify the Evidence");
-			sleep(6000);
+			
 			WebElement weFile = driver
 					.findElement(By.xpath("//span[contains(text(),'" + sharedEvidenceFileName + "')]"));
 			verifyIfElementPresent(weFile, "Evidence :" + sharedEvidenceFileName, "FuelAndEnergy");
@@ -2673,6 +2683,7 @@ public class GHGCalculatorsPage extends CalculatorElements {
 			waitForElement(selectPeriod);// *[text()='Global Warming
 											// Potential']/../../following-sibling::div//div[@aria-labelledby='demo-radio-buttons-group-label']/div/label/span/following-sibling::span/span
 			clickOn(selectPeriod, "Selected period is ==>" + data.get("Period Year"));
+			sleep(2000);
 			List<WebElement> GHGInveRadioButton = driver.findElements(By.xpath(
 					"//*[text()='Global Warming Potential']/../../following-sibling::div//div[@aria-labelledby='demo-radio-buttons-group-label']/div/label/span/input/.."));
 			List<WebElement> GWPValue = driver.findElements(By.xpath(
@@ -3141,7 +3152,10 @@ public class GHGCalculatorsPage extends CalculatorElements {
 		try {
 
 			validateToastMessageForActivityCalculators();
-			sleep(1);
+//			VerifyEvidence();
+//			ValidateEvidenceDetails();
+//			expandActivityDetailsInRHP();
+			sleep(3000);
 			if (!data.get("Activity").equals("Overlap")) {
 				validateRHPActivityDetailsForAllCalculators(actDetails, calcName);
 				switch (calcName) {

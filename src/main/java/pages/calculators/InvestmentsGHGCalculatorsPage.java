@@ -643,29 +643,37 @@ public class InvestmentsGHGCalculatorsPage extends GHGCalculatorsPage {
 			verifyIfElementPresent(lblActivityDetails, "lblAddActivity", "lblAddActivity");
 			Actions act = new Actions(driver);
 			act.doubleClick(txtInvesteeCompanyScope3_15).perform();
+			clearUntillTextFieldIsGettingCleared(txtInvesteeCompanyScope3_15);
 			enterText(txtInvesteeCompanyScope3_15, "Investee Copmany text", data.get("Investee Company/Project"));
 			clickOn(drpInvesteeCompanyDebtFinance, data.get("Investee Company/Project Sector"));
 			WebElement weinvesteeCompanyProject = driver
 					.findElement(By.xpath("//li[text()='" + data.get("Investee Company/Project Sector") + "']"));
 			clickOn(weinvesteeCompanyProject, data.get("Investee Company/Project Sector"));
 			clickOn(txtStartDate, "Start date");
+			clearUntillTextFieldIsGettingCleared(txtStartDate);
 			enterText(txtStartDate, "Start Date", data.get("Start Date"));
 			clickOn(txtEndDate, "end date");
+			clearUntillTextFieldIsGettingCleared(txtEndDate);
 			enterText(txtEndDate, "End Date", data.get("End Date"));
 			act.doubleClick(txtValueofDebtInvest).perform();
+			clearUntillTextFieldIsGettingCleared(txtValueofDebtInvest);
 			enterText(txtValueofDebtInvest, "txtValueofDebtInvest", data.get("Value of Debt Investment"));
 			act.doubleClick(txtTotalProjectCost).perform();
+			clearUntillTextFieldIsGettingCleared(txtTotalProjectCost);
 			enterText(txtTotalProjectCost, "txtValueofDebtInvest", data.get("Total Project Cost"));
 			clickOn(drpUnitDebtInvest, "Unit of Investments Debt");
 			WebElement weUnits = driver.findElement(By.xpath("//li[text()='" + data.get("Units") + "']"));
 			clickOn(weUnits, data.get("Units"));
 			act.doubleClick(txtScope1tCO2eEmissions3_15).perform();
+			clearUntillTextFieldIsGettingCleared(txtScope1tCO2eEmissions3_15);
 			enterText(txtScope1tCO2eEmissions3_15, "Scope 1 - (tCO2e) Emissions of investee company 3_15",
 					data.get("Scope 1 - (tCO2e) Emissions of investee company"));
 			act.doubleClick(txtScope2tCO2eEmissions3_15).perform();
+			clearUntillTextFieldIsGettingCleared(txtScope2tCO2eEmissions3_15);
 			enterText(txtScope2tCO2eEmissions3_15, "Scope 2 - (tCO2e) Emissions of investee company 3_15",
 					data.get("Scope 2 - (tCO2e) Emissions of investee company"));
 			act.doubleClick(txtScope3tCO2eEmissions3_15).perform();
+			clearUntillTextFieldIsGettingCleared(txtScope3tCO2eEmissions3_15);
 			enterText(txtScope3tCO2eEmissions3_15, "Scope 3 - (tCO2e) Emissions of investee company 3_15",
 					data.get("Scope 3 - (tCO2e) Emissions of investee company"));
 			//act.doubleClick(txtTotaltCO2eEmissions3_15).perform();
@@ -674,6 +682,7 @@ public class InvestmentsGHGCalculatorsPage extends GHGCalculatorsPage {
 //			enterText(txtTotaltCO2eEmissions3_15, "Total (tCO2e) Emissions of investee company 3_15",
 //					data.get("Total GHG Emissions - (tCO2e) of investee company"));
 			act.doubleClick(txtSourceDebtInvest).perform();
+			clearUntillTextFieldIsGettingCleared(txtSourceDebtInvest);
 			enterText(txtSourceDebtInvest, "Sourcs 3_15", data.get("Source of Emissions Data"));
 			clickOn(btnSaveHotelStay, "Save Button Hotel stay");
 		} catch (Exception e) {
